@@ -3091,38 +3091,57 @@ bool CViewerDoc::applyContentPreset(const ViewerContentPreset &preset, CString &
         if (preset.skeletonTemplate.GetLength())
         {
                 CStringA skeletonReference(preset.skeletonTemplate);
-                newTemplate->addSkeletonTemplate(skeletonReference, 0);
-                addedSkeleton = true;
+                const bool skeletonExists = TreeFile::exists(skeletonReference);
+                const bool hasLatMapping = preset.latMapping.GetLength() > 0;
+                CStringA latReference;
+                bool latExists = false;
 
-                if (preset.latMapping.GetLength())
+                if (hasLatMapping)
                 {
-                        CStringA latReference(preset.latMapping);
-                        CrcLowerString skeletonCrc(skeletonReference);
-                        CrcLowerString latCrc(latReference);
-                        newTemplate->setSktToLatMapping(skeletonCrc, latCrc);
-                        newTemplate->setCreateAnimationController(true);
-                        addedLatMapping = true;
+                        latReference = preset.latMapping;
+                        latExists = TreeFile::exists(latReference);
                 }
 
-                if (!TreeFile::exists(skeletonReference))
+                if (skeletonExists)
+                {
+                        newTemplate->addSkeletonTemplate(skeletonReference, 0);
+                        addedSkeleton = true;
+
+                        if (hasLatMapping)
+                        {
+                                CrcLowerString skeletonCrc(skeletonReference);
+                                CrcLowerString latCrc(latReference);
+                                newTemplate->setSktToLatMapping(skeletonCrc, latCrc);
+                                newTemplate->setCreateAnimationController(true);
+                                addedLatMapping = true;
+
+                                if (!latExists)
+                                        missingAssets.push_back(preset.latMapping);
+                        }
+                }
+                else
+                {
                         missingAssets.push_back(preset.skeletonTemplate);
+
+                        if (hasLatMapping && !latExists)
+                                missingAssets.push_back(preset.latMapping);
+                }
         }
 
         if (preset.meshGenerator.GetLength())
         {
                 CStringA meshReference(preset.meshGenerator);
-                newTemplate->addMeshGenerator(meshReference);
-                addedMesh = true;
+                const bool meshExists = TreeFile::exists(meshReference);
 
-                if (!TreeFile::exists(meshReference))
+                if (meshExists)
+                {
+                        newTemplate->addMeshGenerator(meshReference);
+                        addedMesh = true;
+                }
+                else
+                {
                         missingAssets.push_back(preset.meshGenerator);
-        }
-
-        if (addedSkeleton && !preset.latMapping.IsEmpty())
-        {
-                CStringA latReference(preset.latMapping);
-                if (!TreeFile::exists(latReference))
-                        missingAssets.push_back(preset.latMapping);
+                }
         }
 
         if (!addedSkeleton && !addedMesh)
