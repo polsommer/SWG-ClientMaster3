@@ -88,6 +88,9 @@
     <ClCompile Include="..\..\src\win32\Viewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\ViewerWinMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\win32\ViewerDoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
