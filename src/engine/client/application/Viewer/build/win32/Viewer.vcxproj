@@ -259,6 +259,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
       <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</TreatWarningAsError>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\ViewerWinMain.cpp" />
     <ClCompile Include="..\..\src\win32\ViewerDoc.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
