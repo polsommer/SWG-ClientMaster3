@@ -310,6 +310,9 @@
     <ClCompile Include="..\..\src\win32\external\SmartSliderCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\SmartTerrainAnalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\win32\Splash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -655,6 +658,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\external\SmartSliderCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\win32\SmartTerrainAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\Splash.h">

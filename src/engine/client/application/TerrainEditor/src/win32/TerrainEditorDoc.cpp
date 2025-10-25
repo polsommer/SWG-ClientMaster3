@@ -42,6 +42,7 @@
 #include "FormFilterSlope.h"
 #include "FormLayer.h"
 #include "LayerFrame.h"
+#include "SmartTerrainAnalyzer.h"
 #include "LayerView.h"
 #include "MainFrame.h"
 #include "MapFrame.h"
@@ -171,16 +172,17 @@ BEGIN_MESSAGE_MAP(TerrainEditorDoc, CDocument)
 	ON_COMMAND(ID_NEW_FILTER_SHADER, OnNewFilterShader)
 	ON_COMMAND(ID_NEW_FILTER_SLOPE, OnNewFilterSlope)
 	ON_COMMAND(ID_OPTIONS_FLORAPARAMETERS, OnOptionsFloraparameters)
-	ON_COMMAND(ID_OPTIONS_MAPPARAMETERS, OnOptionsMapparameters)
-	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_COLLIDABLE_CONSTANT, OnUpdateNewAffector)
-	ON_UPDATE_COMMAND_UI(ID_NEW_FILTER_DIRECTION, OnUpdateNewFilter)
-	ON_COMMAND(ID_VIEW_MAP_PREFERENCES, OnViewMapPreferences)
-	ON_COMMAND(ID_NEW_AFFECTOR_ENVIRONMENT, OnNewAffectorEnvironment)
-	ON_COMMAND(ID_DEBUG_ADDALLRULES, OnDebugAddallrules)
-	ON_COMMAND(ID_TOOLS_BAKETERRAIN, OnToolsBaketerrain)
-	ON_COMMAND(ID_TOOLS_BAKEFLORA, OnToolsBakeflora)
-	ON_COMMAND(ID_TOOLS_BAKERIVERSROADS, OnToolsBakeriversroads)
-	ON_COMMAND(ID_DEBUG_VIEWBAKEDTERRAIN, OnDebugViewbakedterrain)
+        ON_COMMAND(ID_OPTIONS_MAPPARAMETERS, OnOptionsMapparameters)
+        ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_COLLIDABLE_CONSTANT, OnUpdateNewAffector)
+        ON_UPDATE_COMMAND_UI(ID_NEW_FILTER_DIRECTION, OnUpdateNewFilter)
+        ON_COMMAND(ID_VIEW_MAP_PREFERENCES, OnViewMapPreferences)
+        ON_COMMAND(ID_NEW_AFFECTOR_ENVIRONMENT, OnNewAffectorEnvironment)
+        ON_COMMAND(ID_DEBUG_ADDALLRULES, OnDebugAddallrules)
+        ON_COMMAND(ID_TOOLS_BAKETERRAIN, OnToolsBaketerrain)
+        ON_COMMAND(ID_TOOLS_BAKEFLORA, OnToolsBakeflora)
+        ON_COMMAND(ID_TOOLS_BAKERIVERSROADS, OnToolsBakeriversroads)
+        ON_COMMAND(ID_TOOLS_TERRAININTELLIGENCE, OnToolsTerrainintelligence)
+        ON_COMMAND(ID_DEBUG_VIEWBAKEDTERRAIN, OnDebugViewbakedterrain)
 	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_DYNAMICFAR_CONSTANT, OnUpdateNewAffector)
 	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_DYNAMICNEAR_CONSTANT, OnUpdateNewAffector)
 	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_NONCOLLIDABLE_CONSTANT, OnUpdateNewAffector)
@@ -1746,14 +1748,28 @@ void TerrainEditorDoc::OnDebugAddallrules()
 
 void TerrainEditorDoc::OnToolsBaketerrain()
 {
-	mapFrame->bakeTerrain();
+        mapFrame->bakeTerrain();
+}
+
+//-------------------------------------------------------------------
+
+void TerrainEditorDoc::OnToolsTerrainintelligence()
+{
+        const CString audit = SmartTerrainAnalyzer::runAudit(*this);
+
+        CString decorated;
+        decorated += _T("\r\n");
+        decorated += audit;
+        decorated += _T("\r\n");
+
+        addConsoleMessage(decorated);
 }
 
 //-------------------------------------------------------------------
 
 void TerrainEditorDoc::OnToolsBakeriversroads()
 {
-	mapFrame->updateRiversAndRoads();
+        mapFrame->updateRiversAndRoads();
 }
 
 //-------------------------------------------------------------------
