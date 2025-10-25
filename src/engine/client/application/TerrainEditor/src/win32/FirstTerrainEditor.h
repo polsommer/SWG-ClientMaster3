@@ -13,6 +13,20 @@
 //-------------------------------------------------------------------
 
 //#define NOMINMAX
+
+// TerrainEditor historically targeted the ANSI versions of the Win32/MFC
+// APIs.  Modern toolchains may define UNICODE/_UNICODE globally which switches
+// the headers to the wide-character overloads and breaks compilation because
+// the code largely uses narrow "char" strings.  Force the ANSI variants here so
+// the code continues to build regardless of the toolchain defaults.
+#ifdef UNICODE
+#undef UNICODE
+#endif
+
+#ifdef _UNICODE
+#undef _UNICODE
+#endif
+
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 //-------------------------------------------------------------------

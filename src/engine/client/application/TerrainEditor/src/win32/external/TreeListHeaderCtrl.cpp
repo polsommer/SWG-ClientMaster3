@@ -132,7 +132,7 @@ void CNewHeaderCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 			else
 			// draw to the right
 				m_pImageList->Draw(&dc, imageIndex, 
-						CPoint( rcLabel.right - dc.GetTextExtent(_T(buf), 1 ).cx*2,offset/3 ),
+						CPoint( rcLabel.right - dc.GetTextExtent(buf, 1 ).cx*2,offset/3 ),
 						ILD_TRANSPARENT );
 
 
