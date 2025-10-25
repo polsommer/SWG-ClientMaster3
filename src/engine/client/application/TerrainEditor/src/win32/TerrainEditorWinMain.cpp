@@ -27,7 +27,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
         return invokeAfxWinMain(hInstance, hPrevInstance, GetCommandLineA(), nCmdShow);
     }
 
-    int const requiredCharacterCount = WideCharToMultiByte(CP_ACP, 0, lpCmdLine, -1, nullptr, 0, nullptr, nullptr);
+    int const requiredCharacterCount = WideCharToMultiByte(CP_ACP, 0, lpCmdLine, -1, NULL, 0, NULL, NULL);
 
     if (requiredCharacterCount <= 0)
     {
@@ -36,7 +36,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
     std::vector<char> ansiCommandLine(static_cast<std::size_t>(requiredCharacterCount));
 
-    WideCharToMultiByte(CP_ACP, 0, lpCmdLine, -1, ansiCommandLine.data(), requiredCharacterCount, nullptr, nullptr);
+    WideCharToMultiByte(CP_ACP, 0, lpCmdLine, -1, &ansiCommandLine[0], requiredCharacterCount, NULL, NULL);
 
-    return invokeAfxWinMain(hInstance, hPrevInstance, ansiCommandLine.data(), nCmdShow);
+    return invokeAfxWinMain(hInstance, hPrevInstance, &ansiCommandLine[0], nCmdShow);
 }
