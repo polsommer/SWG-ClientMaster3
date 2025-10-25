@@ -547,13 +547,19 @@ CString ContentCreationAssistantDialog::buildAvailabilityReport(const ViewerCont
         const struct AssetCheck
         {
                 LPCTSTR label;
-                const CString &value;
+                const CString *value;
+
+                AssetCheck(LPCTSTR const labelIn, const CString &valueIn)
+                : label(labelIn),
+                  value(&valueIn)
+                {
+                }
         } checks[] =
         {
-                { _T("  Skeleton"), preset.skeletonTemplate },
-                { _T("  Mesh Generator"), preset.meshGenerator },
-                { _T("  LAT"), preset.latMapping },
-                { _T("  Shader"), preset.shaderTemplate }
+                AssetCheck(_T("  Skeleton"), preset.skeletonTemplate),
+                AssetCheck(_T("  Mesh Generator"), preset.meshGenerator),
+                AssetCheck(_T("  LAT"), preset.latMapping),
+                AssetCheck(_T("  Shader"), preset.shaderTemplate)
         };
 
         for (size_t i = 0; i < sizeof(checks) / sizeof(checks[0]); ++i)
@@ -561,10 +567,12 @@ CString ContentCreationAssistantDialog::buildAvailabilityReport(const ViewerCont
                 report += checks[i].label;
                 report += _T(": ");
 
-                if (checks[i].value.GetLength())
+                const CString &value = *checks[i].value;
+
+                if (value.GetLength())
                 {
                         ++requiredAssets;
-                        const bool exists = fileExists(checks[i].value);
+                        const bool exists = fileExists(value);
                         if (exists)
                                 ++availableAssets;
                         report += exists ? _T("Found ✓") : _T("Missing ✗");
