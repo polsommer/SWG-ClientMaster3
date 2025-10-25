@@ -3218,6 +3218,20 @@ bool CViewerDoc::previewPresetShader(const CString &shaderTemplateName, CString 
 }
 
 // ----------------------------------------------------------------------
+
+bool CViewerDoc::previewSkeletonTemplate(const char *filename)
+{
+        return filename && loadSkeletonTemplate(filename);
+}
+
+// ----------------------------------------------------------------------
+
+bool CViewerDoc::previewMeshGenerator(const char *filename)
+{
+        return filename && loadMeshGenerator(filename);
+}
+
+// ----------------------------------------------------------------------
 /**
  * Write out the macros to be used by the client data file to create a
  * wearable containing existing .mgn files and customizations.

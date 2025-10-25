@@ -9,6 +9,7 @@
 #define INCLUDED_ContentCreationAssistantDialog_H
 
 #include "ContentCreationPreset.h"
+#include "resource.h"
 
 #include <vector>
 
@@ -60,7 +61,7 @@ private:
     CString buildAutomationPlan(const ViewerContentPreset &preset) const;
     const ViewerContentPreset *getSelectedPreset() const;
     bool ensurePresetApplied(const ViewerContentPreset &preset, CString &statusText);
-    void copyTextToClipboard(const CString &text) const;
+    void copyTextToClipboard(const CString &text);
     bool isPresetReady(const ViewerContentPreset &preset) const;
     CString formatStringList(const std::vector<CString> &values, const CString &separator) const;
 

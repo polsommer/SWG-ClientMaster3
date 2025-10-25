@@ -127,6 +127,8 @@ public:
         bool                            applyContentPreset(const ViewerContentPreset &preset, CString &statusMessage);
         void                            queuePresetAnimations(const std::vector<CString> &animations, bool appendToQueue);
         bool                            previewPresetShader(const CString &shaderTemplateName, CString &statusMessage);
+        bool                            previewSkeletonTemplate(const char *filename);
+        bool                            previewMeshGenerator(const char *filename);
 
 private:
 
