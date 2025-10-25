@@ -29,6 +29,7 @@
 #include <set>
 #include <algorithm>
 #include <vector>
+#include <cstring>
 
 // ======================================================================
 // AppearanceTemplateListNamespace
@@ -572,23 +573,32 @@ AppearanceTemplate *AppearanceTemplateListNamespace::create(const char *const fi
 	}
 
 	//-- we now need to create the appearance from disk
-	if (!appearanceTemplate)
-	{
-		Iff iff;
-		if (!iff.open(actualFileName.getString(), true))
-			FATAL(true, ("Could not open appearance file %s", actualFileName.getString()));
+        if (!appearanceTemplate)
+        {
+                Iff iff;
+                if (!iff.open(actualFileName.getString(), true))
+                {
+                        const char *const defaultAppearanceTemplateName = getDefaultAppearanceTemplateName();
+                        if (strcmp(actualFileName.getString(), defaultAppearanceTemplateName) != 0)
+                        {
+                                DEBUG_WARNING(true, ("Could not open appearance file %s, using default appearance %s", actualFileName.getString(), defaultAppearanceTemplateName));
+                                return create(defaultAppearanceTemplateName);
+                        }
 
-		const Tag tag = iff.getCurrentName();
-		TagBindingMap::iterator iter = ms_tagBindingMap.find(tag);
-		if (iter != ms_tagBindingMap.end())
-			appearanceTemplate = iter->second(actualFileName.getString(), &iff);
-		else
-		{
-			char tagString[5];
-			ConvertTagToString(tag, tagString);
-			DEBUG_FATAL(true, ("AppearanceTemplate binding %s not found", tagString));
-		}
-	}
+                        FATAL(true, ("Could not open appearance file %s", actualFileName.getString()));
+                }
+
+                const Tag tag = iff.getCurrentName();
+                TagBindingMap::iterator iter = ms_tagBindingMap.find(tag);
+                if (iter != ms_tagBindingMap.end())
+                        appearanceTemplate = iter->second(actualFileName.getString(), &iff);
+                else
+                {
+                        char tagString[5];
+                        ConvertTagToString(tag, tagString);
+                        DEBUG_FATAL(true, ("AppearanceTemplate binding %s not found", tagString));
+                }
+        }
 
 	//-- add the appearance template to the named list
 	if (appearanceTemplate)
