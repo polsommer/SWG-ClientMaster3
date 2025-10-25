@@ -13,6 +13,20 @@
 //-------------------------------------------------------------------
 
 //#define NOMINMAX
+
+// The TerrainEditor tool was originally written for an ANSI build of MFC.
+// Modern Windows SDK headers default to Unicode which changes many common
+// typedefs (LPCTSTR, etc.) to their wide-character equivalents.  The legacy
+// editor codebase, however, expects the ANSI variants.  Explicitly disable
+// the Unicode macros here so the included headers match the expectations of
+// the existing source.
+#ifdef UNICODE
+#undef UNICODE
+#endif
+#ifdef _UNICODE
+#undef _UNICODE
+#endif
+
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 //-------------------------------------------------------------------
