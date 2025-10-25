@@ -767,24 +767,143 @@ inline real TerrainEditorDoc::getWhiteHeight (void) const
 
 inline bool TerrainEditorDoc::getUseGlobalWaterTable (void) const
 {
-	return useGlobalWaterTable;
+        return useGlobalWaterTable;
 }
 
 //-------------------------------------------------------------------
 
 inline real TerrainEditorDoc::getGlobalWaterTableHeight (void) const
 {
-	return globalWaterTableHeight;
+        return globalWaterTableHeight;
+}
+
+//-------------------------------------------------------------------
+
+inline int TerrainEditorDoc::getEnvironmentCycleTime () const
+{
+        return m_environmentCycleTime;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getCollidableMinimumDistance () const
+{
+        return m_collidableMinimumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getCollidableMaximumDistance () const
+{
+        return m_collidableMaximumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getCollidableTileSize () const
+{
+        return m_collidableTileSize;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getNonCollidableMinimumDistance () const
+{
+        return m_nonCollidableMinimumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getNonCollidableMaximumDistance () const
+{
+        return m_nonCollidableMaximumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getNonCollidableTileSize () const
+{
+        return m_nonCollidableTileSize;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getRadialMinimumDistance () const
+{
+        return m_radialMinimumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getRadialMaximumDistance () const
+{
+        return m_radialMaximumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getRadialTileSize () const
+{
+        return m_radialTileSize;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getFarRadialMinimumDistance () const
+{
+        return m_farRadialMinimumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getFarRadialMaximumDistance () const
+{
+        return m_farRadialMaximumDistance;
+}
+
+//-------------------------------------------------------------------
+
+inline float TerrainEditorDoc::getFarRadialTileSize () const
+{
+        return m_farRadialTileSize;
+}
+
+//-------------------------------------------------------------------
+
+inline uint32 TerrainEditorDoc::getCollidableSeed () const
+{
+        return m_collidableSeed;
+}
+
+//-------------------------------------------------------------------
+
+inline uint32 TerrainEditorDoc::getNonCollidableSeed () const
+{
+        return m_nonCollidableSeed;
+}
+
+//-------------------------------------------------------------------
+
+inline uint32 TerrainEditorDoc::getRadialSeed () const
+{
+        return m_radialSeed;
+}
+
+//-------------------------------------------------------------------
+
+inline uint32 TerrainEditorDoc::getFarRadialSeed () const
+{
+        return m_farRadialSeed;
 }
 
 //-------------------------------------------------------------------
 
 inline void TerrainEditorDoc::setLastChunkGenerationTimes (real total, real average, real minimum, real maximum)
 {
-	lastTotalChunkGenerationTime   = total;
-	lastAverageChunkGenerationTime = average;
-	lastMinimumChunkGenerationTime = minimum;
-	lastMaximumChunkGenerationTime = maximum;
+        lastTotalChunkGenerationTime   = total;
+        lastAverageChunkGenerationTime = average;
+        lastMinimumChunkGenerationTime = minimum;
+        lastMaximumChunkGenerationTime = maximum;
 }
 
 //-------------------------------------------------------------------

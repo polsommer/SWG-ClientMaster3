@@ -11,6 +11,8 @@
 
 #include "FirstTerrainEditor.h"
 
+#include <vector>
+
 class TerrainEditorDoc;
 
 class SmartTerrainAnalyzer
@@ -23,7 +25,50 @@ public:
                 float   confidence;
         };
 
+        struct BlueprintAction
+        {
+                CString label;
+                CString rationale;
+                float   predictedImpact;
+                float   confidence;
+        };
+
+        struct AuditReport
+        {
+                float foresightScore;
+                float structureScore;
+                float ecosystemScore;
+                float workflowScore;
+
+                int totalLayers;
+                int activeLayers;
+                int inactiveLayers;
+                int totalBoundaries;
+                int totalFilters;
+                int totalAffectors;
+                int hierarchyDepth;
+
+                int shaderFamilies;
+                int floraFamilies;
+                int radialFamilies;
+                int environmentFamilies;
+                int fractalFamilies;
+                int bitmapFamilies;
+
+                bool hasGlobalWaterTable;
+                int environmentCycleMinutes;
+
+                std::vector<CString> dormantLayers;
+                std::vector<CString> emptyLayers;
+                std::vector<CString> boundaryFreeLayers;
+                std::vector<CString> heroLayers;
+
+                std::vector<Insight> insights;
+                std::vector<BlueprintAction> blueprint;
+        };
+
 public:
+        static AuditReport analyze(const TerrainEditorDoc &doc);
         static CString runAudit(const TerrainEditorDoc &doc);
 };
 
