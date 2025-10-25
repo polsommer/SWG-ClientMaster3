@@ -207,6 +207,9 @@
     <ClCompile Include="..\..\src\win32\CoolDialogBar.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\ContentCreationAssistantDialog.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
     <ClCompile Include="..\..\src\win32\DialogAddSkeleton.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
@@ -277,6 +280,8 @@
     <ClInclude Include="..\..\src\win32\ChildFrm.h" />
     <ClInclude Include="..\..\src\win32\ClientBakedWearableWriter.h" />
     <ClInclude Include="..\..\src\win32\CoolDialogBar.h" />
+    <ClInclude Include="..\..\src\win32\ContentCreationAssistantDialog.h" />
+    <ClInclude Include="..\..\src\win32\ContentCreationPreset.h" />
     <ClInclude Include="..\..\src\win32\DialogAddSkeleton.h" />
     <ClInclude Include="..\..\src\win32\DialogFind.h" />
     <ClInclude Include="..\..\src\win32\DialogMapAnimation.h" />
