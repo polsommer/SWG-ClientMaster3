@@ -366,16 +366,38 @@ public:
 	BakedTerrain*           getBakedTerrain ();
 	const BakedTerrain*     getBakedTerrain () const;
 
-	real                    getDefaultShaderSize (void) const;
+        real                    getDefaultShaderSize (void) const;
 
-	real                    getBlackHeight (void) const;
-	real                    getWhiteHeight (void) const;
+        real                    getBlackHeight (void) const;
+        real                    getWhiteHeight (void) const;
 
-	void                    BuildFloraFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-	void                    BuildShaderFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-	void                    BuildRadialFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-	void                    BuildEnvironmentFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-	void                    BuildFractalFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+        int                     getEnvironmentCycleTime () const;
+
+        float                   getCollidableMinimumDistance () const;
+        float                   getCollidableMaximumDistance () const;
+        float                   getCollidableTileSize () const;
+        uint32                  getCollidableSeed () const;
+
+        float                   getNonCollidableMinimumDistance () const;
+        float                   getNonCollidableMaximumDistance () const;
+        float                   getNonCollidableTileSize () const;
+        uint32                  getNonCollidableSeed () const;
+
+        float                   getRadialMinimumDistance () const;
+        float                   getRadialMaximumDistance () const;
+        float                   getRadialTileSize () const;
+        uint32                  getRadialSeed () const;
+
+        float                   getFarRadialMinimumDistance () const;
+        float                   getFarRadialMaximumDistance () const;
+        float                   getFarRadialTileSize () const;
+        uint32                  getFarRadialSeed () const;
+
+        void                    BuildFloraFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+        void                    BuildShaderFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+        void                    BuildRadialFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+        void                    BuildEnvironmentFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+        void                    BuildFractalFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
 	void                    BuildBitmapFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
 
 	void                    setLastChunkGenerationTimes (real total, real average, real minimum, real maximum);
