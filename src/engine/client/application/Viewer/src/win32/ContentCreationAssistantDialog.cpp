@@ -754,7 +754,7 @@ bool ContentCreationAssistantDialog::ensurePresetApplied(const ViewerContentPres
 
 // ----------------------------------------------------------------------
 
-void ContentCreationAssistantDialog::copyTextToClipboard(const CString &text) const
+void ContentCreationAssistantDialog::copyTextToClipboard(const CString &text)
 {
         if (!OpenClipboard())
                 return;
@@ -904,7 +904,7 @@ void ContentCreationAssistantDialog::OnPreviewSkeleton()
                 return;
         }
 
-        if (m_viewerDoc->loadSkeletonTemplate(fileName))
+        if (m_viewerDoc->previewSkeletonTemplate(fileName))
                 pushStatus(_T("Skeleton preview loaded."));
         else
                 pushStatus(_T("Failed to load skeleton preview."));
@@ -940,7 +940,7 @@ void ContentCreationAssistantDialog::OnPreviewMesh()
                 return;
         }
 
-        if (m_viewerDoc->loadMeshGenerator(fileName))
+        if (m_viewerDoc->previewMeshGenerator(fileName))
                 pushStatus(_T("Mesh preview loaded."));
         else
                 pushStatus(_T("Failed to load mesh preview."));
