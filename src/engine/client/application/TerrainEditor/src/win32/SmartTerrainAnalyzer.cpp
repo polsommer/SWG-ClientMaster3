@@ -265,12 +265,11 @@ SmartTerrainAnalyzer::AuditReport SmartTerrainAnalyzer::analyze(const TerrainEdi
         else if (tileWidth > 8.0f)
                 workflowScore -= 4.0f;
 
-        const std::set<uint32> uniqueSeeds = {
-                doc.getCollidableSeed(),
-                doc.getNonCollidableSeed(),
-                doc.getRadialSeed(),
-                doc.getFarRadialSeed()
-        };
+        std::set<uint32> uniqueSeeds;
+        uniqueSeeds.insert(doc.getCollidableSeed());
+        uniqueSeeds.insert(doc.getNonCollidableSeed());
+        uniqueSeeds.insert(doc.getRadialSeed());
+        uniqueSeeds.insert(doc.getFarRadialSeed());
         switch (uniqueSeeds.size())
         {
         case 4:
