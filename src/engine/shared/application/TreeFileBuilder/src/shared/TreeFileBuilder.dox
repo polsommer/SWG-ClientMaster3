@@ -1,0 +1,43 @@
+/*! \file TreeFileBuilder.dox
+    \page treefilebuilder_usage TreeFileBuilder Command Line Reference
+
+    \section tfb_usage Usage
+    \verbatim
+    TreeFileBuilder {-r <filename>|--responseFile=<filename>} [options] <treeFileName>
+    TreeFileBuilder --decrypt=<sourceTres> [--decryptOutput=<outputTre>] [--passphrase=<key>]
+    TreeFileBuilder {-h|--help}
+    \endverbatim
+
+    \section tfb_parameters Parameters
+    \verbatim
+      -r <filename>, --responseFile=<filename>
+          specifies the file list used to create the treefile (no extension)
+
+      -t, --noTOCCompression
+          disable compression for table-of-contents data only
+
+      -f, --noFileCompression
+          disable compression for file entry data as well as table-of-contents data
+
+      -e, --encrypt
+          force encryption of the output tree file
+
+      -n, --noEncrypt
+          disable encryption even when generating a .tres output
+
+      -p <key>, --passphrase=<key>
+          override the encryption/decryption passphrase
+
+      --decrypt=<filename>
+          decrypt an existing .tres file into a .tre
+
+      --decryptOutput=<filename>
+          optional destination when using --decrypt (defaults to positional argument)
+    \endverbatim
+
+    \section tfb_remarks Remarks
+    \verbatim
+        TreeFileBuilder automatically chooses the smallest file size for each entry
+        unless either -t/--noTOCCompression or -f/--noFileCompression is specified.
+    \endverbatim
+*/
