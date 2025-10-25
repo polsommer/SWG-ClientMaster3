@@ -8,6 +8,14 @@
 #include <numeric>
 #include <vector>
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 namespace
 {
         struct LayerStats
