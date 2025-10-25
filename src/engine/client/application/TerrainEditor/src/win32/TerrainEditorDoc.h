@@ -251,9 +251,10 @@ protected:
 	afx_msg void OnViewMapPreferences();
 	afx_msg void OnNewAffectorEnvironment();
 	afx_msg void OnDebugAddallrules();
-	afx_msg void OnToolsBaketerrain();
-	afx_msg void OnToolsBakeriversroads();
-	afx_msg void OnToolsBakeflora();
+        afx_msg void OnToolsBaketerrain();
+        afx_msg void OnToolsBakeriversroads();
+        afx_msg void OnToolsBakeflora();
+        afx_msg void OnToolsTerrainintelligence();
 	afx_msg void OnDebugViewbakedterrain();
 	afx_msg void OnEditClearconsole();
 	//}}AFX_MSG

@@ -392,6 +392,7 @@ BEGIN
         MENUITEM "Bake &Terrain",               ID_TOOLS_BAKETERRAIN
         MENUITEM "Bake &Rivers/Roads",          ID_TOOLS_BAKERIVERSROADS
         MENUITEM "Bake &Flora",                 ID_TOOLS_BAKEFLORA
+        MENUITEM "Run Terrain &Intelligence",   ID_TOOLS_TERRAININTELLIGENCE
     END
     POPUP "&View"
     BEGIN

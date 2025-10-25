@@ -490,6 +490,9 @@
     <ClCompile Include="..\..\src\win32\external\SmartSliderCtrl.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\SmartTerrainAnalyzer.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
     <ClCompile Include="..\..\src\win32\Splash.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
@@ -643,6 +646,7 @@
     <ClInclude Include="..\..\src\win32\ShaderView.h" />
     <ClInclude Include="..\..\src\win32\external\SmartEditCtrl.h" />
     <ClInclude Include="..\..\src\win32\external\SmartSliderCtrl.h" />
+    <ClInclude Include="..\..\src\win32\SmartTerrainAnalyzer.h" />
     <ClInclude Include="..\..\src\win32\Splash.h" />
     <ClInclude Include="..\..\src\win32\TerrainEditor.h" />
     <ClInclude Include="..\..\src\win32\TerrainEditorDoc.h" />

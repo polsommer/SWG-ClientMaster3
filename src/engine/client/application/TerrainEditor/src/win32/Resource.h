@@ -498,6 +498,7 @@
 #define ID_CREATERIBBONAFFECTOR         3029
 #define ID_MODIFYRIBBONAFFECTOR         3030
 #define ID_BUTTON_SHOW_RIBBON           3031
+#define ID_TOOLS_TERRAININTELLIGENCE    3032
 #define IDC_MODIFY_MAIN                 4001
 #define IDC_MODIFY_FILL                 4002
 #define IDC_MODIFY_BOUNCE               4003
@@ -555,7 +556,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        2003
-#define _APS_NEXT_COMMAND_VALUE         3032
+#define _APS_NEXT_COMMAND_VALUE         3033
 #define _APS_NEXT_CONTROL_VALUE         4047
 #define _APS_NEXT_SYMED_VALUE           5000
 #endif
