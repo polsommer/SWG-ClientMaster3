@@ -25,6 +25,12 @@
 #ifndef WINAPI_FAMILY
 #define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
 #endif
+
+// The Windows GDI+ headers reference IDirectDrawSurface7 without providing a
+// declaration.  A simple forward declaration satisfies Intellisense and keeps
+// the shared foundation header as the single point that sets up our Windows
+// includes.
+struct IDirectDrawSurface7;
 #endif
 
 #ifndef DEBUG_LEVEL
