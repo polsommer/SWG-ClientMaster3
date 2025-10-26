@@ -12,6 +12,10 @@
 #define _ATL_DEBUG_INTERFACES
 
 #if defined(_WIN32)
+#if !defined(_ATL_ALLOW_WINRT_INCOMPATIBLE_CLASSES)
+#define _ATL_ALLOW_WINRT_INCOMPATIBLE_CLASSES 1
+#endif
+
 //
 // The upstream ATL headers ship with Windows SDKs that default to the App
 // partition when WINAPI_FAMILY is undefined.  The legacy MFC tools in this
