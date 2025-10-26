@@ -2,9 +2,10 @@
 -- Combines importer/exporter workflows with additional automation helpers.
 -- This script expects SWG_MSHImporter.ms and SWG_MSHFullExporter.ms to live in the same directory.
 
--- Cache the directory of this script so we can load the legacy tools.
-local swgSuper_thisScript = getThisScriptFilename()
-local swgSuper_scriptDir = if swgSuper_thisScript != undefined then getFilenamePath swgSuper_thisScript else (getDir #scripts + "\\")
+global swgSuper_thisScript
+global swgSuper_scriptDir
+swgSuper_thisScript = getThisScriptFilename()
+swgSuper_scriptDir = if swgSuper_thisScript != undefined then getFilenamePath swgSuper_thisScript else (getDir #scripts + "\\")
 
 -- Prevent the legacy scripts from spawning their standalone floaters while we compose the super tool UI.
 try(global SWG_Importer_AutoLaunch = false) catch()
