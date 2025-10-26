@@ -271,6 +271,12 @@
     <ClCompile Include="..\..\src\win32\EnvironmentView.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\GuidedCreationFrame.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
+    <ClCompile Include="..\..\src\win32\GuidedCreationView.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
+    </ClCompile>
     <ClCompile Include="..\..\src\win32\FindFrame.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
@@ -574,6 +580,8 @@
     <ClInclude Include="..\..\src\win32\EditorTerrain.h" />
     <ClInclude Include="..\..\src\win32\EnvironmentFrame.h" />
     <ClInclude Include="..\..\src\win32\EnvironmentView.h" />
+    <ClInclude Include="..\..\src\win32\GuidedCreationFrame.h" />
+    <ClInclude Include="..\..\src\win32\GuidedCreationView.h" />
     <ClInclude Include="..\..\src\win32\FindFrame.h" />
     <ClInclude Include="..\..\src\win32\FindView.h" />
     <ClInclude Include="..\..\src\win32\FirstTerrainEditor.h" />
