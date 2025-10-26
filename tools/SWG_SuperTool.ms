@@ -487,7 +487,7 @@ rollout SWG_superUtilities "Utilities" width:380 height:360 (
                 spinner spnClipStart "Start" type:#integer range:[-100000,100000,animationRange.start.frame as integer] align:#left width:80
                 spinner spnClipEnd "End" type:#integer range:[-100000,100000,animationRange.end.frame as integer] align:#left width:80
                 button btnRegisterClip "Register Clip" width:120 align:#left
-                multilistbox lbAnimations "Clips" items:#() height:5 width:350
+                multiListBox lbAnimations "Clips" items:#() height:5 width:350
                 button btnBakeClip "Bake Selected Clips" width:160 align:#left
                 button btnApplyClipRange "Apply Range From Clip" width:180 align:#right
         )
@@ -581,7 +581,7 @@ rollout SWG_superDashboard "SWG Content Super Tool" width:420 height:660 (
         )
         group "Log" (
                 label lblStatus "Status: Ready" width:360
-                multilineEditText logOutput "" width:360 height:120 readOnly:true
+                multiLineEditText logOutput "" width:360 height:120 readOnly:true
         )
 
         on SWG_superDashboard open do (
