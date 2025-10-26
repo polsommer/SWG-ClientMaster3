@@ -53,6 +53,14 @@
 #include <afxbutton.h>
 #include <afxcontrolbars.h>
 
+//
+// The Visual Studio 2013 ATL/MFC headers reference CAtlTransactionManager
+// from <afxpriv.h> without pulling in the definition themselves.  Some
+// environments (including the stripped SDK that accompanies this project)
+// therefore surface IntelliSense errors unless the ATL transaction header is
+// included explicitly before <afxpriv.h> is parsed.
+#include <atltransactionmanager.h>
+
 #if defined(_MSC_VER)
 // Visual Studio's MFC headers emit spurious C4183 warnings when
 // afxvisualmanagerwindows.h pulls in afxcontrolbarutil.h.  Wrap the includes
