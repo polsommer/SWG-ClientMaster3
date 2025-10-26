@@ -41,6 +41,201 @@ global SWG_superSkeletonRoot
 global SWG_superAnimationLibrary
 if SWG_superAnimationLibrary == undefined do SWG_superAnimationLibrary = #()
 
+global SWG_superDashboard
+global SWG_superUtilities
+
+fn swgSuper_SanitizeAssetName rawName = (
+        local name = if rawName == undefined then "" else toLower rawName
+        name = substituteString name " " "_"
+        name = substituteString name "-" "_"
+        name = substituteString name "." "_"
+        local allowed = "abcdefghijklmnopqrstuvwxyz0123456789_"
+        local result = ""
+        for i = 1 to name.count do (
+                local ch = name[i]
+                if findString allowed ch != undefined then result += ch
+        )
+        while (result.count > 0 and result[1] == "_") do (
+                result = if result.count > 1 then substring result 2 (result.count - 1) else ""
+        )
+        while findString result "__" != undefined do (
+                result = substituteString result "__" "_"
+        )
+        if result == "" then result = "swg_asset"
+        result
+)
+
+fn swgSuper_SetOutputRoot path = (
+        if path != undefined and path != "" then (
+                SWG_superOutputRoot = path
+                if SWG_superDashboard != undefined do (
+                        SWG_superDashboard.lblOutput.text = "Output: " + path
+                )
+                swgSuper_UpdateUtilities()
+        )
+)
+
+fn swgSuper_SetAssetName rawName = (
+        local sanitized = swgSuper_SanitizeAssetName rawName
+        SWG_superAssetName = sanitized
+        if SWG_superDashboard != undefined do (
+                if SWG_superDashboard.edtAssetName.text != sanitized then (
+                        SWG_superDashboard.edtAssetName.text = sanitized
+                )
+        )
+        swgSuper_UpdateUtilities()
+        sanitized
+)
+
+fn swgSuper_IsBoneNode node = (
+        local isBoneNode = false
+        if node != undefined and isValidNode node then (
+                try(isBoneNode = isBone node) catch(isBoneNode = false)
+                if not isBoneNode then (
+                        if isProperty node #isBone then (
+                                try(isBoneNode = node.isBone) catch(isBoneNode = false)
+                        )
+                )
+                if not isBoneNode then (
+                        local lowerName = toLower node.name
+                        if matchPattern lowerName pattern:"*bone*" then isBoneNode = true
+                )
+        )
+        isBoneNode
+)
+
+fn swgSuper_FindSkeletonRoot nodes = (
+        local fallback = undefined
+        if nodes != undefined then (
+                for node in nodes do (
+                        if node != undefined and isValidNode node then (
+                                if swgSuper_IsBoneNode node then (
+                                        local lowerName = toLower node.name
+                                        if matchPattern lowerName pattern:"*root*" then return node
+                                        if matchPattern lowerName pattern:"*pelvis*" then fallback = node
+                                        if fallback == undefined then fallback = node
+                                )
+                        )
+                )
+        )
+        fallback
+)
+
+fn swgSuper_SetSkeletonRoot node silent:false = (
+        if node != undefined and isValidNode node then (
+                SWG_superSkeletonRoot = node
+                if not silent then swgSuper_Log ("Skeleton root set to " + node.name)
+                swgSuper_UpdateUtilities()
+        )
+)
+
+fn swgSuper_GatherSkeletonNodes rootNode = (
+        local result = #()
+        if rootNode == undefined or not isValidNode rootNode then return result
+        local stack = #(rootNode)
+        while stack.count > 0 do (
+                local n = stack[stack.count]
+                deleteItem stack stack.count
+                if n != undefined and isValidNode n then (
+                        if swgSuper_IsBoneNode n then (
+                                if (findItem result n) == 0 then append result n
+                        )
+                        for c in n.children do (
+                                append stack c
+                        )
+                )
+        )
+        result
+)
+
+fn swgSuper_AddOrUpdateClip clipName startFrame endFrame = (
+        if clipName == undefined or clipName == "" then return false
+        local existingIndex = 0
+        for i = 1 to SWG_superAnimationLibrary.count do (
+                if toLower SWG_superAnimationLibrary[i][1] == toLower clipName then (
+                        existingIndex = i
+                        exit
+                )
+        )
+        local record = #(clipName, startFrame as integer, endFrame as integer)
+        if existingIndex > 0 then (
+                SWG_superAnimationLibrary[existingIndex] = record
+        ) else (
+                append SWG_superAnimationLibrary record
+        )
+        swgSuper_UpdateAnimationList()
+        true
+)
+
+fn swgSuper_AutoConfigureFromScene = (
+        local nodes = selection as array
+        local candidateName = undefined
+        if nodes.count > 0 then candidateName = nodes[1].name
+        if candidateName == undefined or candidateName == "" then (
+                try(candidateName = getFileNameFile maxFileName) catch(candidateName = undefined)
+        )
+        if candidateName == undefined or candidateName == "" then candidateName = "swg_asset"
+        local sanitized = swgSuper_SetAssetName candidateName
+        swgSuper_Log ("Asset tag set to " + sanitized + " via smart configure.")
+
+        if SWG_superOutputRoot == undefined or SWG_superOutputRoot == "" then (
+                local defaultPath = undefined
+                try(defaultPath = maxFilePath) catch(defaultPath = undefined)
+                if defaultPath == undefined or defaultPath == "" then (
+                        try(defaultPath = getDir #export) catch(defaultPath = undefined)
+                )
+                if defaultPath != undefined and defaultPath != "" then (
+                        swgSuper_SetOutputRoot defaultPath
+                        swgSuper_Log ("Output folder auto-set to " + defaultPath)
+                )
+        )
+
+        local root = swgSuper_FindSkeletonRoot nodes
+        if root == undefined then (
+                root = swgSuper_FindSkeletonRoot objects
+        )
+        if root != undefined then (
+                swgSuper_SetSkeletonRoot root
+        ) else (
+                swgSuper_Log "No skeleton root detected. Select a bone and try again."
+        )
+
+        local startFrame = animationRange.start.frame as integer
+        local endFrame = animationRange.end.frame as integer
+        if swgSuper_AddOrUpdateClip "full_body" startFrame endFrame then (
+                swgSuper_Log "Default 'full_body' clip registered."
+        )
+        swgSuper_Log "Scene smart configuration complete."
+)
+
+fn swgSuper_RunExportWizard bakeAnimations = (
+        local nodes = selection as array
+        if nodes.count == 0 then (
+                messageBox "Select the geometry you want to export before running Smart Export." title:"SWG Super Tool"
+                return undefined
+        )
+        swgSuper_Log ("Smart export running on " + (nodes.count as string) + " nodes.")
+        if not swgSuper_PrepareGeometry nodes then return undefined
+
+        local skeletonNodes = #()
+        if SWG_superSkeletonRoot != undefined and isValidNode SWG_superSkeletonRoot then (
+                skeletonNodes = swgSuper_GatherSkeletonNodes SWG_superSkeletonRoot
+                if skeletonNodes.count > 0 then (
+                        local skeletonReady = swgSuper_PrepareSkeleton skeletonNodes
+                        if skeletonReady and bakeAnimations and SWG_superAnimationLibrary.count > 0 then (
+                                for clip in SWG_superAnimationLibrary do (
+                                        swgSuper_BakeAnimation skeletonNodes clip[2] clip[3]
+                                )
+                        )
+                )
+        ) else (
+                swgSuper_Log "Smart export skipped skeleton prep because no root is set."
+        )
+
+        swgSuper_Log "Triggering exporter dialog."
+        swgSuper_RunExporter()
+)
+
 fn swgSuper_GetOutputPath extension = (
         if (SWG_superOutputRoot == undefined or SWG_superOutputRoot == "" or SWG_superAssetName == undefined or SWG_superAssetName == "") then (
                 "<asset or output path not set>"
@@ -51,7 +246,7 @@ fn swgSuper_GetOutputPath extension = (
 
 fn swgSuper_UpdateAnimationList = (
         if SWG_superUtilities != undefined do (
-                local items = for clip in SWG_superAnimationLibrary collect (clip[1] + " [" + clip[2] as string + "-" + clip[3] as string + "]")
+                local items = for clip in SWG_superAnimationLibrary collect (clip[1] + " [" + (clip[2] as string) + "-" + (clip[3] as string) + "]")
                 SWG_superUtilities.lbAnimations.items = items
         )
 )
@@ -67,6 +262,13 @@ fn swgSuper_UpdateUtilities = (
                         SWG_superUtilities.lblSkeletonRoot.text = "Skeleton Root: <not set>"
                 )
                 swgSuper_UpdateAnimationList()
+        )
+        if SWG_superDashboard != undefined do (
+                if SWG_superOutputRoot != undefined and SWG_superOutputRoot != "" then (
+                        SWG_superDashboard.lblOutput.text = "Output: " + SWG_superOutputRoot
+                ) else (
+                        SWG_superDashboard.lblOutput.text = "Output: <not set>"
+                )
         )
 )
 
@@ -97,15 +299,24 @@ fn swgSuper_PrepareGeometry nodes = (
                 messageBox "Select one or more mesh nodes to prepare." title:"SWG Super Tool"
                 false
         ) else (
+                local processed = 0
                 for obj in nodes do (
-                        try(resetXForm obj) catch()
-                        if (canConvertTo obj Editable_Poly) do (
-                                try(convertToEditablePoly obj) catch()
+                        if obj != undefined and isValidNode obj then (
+                                try(resetXForm obj) catch()
+                                if (canConvertTo obj Editable_Poly) do (
+                                        try(convertToEditablePoly obj) catch()
+                                )
+                                try(collapseStack obj) catch()
+                                processed += 1
                         )
-                        try(collapseStack obj) catch()
                 )
-                swgSuper_Log ("Prepared geometry for " + nodes.count as string + " nodes.")
-                true
+                if processed > 0 then (
+                        swgSuper_Log ("Prepared geometry for " + (processed as string) + " nodes.")
+                        true
+                ) else (
+                        swgSuper_Log "No valid geometry nodes were prepared."
+                        false
+                )
         )
 )
 
@@ -114,14 +325,23 @@ fn swgSuper_PrepareSkeleton nodes = (
                 messageBox "Select the skeleton bones you want to prep." title:"SWG Super Tool"
                 false
         ) else (
+                local processed = 0
                 for b in nodes do (
-                        try(if isProperty b #boneScaleType do b.boneScaleType = #none) catch()
-                        try(if isProperty b #showLinks do b.showLinks = true) catch()
-                        try(if isProperty b #freeze do b.freeze = false) catch()
-                        try(if isProperty b #boneObject do b.boneObject = true) catch()
+                        if b != undefined and isValidNode b then (
+                                try(if isProperty b #boneScaleType do b.boneScaleType = #none) catch()
+                                try(if isProperty b #showLinks do b.showLinks = true) catch()
+                                try(if isProperty b #freeze do b.freeze = false) catch()
+                                try(if isProperty b #boneObject do b.boneObject = true) catch()
+                                processed += 1
+                        )
                 )
-                swgSuper_Log ("Prepared skeleton nodes: " + nodes.count as string)
-                true
+                if processed > 0 then (
+                        swgSuper_Log ("Prepared skeleton nodes: " + (processed as string))
+                        true
+                ) else (
+                        swgSuper_Log "No valid skeleton nodes were prepared."
+                        false
+                )
         )
 )
 
@@ -132,26 +352,35 @@ fn swgSuper_BakeAnimation nodes startFrame endFrame = (
         ) else (
                 local s = amin startFrame endFrame
                 local e = amax startFrame endFrame
+                local bakedCount = 0
                 with animate on (
                         for f = s to e do (
                                 sliderTime = f
                                 for obj in nodes do (
-                                        at time f (
-                                                obj.position = obj.position
-                                                obj.rotation = obj.rotation
-                                                obj.scale = obj.scale
+                                        if obj != undefined and isValidNode obj then (
+                                                at time f (
+                                                        obj.position = obj.position
+                                                        obj.rotation = obj.rotation
+                                                        obj.scale = obj.scale
+                                                )
+                                                if f == s then bakedCount += 1
                                         )
                                 )
                         )
                 )
-                swgSuper_Log ("Baked animation keys for " + nodes.count as string + " nodes between " + s as string + " and " + e as string + ".")
-                true
+                if bakedCount > 0 then (
+                        swgSuper_Log ("Baked animation keys for " + (bakedCount as string) + " nodes between " + (s as string) + " and " + (e as string) + ".")
+                        true
+                ) else (
+                        swgSuper_Log "No valid nodes were baked for animation."
+                        false
+                )
         )
 )
 
 fn swgSuper_SetAnimationRange startFrame endFrame = (
         animationRange = interval (startFrame as integer) (endFrame as integer)
-        swgSuper_Log ("Animation range set to " + startFrame as string + " - " + endFrame as string)
+        swgSuper_Log ("Animation range set to " + (startFrame as string) + " - " + (endFrame as string))
 )
 
 fn swgSuper_RunImporter = (
@@ -290,9 +519,7 @@ rollout SWG_superUtilities "Utilities" width:380 height:360 (
         on btnLegacyExporter pressed do swgSuper_ShowStandaloneExporter()
         on btnSetSkeletonRoot pressed do (
                 if selection.count == 1 then (
-                        SWG_superSkeletonRoot = selection[1]
-                        swgSuper_Log ("Skeleton root set to " + selection[1].name)
-                        swgSuper_UpdateUtilities()
+                        swgSuper_SetSkeletonRoot selection[1]
                 ) else (
                         messageBox "Select exactly one root bone." title:"SWG Super Tool"
                 )
@@ -331,6 +558,7 @@ rollout SWG_superDashboard "SWG Content Super Tool" width:420 height:660 (
         group "Asset" (
                 editText edtAssetName "Asset Tag" text:SWG_superAssetName width:240 align:#left
                 button btnBrowseOutput "Select Output Folder" width:160 align:#right
+                button btnAutoAsset "Smart Configure" width:160 align:#center
                 label lblOutput "Output: <not set>" width:360
         )
         group "Automation" (
@@ -338,6 +566,7 @@ rollout SWG_superDashboard "SWG Content Super Tool" width:420 height:660 (
                 button btnPrepBones "Prepare Skeleton" width:160
                 button btnBakeAnim "Bake Animation" width:160 across:2
                 button btnRoundtrip "Roundtrip Export" width:160
+                button btnSmartExport "Smart Export" width:160 align:#center
         )
         group "Animation Range" (
                 spinner spnStart "Start" type:#integer range:[-100000,100000,animationRange.start.frame as integer] align:#left across:2
@@ -369,16 +598,13 @@ rollout SWG_superDashboard "SWG Content Super Tool" width:420 height:660 (
         on btnBrowseOutput pressed do (
                 local path = getSavePath caption:"Choose SWG export root"
                 if path != undefined do (
-                        SWG_superOutputRoot = path
-                        lblOutput.text = "Output: " + path
+                        swgSuper_SetOutputRoot path
                         swgSuper_Log ("Output folder set to " + path)
-                        swgSuper_UpdateUtilities()
                 )
         )
         on edtAssetName entered text do (
-                SWG_superAssetName = text
-                swgSuper_Log ("Asset tag set to " + text)
-                swgSuper_UpdateUtilities()
+                local sanitized = swgSuper_SetAssetName text
+                swgSuper_Log ("Asset tag set to " + sanitized)
         )
         on btnPrepGeometry pressed do (
                 swgSuper_PrepareGeometry (selection as array)
@@ -390,6 +616,12 @@ rollout SWG_superDashboard "SWG Content Super Tool" width:420 height:660 (
                 swgSuper_BakeAnimation (selection as array) spnStart.value spnEnd.value
         )
         on btnRoundtrip pressed do swgSuper_RunRoundtrip()
+        on btnAutoAsset pressed do (
+                swgSuper_AutoConfigureFromScene()
+        )
+        on btnSmartExport pressed do (
+                swgSuper_RunExportWizard true
+        )
         on btnApplyRange pressed do (
                 swgSuper_SetAnimationRange spnStart.value spnEnd.value
         )
