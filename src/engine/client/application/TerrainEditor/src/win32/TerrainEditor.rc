@@ -347,6 +347,7 @@ BEGIN
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM SEPARATOR
         MENUITEM "&Catalog",                    ID_VIEW_CATALOG
+        MENUITEM "Guided Creation Dashboard",   ID_VIEW_GUIDEDCREATION
     END
     POPUP "&Help"
     BEGIN
@@ -400,6 +401,7 @@ BEGIN
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM SEPARATOR
         MENUITEM "Catalog",                     ID_VIEW_CATALOG
+        MENUITEM "Guided Creation Dashboard",   ID_VIEW_GUIDEDCREATION
         MENUITEM SEPARATOR
         MENUITEM "&Preferences",                ID_VIEW_MAP_PREFERENCES
     END
@@ -1729,6 +1731,31 @@ BEGIN
     LTEXT           "Family",IDC_STATIC,25,201,20,8
 END
 
+IDD_GUIDED_CREATION_VIEW DIALOGEX 0, 0, 420, 310
+STYLE DS_CONTROL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "AI powered terrain guidance",IDC_GUIDANCE_HEADER,7,7,406,10,SS_NOPREFIX
+    LTEXT           "",IDC_GUIDANCE_METRICS,7,20,406,24,SS_NOPREFIX
+    LTEXT           "Structure",IDC_STATIC,7,50,44,8
+    CONTROL         "",IDC_GUIDANCE_STRUCTURE_PROGRESS,"msctls_progress32",WS_CHILD | WS_VISIBLE,60,48,170,10
+    LTEXT           "Ecosystem",IDC_STATIC,7,64,44,8
+    CONTROL         "",IDC_GUIDANCE_ECOSYSTEM_PROGRESS,"msctls_progress32",WS_CHILD | WS_VISIBLE,60,62,170,10
+    LTEXT           "Workflow",IDC_STATIC,7,78,44,8
+    CONTROL         "",IDC_GUIDANCE_WORKFLOW_PROGRESS,"msctls_progress32",WS_CHILD | WS_VISIBLE,60,76,170,10
+    GROUPBOX        "Visual helpers",IDC_STATIC,240,44,173,46
+    PUSHBUTTON      "Refresh insights",IDC_GUIDANCE_REFRESH,240,55,80,14
+    AUTOCHECKBOX    "Show overlays",IDC_GUIDANCE_TOGGLE_OVERLAY,240,72,80,10
+    AUTOCHECKBOX    "Biome heatmap",IDC_GUIDANCE_TOGGLE_HEATMAP,322,72,80,10
+    AUTOCHECKBOX    "Design guides",IDC_GUIDANCE_TOGGLE_GUIDES,240,86,80,10
+    LTEXT           "Insights",IDC_STATIC,7,96,200,8
+    CONTROL         "",IDC_GUIDANCE_INSIGHT_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,7,106,406,72
+    LTEXT           "AI blueprint queue",IDC_STATIC,7,182,200,8
+    CONTROL         "",IDC_GUIDANCE_BLUEPRINT_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,7,192,406,60
+    LTEXT           "Quick helpers",IDC_STATIC,7,256,200,8
+    CONTROL         "",IDC_GUIDANCE_QUICKACTION_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,7,266,406,37
+END
+
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
@@ -2759,6 +2786,7 @@ BEGIN
     ID_VIEW_FLORA           "View Flora\nView Flora"
     ID_VIEW_HF              "View Heightfield\nView Heightfield"
     ID_VIEW_LAYERS          "View Layers\nViewLayers"
+    ID_VIEW_GUIDEDCREATION  "Guided Creation Dashboard\nGuidedCreation"
     ID_VIEW_MAP_PREFERENCES "Preferences\nPreferences"
     ID_VIEW_SHADERS         "View Shaders\nView Shaders"
 END
