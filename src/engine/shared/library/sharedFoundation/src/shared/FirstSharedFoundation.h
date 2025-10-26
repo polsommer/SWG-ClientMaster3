@@ -58,7 +58,13 @@ typedef float real;
 #define CONST_REAL(a)  static_cast<float>(a)
 #define RECIP(a)       (1.0f / (a))
 
+#ifdef REAL_MIN
+#undef REAL_MIN
+#endif
 const float REAL_MIN = FLT_MIN;
+#ifdef REAL_MAX
+#undef REAL_MAX
+#endif
 const float REAL_MAX = FLT_MAX;
 
 // ======================================================================
