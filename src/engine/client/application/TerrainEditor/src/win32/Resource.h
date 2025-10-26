@@ -198,6 +198,18 @@
 #define IDC_STARTUP                     1169
 #define IDC_STATIC_FAMILY_COLOR         1170
 #define IDC_STATIC_WINDOW_COLOR         1171
+#define IDC_GUIDANCE_HEADER              1172
+#define IDC_GUIDANCE_METRICS             1173
+#define IDC_GUIDANCE_STRUCTURE_PROGRESS  1174
+#define IDC_GUIDANCE_ECOSYSTEM_PROGRESS  1175
+#define IDC_GUIDANCE_WORKFLOW_PROGRESS   1176
+#define IDC_GUIDANCE_INSIGHT_LIST        1177
+#define IDC_GUIDANCE_BLUEPRINT_LIST      1178
+#define IDC_GUIDANCE_QUICKACTION_LIST    1179
+#define IDC_GUIDANCE_REFRESH             1180
+#define IDC_GUIDANCE_TOGGLE_OVERLAY      1181
+#define IDC_GUIDANCE_TOGGLE_HEATMAP      1182
+#define IDC_GUIDANCE_TOGGLE_GUIDES       1183
 #define IDC_SUBTRACT                    1172
 #define IDC_TIPSTRING                   1173
 #define IDC_TODESTINATION               1174
@@ -466,6 +478,7 @@
 #define IDD_FORM_BITMAPFAMILY           2003
 #define IDD_FORM_FILTERBITMAP           2004
 #define IDD_FORM_AFFECTORRIBBON         2005
+#define IDD_GUIDED_CREATION_VIEW         2006
 #define ID_DEBUG_TEST                   3000
 #define ID_VIEWENVIRONMENT              3001
 #define ID_NEW_AFFECTOR_ENVIRONMENT     3002
@@ -492,6 +505,7 @@
 #define ID_BUTTON_DUMPCOLORRAMPS        3023
 #define ID_NEW_AFFECTOR_PASSABLE        3024
 #define ID_VIEW_PASSABLEMAP             3025
+#define ID_VIEW_GUIDEDCREATION          3033
 #define ID_BITMAP_PREVIEW               3026
 #define ID_EDIT_BITMAP                  3027
 #define ID_NEW_FILTER_BITMAP            3028
@@ -556,7 +570,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        2003
-#define _APS_NEXT_COMMAND_VALUE         3033
+#define _APS_NEXT_COMMAND_VALUE         3034
 #define _APS_NEXT_CONTROL_VALUE         4047
 #define _APS_NEXT_SYMED_VALUE           5000
 #endif

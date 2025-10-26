@@ -22,6 +22,7 @@
 #include "clientObject/ObjectListCamera.h"
 #include "clientGraphics/ShaderTemplateList.h"
 #include "TerrainEditorDoc.h"
+#include "SmartTerrainAnalyzer.h"
 #include "TerrainGeneratorHelper.h"
 #include "sharedDebug/Profiler.h"
 
@@ -1514,8 +1515,7 @@ void MapView::OnDraw(CDC* pDC)
 	if (!terrain)
 		return;
 
-	TerrainEditorDoc* doc = static_cast<TerrainEditorDoc*>(GetDocument());
-	UNREF (doc);
+        TerrainEditorDoc* doc = static_cast<TerrainEditorDoc*>(GetDocument());
 
 	//--
 	CRect rect;
@@ -1524,7 +1524,11 @@ void MapView::OnDraw(CDC* pDC)
 	//-- point the Gl at this window
 	Graphics::setViewport (0, 0, min(Graphics::getCurrentRenderTargetWidth(), rect.Width ()), min(Graphics::getCurrentRenderTargetHeight(), rect.Height ()));
 
-	Graphics::beginScene ();
+        SmartTerrainAnalyzer::AuditReport auditReport = {};
+        if (doc)
+                auditReport = SmartTerrainAnalyzer::analyze(*doc);
+
+        Graphics::beginScene ();
 
 			Graphics::clearViewport(true, 0xffff00ff, true, 1.0f, true, 0);
 
@@ -1556,14 +1560,26 @@ void MapView::OnDraw(CDC* pDC)
 			drawSelectedRivers (pDC, VectorArgb::solidGreen);
 		}
 
-		//-- draw ribbon affectors
-		if (showRibbonAffectors)
-		{
-			drawRibbonAffectors (pDC, VectorArgb::solidBlue);
-			drawSelectedRibbonAffectors (pDC, VectorArgb::solidGreen);
-		}
+                //-- draw ribbon affectors
+                if (showRibbonAffectors)
+                {
+                        drawRibbonAffectors (pDC, VectorArgb::solidBlue);
+                        drawSelectedRibbonAffectors (pDC, VectorArgb::solidGreen);
+                }
 
-		Vector2d zero;
+                if (doc)
+                {
+                        if (doc->isGuidanceOverlayEnabled())
+                                drawGuidanceOverlay(pDC, auditReport);
+
+                        if (doc->isHeatmapPreviewEnabled())
+                                drawHeatmapPreview(pDC, auditReport);
+
+                        if (doc->isGuidelineLayerEnabled())
+                                drawDesignGuides(pDC);
+                }
+
+                Vector2d zero;
 		zero.makeZero ();
 		drawCircle_w (pDC, zero, 2.f, VectorArgb::solidWhite);
 
@@ -2663,6 +2679,128 @@ void MapView::OnUpdateButtonHighres(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck (terrain->getResolutionType () == EditorTerrain::RT_high);
 }
+
+//-------------------------------------------------------------------
+
+void MapView::drawGuidanceOverlay (CDC* pDC, const SmartTerrainAnalyzer::AuditReport &report) const
+{
+        UNREF(pDC);
+
+        CRect rect;
+        GetClientRect(&rect);
+
+        const int width = std::max(40, std::min(rect.Width() / 4, 220));
+        const int barHeight = 6;
+        const int left = rect.left + 12;
+        int top = rect.top + 12;
+
+        const auto clamp01 = [](float value)->float
+        {
+                return value < 0.0f ? 0.0f : (value > 1.0f ? 1.0f : value);
+        };
+
+        const auto drawBar = [&](float value, const VectorArgb &color)
+        {
+                const int filled = static_cast<int>(clamp01(value) * static_cast<float>(width));
+                for (int y = 0; y < barHeight; ++y)
+                {
+                        Graphics::drawLine(left, top + y, left + width, top + y, VectorArgb(0.30f, 0.04f, 0.04f, 0.04f));
+                        if (filled > 0)
+                                Graphics::drawLine(left, top + y, left + filled, top + y, color);
+                }
+                top += barHeight + 4;
+        };
+
+        drawBar(report.structureScore / 100.0f, VectorArgb(0.85f, 0.45f, 0.80f, 0.25f));
+        drawBar(report.ecosystemScore / 100.0f, VectorArgb(0.85f, 0.25f, 0.65f, 0.78f));
+        drawBar(report.workflowScore / 100.0f, VectorArgb(0.85f, 0.85f, 0.55f, 0.20f));
+
+        const int insightStart = top + 4;
+        const int insightLines = std::min(3, static_cast<int>(report.insights.size()));
+        for (int i = 0; i < insightLines; ++i)
+        {
+                const int y = insightStart + i * 6;
+                Graphics::drawLine(left, y, left + width, y, VectorArgb(0.55f, 0.30f, 0.70f, 0.90f));
+        }
+}
+
+//-------------------------------------------------------------------
+
+void MapView::drawHeatmapPreview (CDC* pDC, const SmartTerrainAnalyzer::AuditReport &report) const
+{
+        UNREF(pDC);
+
+        CRect rect;
+        GetClientRect(&rect);
+
+        const int width = rect.Width();
+        const int height = rect.Height();
+        if (width <= 0 || height <= 0)
+                return;
+
+        const float density = static_cast<float>(report.totalAffectors + report.totalFilters) / static_cast<float>(std::max(1, report.totalLayers));
+        const float variety = static_cast<float>(report.shaderFamilies + report.floraFamilies + report.radialFamilies) / 18.0f;
+        const float normalizedDensity = density > 6.0f ? 1.0f : density / 6.0f;
+        const float normalizedVariety = variety > 1.0f ? 1.0f : variety;
+
+        const VectorArgb baseColor(0.18f + 0.30f * normalizedDensity, 0.10f, 0.45f + 0.40f * normalizedVariety, 0.30f + 0.20f * normalizedDensity);
+        const VectorArgb accentColor(0.22f + 0.25f * normalizedVariety, 0.55f, 0.25f, 0.65f);
+
+        const int step = 14;
+        for (int offset = -height; offset < width; offset += step)
+        {
+                const int x0 = rect.left + offset;
+                const int y0 = rect.top;
+                const int x1 = x0 + height;
+                const int y1 = rect.bottom;
+                Graphics::drawLine(x0, y0, x1, y1, baseColor);
+        }
+
+        for (int x = rect.left; x < rect.right; x += step * 2)
+                Graphics::drawLine(x, rect.top, x, rect.bottom, accentColor);
+}
+
+//-------------------------------------------------------------------
+
+void MapView::drawDesignGuides (CDC* pDC) const
+{
+        UNREF(pDC);
+
+        CRect rect;
+        GetClientRect(&rect);
+
+        const int width = rect.Width();
+        const int height = rect.Height();
+        if (width <= 0 || height <= 0)
+                return;
+
+        const int thirdX1 = rect.left + width / 3;
+        const int thirdX2 = rect.left + (2 * width) / 3;
+        const int thirdY1 = rect.top + height / 3;
+        const int thirdY2 = rect.top + (2 * height) / 3;
+
+        const VectorArgb guideColor(0.55f, 0.90f, 0.90f, 0.20f);
+        const VectorArgb accentColor(0.55f, 0.20f, 0.80f, 0.80f);
+
+        Graphics::drawLine(thirdX1, rect.top, thirdX1, rect.bottom, guideColor);
+        Graphics::drawLine(thirdX2, rect.top, thirdX2, rect.bottom, guideColor);
+        Graphics::drawLine(rect.left, thirdY1, rect.right, thirdY1, guideColor);
+        Graphics::drawLine(rect.left, thirdY2, rect.right, thirdY2, guideColor);
+
+        Graphics::drawLine(rect.left, rect.top, rect.right, rect.bottom, accentColor);
+        Graphics::drawLine(rect.right, rect.top, rect.left, rect.bottom, accentColor);
+
+        const int centerX = rect.left + width / 2;
+        const int centerY = rect.top + height / 2;
+        const int crossSize = 6;
+        Graphics::drawLine(centerX - crossSize, centerY, centerX + crossSize, centerY, VectorArgb::solidWhite);
+        Graphics::drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize, VectorArgb::solidWhite);
+}
+
+//-------------------------------------------------------------------
+
+//-------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------
 

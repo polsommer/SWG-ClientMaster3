@@ -15,6 +15,7 @@
 #include "DialogFloraParameters.h"
 #include "DialogMapParameters.h"
 #include "FindFrame.h"
+#include "GuidedCreationFrame.h"
 #include "FormAffectorColorConstant.h"
 #include "FormAffectorColorRampFractal.h"
 #include "FormAffectorColorRampHeight.h"
@@ -259,10 +260,11 @@ TerrainEditorDoc::TerrainEditorDoc() :
 	helpFrame (0),
 	profileFrame (0),
 	warningFrame (0),
-	findFrame (0),
-	environmentFrame (0),
-	consoleMessage (),
-	selectedItem (0),
+        findFrame (0),
+        environmentFrame (0),
+        guidedCreationFrame (0),
+        consoleMessage (),
+        selectedItem (0),
 	blackHeight (CONST_REAL (0)),
 	whiteHeight (CONST_REAL (255)),
 	lastTotalChunkGenerationTime (0),
@@ -271,7 +273,10 @@ TerrainEditorDoc::TerrainEditorDoc() :
 	lastMaximumChunkGenerationTime (0),
 	m_bakedTerrain(0),
 	m_staticCollidableFloraMap(0),
-	m_staticCollidableFloraHeightMap(0)
+        m_staticCollidableFloraHeightMap(0),
+        m_guidanceOverlayEnabled(true),
+        m_heatmapPreviewEnabled(false),
+        m_guidelineLayerEnabled(true)
 {
 	//-- create terrain generator
 	terrainGenerator = new TerrainGenerator ();
@@ -324,10 +329,11 @@ TerrainEditorDoc::~TerrainEditorDoc()
 	view3dFrame = 0;
 	helpFrame = 0;
 	profileFrame = 0;
-	warningFrame = 0;
-	findFrame = 0;
-	environmentFrame = 0;
-	selectedItem = 0;
+        warningFrame = 0;
+        findFrame = 0;
+        environmentFrame = 0;
+        guidedCreationFrame = 0;
+        selectedItem = 0;
 }
 
 //-------------------------------------------------------------------
@@ -1763,6 +1769,39 @@ void TerrainEditorDoc::OnToolsTerrainintelligence()
         decorated += _T("\r\n");
 
         addConsoleMessage(decorated);
+}
+
+//-------------------------------------------------------------------
+
+void TerrainEditorDoc::setGuidanceOverlayEnabled(bool enabled)
+{
+        if (m_guidanceOverlayEnabled == enabled)
+                return;
+
+        m_guidanceOverlayEnabled = enabled;
+        UpdateAllViews(0);
+}
+
+//-------------------------------------------------------------------
+
+void TerrainEditorDoc::setHeatmapPreviewEnabled(bool enabled)
+{
+        if (m_heatmapPreviewEnabled == enabled)
+                return;
+
+        m_heatmapPreviewEnabled = enabled;
+        UpdateAllViews(0);
+}
+
+//-------------------------------------------------------------------
+
+void TerrainEditorDoc::setGuidelineLayerEnabled(bool enabled)
+{
+        if (m_guidelineLayerEnabled == enabled)
+                return;
+
+        m_guidelineLayerEnabled = enabled;
+        UpdateAllViews(0);
 }
 
 //-------------------------------------------------------------------

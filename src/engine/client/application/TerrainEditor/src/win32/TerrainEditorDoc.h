@@ -28,6 +28,7 @@ class BoundaryPolygon;
 class ConsoleFrame;
 class EnvironmentFrame;
 class FindFrame;
+class GuidedCreationFrame;
 class FloraGroupFrame;
 class FractalFrame;
 class FractalPreviewFrame;
@@ -177,10 +178,11 @@ private:
 	HelpFrame*              helpFrame;
 	ProfileFrame*           profileFrame;
 	WarningFrame*           warningFrame;
-	FindFrame*              findFrame;
-	EnvironmentFrame*       environmentFrame;
+        FindFrame*              findFrame;
+        EnvironmentFrame*       environmentFrame;
+        GuidedCreationFrame*    guidedCreationFrame;
 
-	CString                 consoleMessage;
+        CString                 consoleMessage;
 
 	Item*                   selectedItem;
 
@@ -190,12 +192,16 @@ private:
 	real                    lastTotalChunkGenerationTime;
 	real                    lastAverageChunkGenerationTime;
 	real                    lastMinimumChunkGenerationTime;
-	real                    lastMaximumChunkGenerationTime;
+        real                    lastMaximumChunkGenerationTime;
 
-	BakedTerrain*           m_bakedTerrain;
+        BakedTerrain*           m_bakedTerrain;
 
-	PackedIntegerMap       *m_staticCollidableFloraMap;
-	PackedFixedPointMap    *m_staticCollidableFloraHeightMap;
+        PackedIntegerMap       *m_staticCollidableFloraMap;
+        PackedFixedPointMap    *m_staticCollidableFloraHeightMap;
+
+        bool                    m_guidanceOverlayEnabled;
+        bool                    m_heatmapPreviewEnabled;
+        bool                    m_guidelineLayerEnabled;
 
 private:
 
@@ -322,11 +328,15 @@ public:
 	void                    setFindFrame (FindFrame* newFindFrame);
 	FindFrame*              getFindFrame (void);
 
-	void                    setEnvironmentFrame (EnvironmentFrame* newEnvironmentFrame);
-	EnvironmentFrame*       getEnvironmentFrame (void);
+        void                    setEnvironmentFrame (EnvironmentFrame* newEnvironmentFrame);
+        EnvironmentFrame*       getEnvironmentFrame (void);
 
-	void                    setView3dFrame (View3dFrame* newView3dFrame);
-	View3dFrame*            getView3dFrame (void);
+        void                    setGuidedCreationFrame (GuidedCreationFrame* newGuidedCreationFrame);
+        GuidedCreationFrame*    getGuidedCreationFrame (void);
+        const GuidedCreationFrame* getGuidedCreationFrame (void) const;
+
+        void                    setView3dFrame (View3dFrame* newView3dFrame);
+        View3dFrame*            getView3dFrame (void);
 
 	void                    setHelpFrame (HelpFrame* newHelpFrame);
 	HelpFrame*              getHelpFrame (void);
@@ -392,6 +402,13 @@ public:
         float                   getFarRadialMaximumDistance () const;
         float                   getFarRadialTileSize () const;
         uint32                  getFarRadialSeed () const;
+
+        void                    setGuidanceOverlayEnabled(bool enabled);
+        bool                    isGuidanceOverlayEnabled() const;
+        void                    setHeatmapPreviewEnabled(bool enabled);
+        bool                    isHeatmapPreviewEnabled() const;
+        void                    setGuidelineLayerEnabled(bool enabled);
+        bool                    isGuidelineLayerEnabled() const;
 
         void                    BuildFloraFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
         void                    BuildShaderFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
@@ -684,7 +701,28 @@ inline void TerrainEditorDoc::setEnvironmentFrame (EnvironmentFrame* newEnvironm
 
 inline EnvironmentFrame* TerrainEditorDoc::getEnvironmentFrame (void)
 {
-	return environmentFrame;
+        return environmentFrame;
+}
+
+//-------------------------------------------------------------------
+
+inline void TerrainEditorDoc::setGuidedCreationFrame (GuidedCreationFrame* newGuidedCreationFrame)
+{
+        guidedCreationFrame = newGuidedCreationFrame;
+}
+
+//-------------------------------------------------------------------
+
+inline GuidedCreationFrame* TerrainEditorDoc::getGuidedCreationFrame (void)
+{
+        return guidedCreationFrame;
+}
+
+//-------------------------------------------------------------------
+
+inline const GuidedCreationFrame* TerrainEditorDoc::getGuidedCreationFrame (void) const
+{
+        return guidedCreationFrame;
 }
 
 //-------------------------------------------------------------------
@@ -916,6 +954,27 @@ inline uint32 TerrainEditorDoc::getRadialSeed () const
 inline uint32 TerrainEditorDoc::getFarRadialSeed () const
 {
         return m_farRadialSeed;
+}
+
+//-------------------------------------------------------------------
+
+inline bool TerrainEditorDoc::isGuidanceOverlayEnabled() const
+{
+        return m_guidanceOverlayEnabled;
+}
+
+//-------------------------------------------------------------------
+
+inline bool TerrainEditorDoc::isHeatmapPreviewEnabled() const
+{
+        return m_heatmapPreviewEnabled;
+}
+
+//-------------------------------------------------------------------
+
+inline bool TerrainEditorDoc::isGuidelineLayerEnabled() const
+{
+        return m_guidelineLayerEnabled;
 }
 
 //-------------------------------------------------------------------
