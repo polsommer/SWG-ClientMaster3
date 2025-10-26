@@ -41,6 +41,9 @@ global SWG_superSkeletonRoot
 global SWG_superAnimationLibrary
 if SWG_superAnimationLibrary == undefined do SWG_superAnimationLibrary = #()
 
+global SWG_superDashboard
+global SWG_superUtilities
+
 fn swgSuper_SanitizeAssetName rawName = (
         local name = if rawName == undefined then "" else toLower rawName
         name = substituteString name " " "_"
@@ -211,15 +214,15 @@ fn swgSuper_RunExportWizard bakeAnimations = (
                 messageBox "Select the geometry you want to export before running Smart Export." title:"SWG Super Tool"
                 return undefined
         )
-        swgSuper_Log ("Smart export running on " + nodes.count as string + " nodes.")
+        swgSuper_Log ("Smart export running on " + (nodes.count as string) + " nodes.")
         if not swgSuper_PrepareGeometry nodes then return undefined
 
         local skeletonNodes = #()
         if SWG_superSkeletonRoot != undefined and isValidNode SWG_superSkeletonRoot then (
                 skeletonNodes = swgSuper_GatherSkeletonNodes SWG_superSkeletonRoot
                 if skeletonNodes.count > 0 then (
-                        swgSuper_PrepareSkeleton skeletonNodes
-                        if bakeAnimations and SWG_superAnimationLibrary.count > 0 then (
+                        local skeletonReady = swgSuper_PrepareSkeleton skeletonNodes
+                        if skeletonReady and bakeAnimations and SWG_superAnimationLibrary.count > 0 then (
                                 for clip in SWG_superAnimationLibrary do (
                                         swgSuper_BakeAnimation skeletonNodes clip[2] clip[3]
                                 )
@@ -243,7 +246,7 @@ fn swgSuper_GetOutputPath extension = (
 
 fn swgSuper_UpdateAnimationList = (
         if SWG_superUtilities != undefined do (
-                local items = for clip in SWG_superAnimationLibrary collect (clip[1] + " [" + clip[2] as string + "-" + clip[3] as string + "]")
+                local items = for clip in SWG_superAnimationLibrary collect (clip[1] + " [" + (clip[2] as string) + "-" + (clip[3] as string) + "]")
                 SWG_superUtilities.lbAnimations.items = items
         )
 )
@@ -296,15 +299,24 @@ fn swgSuper_PrepareGeometry nodes = (
                 messageBox "Select one or more mesh nodes to prepare." title:"SWG Super Tool"
                 false
         ) else (
+                local processed = 0
                 for obj in nodes do (
-                        try(resetXForm obj) catch()
-                        if (canConvertTo obj Editable_Poly) do (
-                                try(convertToEditablePoly obj) catch()
+                        if obj != undefined and isValidNode obj then (
+                                try(resetXForm obj) catch()
+                                if (canConvertTo obj Editable_Poly) do (
+                                        try(convertToEditablePoly obj) catch()
+                                )
+                                try(collapseStack obj) catch()
+                                processed += 1
                         )
-                        try(collapseStack obj) catch()
                 )
-                swgSuper_Log ("Prepared geometry for " + nodes.count as string + " nodes.")
-                true
+                if processed > 0 then (
+                        swgSuper_Log ("Prepared geometry for " + (processed as string) + " nodes.")
+                        true
+                ) else (
+                        swgSuper_Log "No valid geometry nodes were prepared."
+                        false
+                )
         )
 )
 
@@ -313,14 +325,23 @@ fn swgSuper_PrepareSkeleton nodes = (
                 messageBox "Select the skeleton bones you want to prep." title:"SWG Super Tool"
                 false
         ) else (
+                local processed = 0
                 for b in nodes do (
-                        try(if isProperty b #boneScaleType do b.boneScaleType = #none) catch()
-                        try(if isProperty b #showLinks do b.showLinks = true) catch()
-                        try(if isProperty b #freeze do b.freeze = false) catch()
-                        try(if isProperty b #boneObject do b.boneObject = true) catch()
+                        if b != undefined and isValidNode b then (
+                                try(if isProperty b #boneScaleType do b.boneScaleType = #none) catch()
+                                try(if isProperty b #showLinks do b.showLinks = true) catch()
+                                try(if isProperty b #freeze do b.freeze = false) catch()
+                                try(if isProperty b #boneObject do b.boneObject = true) catch()
+                                processed += 1
+                        )
                 )
-                swgSuper_Log ("Prepared skeleton nodes: " + nodes.count as string)
-                true
+                if processed > 0 then (
+                        swgSuper_Log ("Prepared skeleton nodes: " + (processed as string))
+                        true
+                ) else (
+                        swgSuper_Log "No valid skeleton nodes were prepared."
+                        false
+                )
         )
 )
 
@@ -331,26 +352,35 @@ fn swgSuper_BakeAnimation nodes startFrame endFrame = (
         ) else (
                 local s = amin startFrame endFrame
                 local e = amax startFrame endFrame
+                local bakedCount = 0
                 with animate on (
                         for f = s to e do (
                                 sliderTime = f
                                 for obj in nodes do (
-                                        at time f (
-                                                obj.position = obj.position
-                                                obj.rotation = obj.rotation
-                                                obj.scale = obj.scale
+                                        if obj != undefined and isValidNode obj then (
+                                                at time f (
+                                                        obj.position = obj.position
+                                                        obj.rotation = obj.rotation
+                                                        obj.scale = obj.scale
+                                                )
+                                                if f == s then bakedCount += 1
                                         )
                                 )
                         )
                 )
-                swgSuper_Log ("Baked animation keys for " + nodes.count as string + " nodes between " + s as string + " and " + e as string + ".")
-                true
+                if bakedCount > 0 then (
+                        swgSuper_Log ("Baked animation keys for " + (bakedCount as string) + " nodes between " + (s as string) + " and " + (e as string) + ".")
+                        true
+                ) else (
+                        swgSuper_Log "No valid nodes were baked for animation."
+                        false
+                )
         )
 )
 
 fn swgSuper_SetAnimationRange startFrame endFrame = (
         animationRange = interval (startFrame as integer) (endFrame as integer)
-        swgSuper_Log ("Animation range set to " + startFrame as string + " - " + endFrame as string)
+        swgSuper_Log ("Animation range set to " + (startFrame as string) + " - " + (endFrame as string))
 )
 
 fn swgSuper_RunImporter = (
