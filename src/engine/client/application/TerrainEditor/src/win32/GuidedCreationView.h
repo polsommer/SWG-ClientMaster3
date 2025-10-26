@@ -10,6 +10,7 @@
 
 #include "FirstTerrainEditor.h"
 #include "SmartTerrainAnalyzer.h"
+#include "Resource.h"
 #include <afxcmn.h>
 
 class TerrainEditorDoc;
