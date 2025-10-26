@@ -43,6 +43,20 @@ inline float clamp01(float value)
 
 //----------------------------------------------------------------------
 
+inline int minimum(int lhs, int rhs)
+{
+        return (lhs < rhs) ? lhs : rhs;
+}
+
+//----------------------------------------------------------------------
+
+inline int maximum(int lhs, int rhs)
+{
+        return (lhs > rhs) ? lhs : rhs;
+}
+
+//----------------------------------------------------------------------
+
 inline void drawInsightBar(int left, int width, int barHeight, int &top, float value, const VectorArgb &color)
 {
         const int filled = static_cast<int>(clamp01(value) * static_cast<float>(width));
@@ -2719,7 +2733,7 @@ void MapView::drawGuidanceOverlay (CDC* pDC, const SmartTerrainAnalyzer::AuditRe
         CRect rect;
         GetClientRect(&rect);
 
-        const int width = std::max(40, std::min(rect.Width() / 4, 220));
+        const int width = maximum(40, minimum(rect.Width() / 4, 220));
         const int barHeight = 6;
         const int left = rect.left + 12;
         int top = rect.top + 12;
@@ -2729,7 +2743,7 @@ void MapView::drawGuidanceOverlay (CDC* pDC, const SmartTerrainAnalyzer::AuditRe
         drawInsightBar(left, width, barHeight, top, report.workflowScore / 100.0f, VectorArgb(0.85f, 0.85f, 0.55f, 0.20f));
 
         const int insightStart = top + 4;
-        const int insightLines = std::min(3, static_cast<int>(report.insights.size()));
+        const int insightLines = minimum(3, static_cast<int>(report.insights.size()));
         for (int i = 0; i < insightLines; ++i)
         {
                 const int y = insightStart + i * 6;
@@ -2751,7 +2765,7 @@ void MapView::drawHeatmapPreview (CDC* pDC, const SmartTerrainAnalyzer::AuditRep
         if (width <= 0 || height <= 0)
                 return;
 
-        const float density = static_cast<float>(report.totalAffectors + report.totalFilters) / static_cast<float>(std::max(1, report.totalLayers));
+        const float density = static_cast<float>(report.totalAffectors + report.totalFilters) / static_cast<float>(maximum(1, report.totalLayers));
         const float variety = static_cast<float>(report.shaderFamilies + report.floraFamilies + report.radialFamilies) / 18.0f;
         const float normalizedDensity = density > 6.0f ? 1.0f : density / 6.0f;
         const float normalizedVariety = variety > 1.0f ? 1.0f : variety;
