@@ -581,7 +581,7 @@ rollout SWG_superDashboard "SWG Content Super Tool" width:420 height:660 (
         )
         group "Log" (
                 label lblStatus "Status: Ready" width:360
-                editText logOutput "" "" width:360 height:120 readOnly:true
+                editText logOutput "Log" text:"" width:360 height:120 readOnly:true
         )
 
         on SWG_superDashboard open do (
