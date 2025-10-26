@@ -319,7 +319,12 @@ BOOL TerrainEditorApp::InitInstance()
 		SplashScreen::EnableSplashScreen(cmdInfo.m_bShowSplash);
 	}
 
-	AfxEnableControlContainer();
+        AfxEnableControlContainer();
+
+#if _MFC_VER >= 0x0900
+        CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+        CMFCButton::m_bUseVisualManagerTheme = TRUE;
+#endif
 
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
@@ -749,6 +754,7 @@ void TerrainEditorApp::onOpenDefaultViews (TerrainEditorDoc* terrainDocument)
         onViewBitmaps     (terrainDocument);
         onViewEnvironment (terrainDocument);
         onViewGuidedCreation (terrainDocument);
+        onView3d          (terrainDocument);
 }
 
 //-------------------------------------------------------------------

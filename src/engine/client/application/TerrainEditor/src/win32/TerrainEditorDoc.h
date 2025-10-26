@@ -208,8 +208,9 @@ private:
 	void load_0013 (Iff& iff);
 	void _load(Iff& iff, Tag version);
 
-	bool _bakeFlora(const char *terrainFile);
-	bool _importFloraSampleFile(const char *sampleFileName);
+        bool _bakeFlora(const char *terrainFile);
+        bool _importFloraSampleFile(const char *sampleFileName);
+        void populateDefaultTerrainContent();
 
 protected:
 
