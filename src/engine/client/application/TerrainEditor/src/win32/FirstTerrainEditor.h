@@ -70,6 +70,25 @@
 #pragma warning(pop)
 #endif
 
+#if !defined(AFX_IMPORT_DATA)
+//
+// Older MFC toolchains (including the ancient SDK that the terrain editor was
+// originally authored against) never defined the AFX_IMPORT_DATA or
+// AFX_IMPORT_DATADEF storage-class helpers.  Newer releases, such as the Visual
+// Studio 2013 headers, expect those aliases to exist when including
+// afxcontrolbarutil.h.  When the macros are absent the compiler tries to parse
+// identifiers like `AFX_IMPORT_DATA BOOL m_bUseMemoryDC;` as variable
+// declarations which leads to a cascade of syntax errors in the system header.
+// Provide backward compatible fallbacks that map to the legacy AFX_DATA and
+// AFX_DATADEF definitions so the codebase continues to compile cleanly across
+// the wide range of supported environments.
+#define AFX_IMPORT_DATA    AFX_DATA
+#endif
+
+#if !defined(AFX_IMPORT_DATADEF)
+#define AFX_IMPORT_DATADEF AFX_DATADEF
+#endif
+
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
