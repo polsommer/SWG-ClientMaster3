@@ -547,7 +547,7 @@ rollout SWG_superUtilities "Utilities" width:380 height:360 (
                         swgSuper_SetAnimationRange clip[2] clip[3]
                 )
         )
-        on open do (
+        on SWG_superUtilities open do (
                 swgSuper_UpdateUtilities()
         )
 )
@@ -584,7 +584,7 @@ rollout SWG_superDashboard "SWG Content Super Tool" width:420 height:660 (
                 multilineEditText logOutput "" width:360 height:120 readOnly:true
         )
 
-        on open do (
+        on SWG_superDashboard open do (
                 SWG_superPanelControl = srPanels
                 if SWG_superAssetName != undefined then edtAssetName.text = SWG_superAssetName
                 if SWG_superOutputRoot != undefined and SWG_superOutputRoot != "" then (
