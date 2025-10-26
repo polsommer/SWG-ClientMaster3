@@ -52,6 +52,15 @@
 #include <afxdisp.h>        // MFC Automation classes
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 
+// Visual Studio's MFC headers normally define the import/export helper macros
+// such as AFX_IMPORT_DATA.  Some SDK configurations used with this legacy
+// project omit those definitions which causes <afxusertoolsmanager.h> to emit
+// syntax errors.  Supply a benign fallback so the class declarations in that
+// header remain valid even when the macro is not pre-defined by the toolchain.
+#ifndef AFX_IMPORT_DATA
+#define AFX_IMPORT_DATA
+#endif
+
 #include <ddraw.h>
 
 #include <afxbutton.h>
