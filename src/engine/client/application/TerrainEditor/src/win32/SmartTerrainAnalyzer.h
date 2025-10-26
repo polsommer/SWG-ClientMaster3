@@ -65,6 +65,10 @@ public:
 
                 std::vector<Insight> insights;
                 std::vector<BlueprintAction> blueprint;
+
+                std::vector<CString> copilotModules;
+                std::vector<CString> automationOpportunities;
+                std::vector<CString> monitoringSignals;
         };
 
 public:
