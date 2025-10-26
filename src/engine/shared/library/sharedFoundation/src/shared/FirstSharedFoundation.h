@@ -17,15 +17,7 @@
 
 #define _CRT_SECURE_NO_DEPRECATE 1
 
-#if defined(_WIN32)
-#include <winapifamily.h>
-#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
-#undef WINAPI_FAMILY
-#endif
-#ifndef WINAPI_FAMILY
-#define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
-#endif
-#endif
+#include "sharedFoundation/WinApiFamily.h"
 
 #ifndef DEBUG_LEVEL
 	#ifdef _DEBUG

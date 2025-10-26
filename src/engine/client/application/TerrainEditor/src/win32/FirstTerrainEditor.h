@@ -14,20 +14,7 @@
 
 //#define NOMINMAX
 
-// Force the Windows headers into the desktop partition before MFC pulls them
-// in.  Recent Windows SDKs default to the App partition which excludes large
-// portions of GDI and ATL that the legacy TerrainEditor relies on.  The old
-// codebase compiled before the SDK introduced partitions, so make the desktop
-// intent explicit here.
-#if defined(_WIN32)
-#include <winapifamily.h>
-#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
-#undef WINAPI_FAMILY
-#endif
-#if !defined(WINAPI_FAMILY)
-#define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
-#endif
-#endif
+#include "sharedFoundation/WinApiFamily.h"
 
 // The TerrainEditor tool was originally written for an ANSI build of MFC.
 // Modern Windows SDK headers default to Unicode which changes many common
