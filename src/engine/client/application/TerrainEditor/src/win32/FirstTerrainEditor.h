@@ -56,14 +56,17 @@
 
 #include <afxbutton.h>
 
-#if _MFC_VER >= 0x0900
-// Visual Studio 2013's MFC headers emit spurious C4183 warnings when
+#if defined(_MSC_VER)
+// Visual Studio's MFC headers emit spurious C4183 warnings when
 // afxvisualmanagerwindows.h pulls in afxcontrolbarutil.h.  Wrap the includes
-// in a warning scope so the tool's build output stays clean.
+// in a warning scope so the tool's build output stays clean regardless of the
+// exact _MFC_VER that is defined by the toolchain.
 #pragma warning(push)
 #pragma warning(disable:4183)
+#endif
 #include <afxvisualmanager.h>
 #include <afxvisualmanagerwindows.h>
+#if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 
