@@ -28,6 +28,36 @@
 
 #include <algorithm>
 
+namespace
+{
+//----------------------------------------------------------------------
+
+inline float clamp01(float value)
+{
+        if (value < 0.0f)
+                return 0.0f;
+        if (value > 1.0f)
+                return 1.0f;
+        return value;
+}
+
+//----------------------------------------------------------------------
+
+inline void drawInsightBar(int left, int width, int barHeight, int &top, float value, const VectorArgb &color)
+{
+        const int filled = static_cast<int>(clamp01(value) * static_cast<float>(width));
+        for (int y = 0; y < barHeight; ++y)
+        {
+                Graphics::drawLine(left, top + y, left + width, top + y, VectorArgb(0.30f, 0.04f, 0.04f, 0.04f));
+                if (filled > 0)
+                        Graphics::drawLine(left, top + y, left + filled, top + y, color);
+        }
+        top += barHeight + 4;
+}
+
+//----------------------------------------------------------------------
+}
+
 //-------------------------------------------------------------------
 
 static inline bool keyDown (int key)
@@ -2694,26 +2724,9 @@ void MapView::drawGuidanceOverlay (CDC* pDC, const SmartTerrainAnalyzer::AuditRe
         const int left = rect.left + 12;
         int top = rect.top + 12;
 
-        const auto clamp01 = [](float value)->float
-        {
-                return value < 0.0f ? 0.0f : (value > 1.0f ? 1.0f : value);
-        };
-
-        const auto drawBar = [&](float value, const VectorArgb &color)
-        {
-                const int filled = static_cast<int>(clamp01(value) * static_cast<float>(width));
-                for (int y = 0; y < barHeight; ++y)
-                {
-                        Graphics::drawLine(left, top + y, left + width, top + y, VectorArgb(0.30f, 0.04f, 0.04f, 0.04f));
-                        if (filled > 0)
-                                Graphics::drawLine(left, top + y, left + filled, top + y, color);
-                }
-                top += barHeight + 4;
-        };
-
-        drawBar(report.structureScore / 100.0f, VectorArgb(0.85f, 0.45f, 0.80f, 0.25f));
-        drawBar(report.ecosystemScore / 100.0f, VectorArgb(0.85f, 0.25f, 0.65f, 0.78f));
-        drawBar(report.workflowScore / 100.0f, VectorArgb(0.85f, 0.85f, 0.55f, 0.20f));
+        drawInsightBar(left, width, barHeight, top, report.structureScore / 100.0f, VectorArgb(0.85f, 0.45f, 0.80f, 0.25f));
+        drawInsightBar(left, width, barHeight, top, report.ecosystemScore / 100.0f, VectorArgb(0.85f, 0.25f, 0.65f, 0.78f));
+        drawInsightBar(left, width, barHeight, top, report.workflowScore / 100.0f, VectorArgb(0.85f, 0.85f, 0.55f, 0.20f));
 
         const int insightStart = top + 4;
         const int insightLines = std::min(3, static_cast<int>(report.insights.size()));
