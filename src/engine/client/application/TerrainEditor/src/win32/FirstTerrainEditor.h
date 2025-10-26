@@ -55,6 +55,7 @@
 #include <ddraw.h>
 
 #include <afxbutton.h>
+#include <afxcontrolbars.h>
 
 #if defined(_MSC_VER)
 // Visual Studio's MFC headers emit spurious C4183 warnings when
