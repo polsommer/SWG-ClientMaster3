@@ -1,4 +1,4 @@
-rollout SWG_roll "MSH importer" (
+rollout SWG_importRoll "MSH importer" (
  label lbl0 ""
  button impMGN "Import   MSH" width:150 Height:25 align:#center
  label lbl1 ""
@@ -415,7 +415,13 @@ rollout SWG_roll "MSH importer" (
  )
 )
 
-if Fatduck_SWG != undefined then closeRolloutFloater Fatduck_SWG
-Fatduck_SWG = newRolloutFloater "Star Wars Galaxies" 200 175 10 70
-addRollout SWG_roll Fatduck_SWG
+global SWG_importFloater
+global SWG_Importer_AutoLaunch
+
+if SWG_Importer_AutoLaunch == undefined do SWG_Importer_AutoLaunch = true
+if SWG_Importer_AutoLaunch do (
+        if SWG_importFloater != undefined then closeRolloutFloater SWG_importFloater
+        SWG_importFloater = newRolloutFloater "Star Wars Galaxies" 200 175 10 70
+        addRollout SWG_importRoll SWG_importFloater
+)
 	
