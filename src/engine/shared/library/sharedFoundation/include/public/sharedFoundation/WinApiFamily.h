@@ -32,6 +32,28 @@
 #define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
 #endif
 
+//
+// Some Windows SDKs ship a <winapifamily.h> implementation where the helper
+// macro evaluates the supplied partition mask directly against
+// WINAPI_FAMILY.  If the toolchain defined WINAPI_FAMILY to an App-centric
+// value before this header is parsed, simply redefining the macro above is not
+// sufficient—the existing family partition helpers will continue to report that
+// the compilation unit targets the App partition.  Guard against that scenario
+// by forcing the helper to recognise the desktop mask.
+//
+#if defined(WINAPI_FAMILY_PARTITION) && defined(WINAPI_PARTITION_DESKTOP)
+#undef WINAPI_FAMILY_PARTITION
+#define WINAPI_FAMILY_PARTITION(Partition) (((Partition) & WINAPI_PARTITION_DESKTOP) != 0)
+#endif
+
+#if !defined(WINAPI_PARTITION_DESKTOP)
+#define WINAPI_PARTITION_DESKTOP 0x00000001
+#endif
+
+#if !defined(WINAPI_FAMILY_PARTITION)
+#define WINAPI_FAMILY_PARTITION(Partition) (((Partition) & WINAPI_PARTITION_DESKTOP) != 0)
+#endif
+
 #endif // defined(_WIN32)
 
 #endif // INCLUDED_WinApiFamily_H
