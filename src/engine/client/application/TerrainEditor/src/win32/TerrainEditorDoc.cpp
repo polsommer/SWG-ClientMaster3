@@ -49,6 +49,8 @@
 #include "MapFrame.h"
 #include "MapView.h"
 #include "PropertyFrame.h"
+#include "Resource.h"
+#include "View3dFrame.h"
 #include "ProgressDialog.h"
 #include "sharedFile/Iff.h"
 #include "sharedFile/TreeFile.h"
@@ -70,6 +72,7 @@
 #include "sharedTerrain/SamplerProceduralTerrainAppearanceTemplate.h"
 #include "sharedTerrain/TerrainGeneratorLoader.h"
 #include "sharedTerrain/TerrainGeneratorType.def"
+#include "sharedFractal/MultiFractal.h"
 #include "sharedUtility/BakedTerrain.h"
 #include "sharedUtility/PackedIntegerMap.h"
 #include "sharedUtility/PackedFixedPointMap.h"
@@ -289,11 +292,11 @@ TerrainEditorDoc::TerrainEditorDoc() :
 
 TerrainEditorDoc::~TerrainEditorDoc()
 {
-	if (terrainGenerator)
-	{
-		delete terrainGenerator;
-		terrainGenerator = 0;
-	}
+        if (terrainGenerator)
+        {
+                delete terrainGenerator;
+                terrainGenerator = 0;
+        }
 
 	if (m_bakedTerrain)
 	{
@@ -338,24 +341,129 @@ TerrainEditorDoc::~TerrainEditorDoc()
 
 //-------------------------------------------------------------------
 
+void TerrainEditorDoc::populateDefaultTerrainContent()
+{
+        TerrainGenerator *const generator = getTerrainGenerator ();
+
+        if (!generator)
+                return;
+
+        const real mapWidth = getMapWidthInMeters ();
+        const float baseHeightMeters = 4.0f;
+        const float hillScale = std::max (12.0f, static_cast<float>(mapWidth * CONST_REAL (0.02)));
+
+        FractalGroup &fractalGroup = generator->getFractalGroup ();
+        int fractalFamilyId = 1;
+
+        if (fractalGroup.getNumberOfFamilies () > 0)
+                fractalFamilyId = fractalGroup.getFamilyId (0);
+
+        if (!fractalGroup.hasFamily (fractalFamilyId))
+                fractalGroup.addFamily (fractalFamilyId, "Auto Hills");
+
+        if (MultiFractal *const multiFractal = fractalGroup.getFamilyMultiFractal (fractalFamilyId))
+        {
+                multiFractal->setSeed (static_cast<uint32>(Random::random ()));
+
+                const float normalizedScale = (mapWidth > CONST_REAL (0.0))
+                        ? 1.0f / std::max (static_cast<float>(mapWidth * CONST_REAL (0.75)), 1.0f)
+                        : MultiFractal::ms_defaultScaleX;
+
+                multiFractal->setScale (normalizedScale, normalizedScale);
+                multiFractal->setNumberOfOctaves (5);
+                multiFractal->setFrequency (1.4f);
+                multiFractal->setAmplitude (1.0f);
+                multiFractal->setGain (true, 0.55f);
+                multiFractal->setBias (true, 0.1f);
+        }
+
+        TerrainGenerator::Layer *const baseLayer = new TerrainGenerator::Layer ();
+        baseLayer->setName ("Auto Base Terrain");
+
+        AffectorHeightConstant *const baseHeight = new AffectorHeightConstant ();
+        baseHeight->setOperation (TGO_replace);
+        baseHeight->setHeight (baseHeightMeters);
+        baseLayer->addAffector (baseHeight);
+
+        AffectorHeightFractal *const hills = new AffectorHeightFractal ();
+        hills->setFamilyId (fractalFamilyId);
+        hills->setScaleY (hillScale);
+        hills->setOperation (TGO_add);
+        baseLayer->addAffector (hills);
+
+        AffectorColorConstant *const baseColor = new AffectorColorConstant ();
+        baseColor->setOperation (TGO_replace);
+        baseColor->setColor (PackedRgb (133, 118, 96));
+        baseLayer->addAffector (baseColor);
+
+        generator->addLayer (baseLayer);
+
+        TerrainGenerator::Layer *const valleyLayer = new TerrainGenerator::Layer ();
+        valleyLayer->setName ("Auto Valleys");
+
+        FilterHeight *const valleyFilter = new FilterHeight ();
+        valleyFilter->setLowHeight (-1000.0f);
+        valleyFilter->setHighHeight (baseHeightMeters + hillScale * 0.35f);
+        valleyLayer->addFilter (valleyFilter);
+
+        AffectorColorConstant *const valleyColor = new AffectorColorConstant ();
+        valleyColor->setOperation (TGO_replace);
+        valleyColor->setColor (PackedRgb (82, 110, 84));
+        valleyLayer->addAffector (valleyColor);
+
+        generator->addLayer (valleyLayer);
+
+        TerrainGenerator::Layer *const peakLayer = new TerrainGenerator::Layer ();
+        peakLayer->setName ("Auto Peaks");
+
+        FilterHeight *const peakFilter = new FilterHeight ();
+        peakFilter->setLowHeight (baseHeightMeters + hillScale * 0.55f);
+        peakFilter->setHighHeight (baseHeightMeters + hillScale * 2.0f);
+        peakLayer->addFilter (peakFilter);
+
+        AffectorColorConstant *const peakColor = new AffectorColorConstant ();
+        peakColor->setOperation (TGO_replace);
+        peakColor->setColor (PackedRgb (210, 208, 200));
+        peakLayer->addAffector (peakColor);
+
+        AffectorHeightFractal *const peakDetail = new AffectorHeightFractal ();
+        peakDetail->setFamilyId (fractalFamilyId);
+        peakDetail->setScaleY (hillScale * 0.2f);
+        peakDetail->setOperation (TGO_add);
+        peakLayer->addAffector (peakDetail);
+
+        generator->addLayer (peakLayer);
+
+        generator->resetProfileData ();
+
+        addConsoleMessage (CString (_T("Automatic terrain content initialized.")));
+        SetModifiedFlag (TRUE);
+}
+
+//-------------------------------------------------------------------
+
 BOOL TerrainEditorDoc::OnNewDocument()
 {
-	if (!CDocument::OnNewDocument())
-		return FALSE;
+        if (!CDocument::OnNewDocument())
+                return FALSE;
 
 	mapWidthInMeters           = CONST_REAL (4096);
 	chunkWidthInMeters         = CONST_REAL (8);
 	numberOfTilesPerChunk      = 4;
 	defaultShaderSize          = CONST_REAL (2);
 
-	//-- recreate generator
-	NOT_NULL (terrainGenerator);
-	terrainGenerator->reset ();
+        //-- recreate generator
+        NOT_NULL (terrainGenerator);
+        terrainGenerator->reset ();
+        populateDefaultTerrainContent ();
 
-	//-- open default views
-	safe_cast<TerrainEditorApp*> (AfxGetApp ())->onOpenDefaultViews (this);
+        //-- open default views
+        safe_cast<TerrainEditorApp*> (AfxGetApp ())->onOpenDefaultViews (this);
 
-	return TRUE;
+        if (View3dFrame *const frame = getView3dFrame ())
+                frame->SendMessage (WM_COMMAND, ID_REFRESH);
+
+        return TRUE;
 }
 
 //-------------------------------------------------------------------

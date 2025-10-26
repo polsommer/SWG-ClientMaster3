@@ -232,7 +232,10 @@ void View3dView::OnInitialUpdate()
         pitch = 0;
 
         updateOrbitTargetFromDocument ();
+        configureCameraForDocument (true);
         applyCameraTransform ();
+
+        OnRefresh ();
 }  //lint !e429  //-- ambientLight/parallelLight has not been freed or returned
 
 //-------------------------------------------------------------------
@@ -460,7 +463,9 @@ void View3dView::OnRefresh()
 
         orbitTarget.y = 0.f;
 
+        configureCameraForDocument (false);
         lastMousePositionValid = false;
+        render = true;
 
         applyCameraTransform ();
 
@@ -604,6 +609,32 @@ void View3dView::updateOrbitTargetFromDocument()
         }
 
         orbitTarget.y = 0.f;
+}
+
+//-------------------------------------------------------------------
+
+void View3dView::configureCameraForDocument(bool resetAngles)
+{
+        const TerrainEditorDoc* doc = dynamic_cast<const TerrainEditorDoc*> (GetDocument ());
+
+        if (!doc)
+                return;
+
+        const real mapWidth = doc->getMapWidthInMeters ();
+
+        if (mapWidth > CONST_REAL (0.0))
+        {
+                const real recommendedDistance = std::max (minOrbitDistance * CONST_REAL (2.0), mapWidth * CONST_REAL (0.6));
+                maxOrbitDistance = std::max (maxOrbitDistance, recommendedDistance * CONST_REAL (1.5));
+                orbitDistance = clamp (minOrbitDistance, recommendedDistance, maxOrbitDistance);
+                verticalOffset = std::max (verticalOffset, recommendedDistance * CONST_REAL (0.15));
+        }
+
+        if (resetAngles)
+        {
+                yaw = PI_OVER_4;
+                pitch = -PI_OVER_4;
+        }
 }
 
 //-------------------------------------------------------------------

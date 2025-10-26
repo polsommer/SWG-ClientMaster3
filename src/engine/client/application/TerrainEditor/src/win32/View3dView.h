@@ -88,6 +88,7 @@ private:
         void           applyCameraTransform();
         void           handleKeyboardNavigation(real frameTime);
         void           updateOrbitTargetFromDocument();
+        void           configureCameraForDocument(bool resetAngles);
 };
 
 //-------------------------------------------------------------------
