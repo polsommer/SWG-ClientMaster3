@@ -16,7 +16,10 @@ global swg_fvfArray
 global swg_shaderArray
 global swg_objArray
 
-floater = newRolloutFloater "Star Wars Galaxies" 400 600 10 70
+global SWG_exportFloater
+global SWG_Exporter_AutoLaunch
+
+if SWG_Exporter_AutoLaunch == undefined do SWG_Exporter_AutoLaunch = true
 
 --shader gui
 rollout SWG_shader "SHT File Creator"(
@@ -631,15 +634,15 @@ rollout SWG_shader "SHT File Creator"(
 						deleteItem swg_fvfArray 1
 						deleteItem swg_shaderArray 1
 					)
-					closeRolloutFloater floater
-					floater = newRolloutFloater "Star Wars Galaxies" 500 600 10 70
-					addRollout SWG_shader floater
+                                        if SWG_exportFloater != undefined then closeRolloutFloater SWG_exportFloater
+					SWG_exportFloater = newRolloutFloater "Star Wars Galaxies" 500 600 10 70
+					addRollout SWG_shader SWG_exportFloater
 					rolled = true
 				)
 				f += 1
 			)
-			if rolled == false then (	
-				closeRolloutFloater floater
+                        if rolled == false then (
+                                if SWG_exportFloater != undefined then closeRolloutFloater SWG_exportFloater
 				messageBox "Extraction and File Creation completed"
 			)
 		)
@@ -647,7 +650,7 @@ rollout SWG_shader "SHT File Creator"(
 )
 
 --MSH Exporter
-rollout SWG_roll "MSH Exporter"(
+rollout SWG_exportRoll "MSH Exporter"(
 	label lbl0 ""
 	checkBox APT "Create APT" width:75 across:3 offset:[0,5]
 	button expMSH "Export   MSH" width:150 Height:25 visible:off offset:[-10, 0]
@@ -970,7 +973,7 @@ rollout SWG_roll "MSH Exporter"(
 		)
 	)
 	
-	on SWG_roll open do ( 
+	on SWG_exportRoll open do ( 
 		--Make sure the user isn't trying to run without having a model to export
 		if geometry.count == 0 then (
 			messageBox "No geometry objects detected"
@@ -978,7 +981,7 @@ rollout SWG_roll "MSH Exporter"(
 		--make visible the amount of information required
 		if geometry.count < 50 then (
 			expMSH.visible = true
-			SWG_roll.height = 55
+			SWG_exportRoll.height = 55
 			suspendEditing()
 			for f=1 to geometry.count do (
 				check1NameArray[f].visible = true
@@ -987,7 +990,7 @@ rollout SWG_roll "MSH Exporter"(
 				textNameArray[f].visible = true
 				textNameArray[f].text = geometry[f].name + ".sht"
 				ddlNameArray[f].visible = true
-				SWG_roll.height += 112
+				SWG_exportRoll.height += 112
 				--calculate bpv, then use to setup fvf code
 				vertColor = 0
 				textNum = 0
@@ -1788,15 +1791,15 @@ rollout SWG_roll "MSH Exporter"(
 						deleteItem swg_fvfArray 1
 						deleteItem swg_shaderArray 1
 					)
-					closeRolloutFloater floater
-					floater = newRolloutFloater "Star Wars Galaxies" 500 600 10 70
-					addRollout SWG_shader floater
+                                        if SWG_exportFloater != undefined then closeRolloutFloater SWG_exportFloater
+					SWG_exportFloater = newRolloutFloater "Star Wars Galaxies" 500 600 10 70
+					addRollout SWG_shader SWG_exportFloater
 					rolled = true
 				)
 				f += 1
 			) while (f <= swg_objArray.count and rolled == false)
 			if rolled == false then (
-				closeRolloutFloater floater
+                           if SWG_exportFloater != undefined then closeRolloutFloater SWG_exportFloater
 				messageBox "Extraction Completed"
 			)
 		)
@@ -1804,4 +1807,10 @@ rollout SWG_roll "MSH Exporter"(
 	)--end on empMSH
 )
 
-addRollout SWG_roll floater
+if SWG_Exporter_AutoLaunch do (
+        if SWG_exportFloater != undefined then (
+                try(closeRolloutFloater SWG_exportFloater) catch()
+        )
+        SWG_exportFloater = newRolloutFloater "Star Wars Galaxies" 400 600 10 70
+        addRollout SWG_exportRoll SWG_exportFloater
+)
