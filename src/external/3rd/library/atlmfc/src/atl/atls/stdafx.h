@@ -12,6 +12,10 @@
 #define _ATL_DEBUG_INTERFACES
 
 #if defined(_WIN32)
+#if !defined(_ATL_ALLOW_WINRT_INCOMPATIBLE_CLASSES)
+#define _ATL_ALLOW_WINRT_INCOMPATIBLE_CLASSES 1
+#endif
+
 //
 // The upstream ATL headers ship with Windows SDKs that default to the App
 // partition when WINAPI_FAMILY is undefined.  The legacy MFC tools in this
@@ -32,6 +36,28 @@
 
 #if !defined(WINAPI_FAMILY)
 #define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
+#endif
+
+//
+// Some Windows SDKs bind the family partition helpers to the original
+// WINAPI_FAMILY value before this override executes.  When that happens the
+// macros keep reporting that the compilation unit targets the App partition and
+// <atlimage.h> responds by triggering a fatal compatibility error.  Mirror the
+// shared WinApiFamily shim by normalising the helper macros so this standalone
+// static library always advertises the desktop partition regardless of the
+// toolchain defaults.
+//
+#if defined(WINAPI_FAMILY_PARTITION) && defined(WINAPI_PARTITION_DESKTOP)
+#undef WINAPI_FAMILY_PARTITION
+#define WINAPI_FAMILY_PARTITION(Partition) (((Partition) & WINAPI_PARTITION_DESKTOP) != 0)
+#endif
+
+#if !defined(WINAPI_PARTITION_DESKTOP)
+#define WINAPI_PARTITION_DESKTOP 0x00000001
+#endif
+
+#if !defined(WINAPI_FAMILY_PARTITION)
+#define WINAPI_FAMILY_PARTITION(Partition) (((Partition) & WINAPI_PARTITION_DESKTOP) != 0)
 #endif
 #endif // defined(_WIN32)
 
