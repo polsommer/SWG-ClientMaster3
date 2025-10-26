@@ -17,9 +17,26 @@
 // "First" header can opt in with a single include.  Some SDK revisions gate the
 // ATL image helper behind _ATL_ALLOW_WINRT_INCOMPATIBLE_CLASSES even when the
 // compilation is known to target the desktop partition, so provide that opt-in
-// alongside the partition overrides.
+// alongside the partition overrides.  Likewise the Visual Studio toolchain
+// emits a warning when WINVER is not defined before including <windows.h>.  The
+// default of 0x0502 corresponds to Windows Server 2003 which is below the
+// minimum level required by the legacy ATL/MFC headers bundled with this
+// project.  Normalise the version macros so every consumer advertises the same
+// desktop baseline regardless of the build configuration.
 
 #if defined(_WIN32)
+#if !defined(WINVER)
+#define WINVER 0x0601
+#endif
+
+#if !defined(_WIN32_WINNT)
+#define _WIN32_WINNT 0x0601
+#endif
+
+#if !defined(NTDDI_VERSION)
+#define NTDDI_VERSION 0x06010000
+#endif
+
 #if !defined(_ATL_ALLOW_WINRT_INCOMPATIBLE_CLASSES)
 #define _ATL_ALLOW_WINRT_INCOMPATIBLE_CLASSES 1
 #endif
