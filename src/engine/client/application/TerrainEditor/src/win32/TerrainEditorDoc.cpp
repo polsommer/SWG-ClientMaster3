@@ -1761,6 +1761,12 @@ void TerrainEditorDoc::OnToolsBaketerrain()
 
 void TerrainEditorDoc::OnToolsTerrainintelligence()
 {
+        if (TerrainEditorApp *const app = GetApp())
+                app->showConsole();
+
+        if (ConsoleFrame *const frame = getConsoleFrame())
+                frame->ActivateFrame();
+
         const CString audit = SmartTerrainAnalyzer::runAudit(*this);
 
         CString decorated;

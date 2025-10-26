@@ -456,6 +456,152 @@ SmartTerrainAnalyzer::AuditReport SmartTerrainAnalyzer::analyze(const TerrainEdi
                 report.blueprint.push_back(action);
         }
 
+        if (report.environmentFamilies < 2)
+        {
+                Insight insight;
+                insight.headline = _T("Environment playlist is sparse");
+                insight.detail.Format(_T("Only %d environment families configured – add day/night or seasonal variants."), report.environmentFamilies);
+                insight.confidence = 0.72f;
+                report.insights.push_back(insight);
+
+                BlueprintAction action;
+                action.label = _T("Author smart environment playlist");
+                action.rationale = _T("Let the AI cycle director craft lighting and weather blends for richer ambience.");
+                action.predictedImpact = 0.53f;
+                action.confidence = 0.74f;
+                report.blueprint.push_back(action);
+        }
+
+        if (report.bitmapFamilies < 2)
+        {
+                Insight insight;
+                insight.headline = _T("Texture bitmap pool is minimal");
+                insight.detail.Format(_T("%d bitmap families detected – expand masks for erosion, albedo and decals."), report.bitmapFamilies);
+                insight.confidence = 0.69f;
+                report.insights.push_back(insight);
+
+                BlueprintAction action;
+                action.label = _T("Grow procedural bitmap library");
+                action.rationale = _T("Ask the AI painter to batch-synthesize splat, erosion and decal maps for new biomes.");
+                action.predictedImpact = 0.56f;
+                action.confidence = 0.71f;
+                report.blueprint.push_back(action);
+        }
+
+        std::vector<CString> disabledOverlays;
+        if (!doc.isGuidanceOverlayEnabled())
+                disabledOverlays.push_back(_T("guidance overlay"));
+        if (!doc.isHeatmapPreviewEnabled())
+                disabledOverlays.push_back(_T("heatmap preview"));
+        if (!doc.isGuidelineLayerEnabled())
+                disabledOverlays.push_back(_T("guideline layer"));
+
+        if (!disabledOverlays.empty())
+        {
+                Insight insight;
+                insight.headline = _T("AI overlays are idle");
+                insight.detail.Format(_T("Enable the %s to stream live AI annotations while sculpting."), joinNames(disabledOverlays).GetString());
+                insight.confidence = 0.6f;
+                report.insights.push_back(insight);
+
+                BlueprintAction action;
+                action.label = _T("Activate live copilot overlays");
+                action.rationale = _T("Switch on overlays so the AI can spotlight gradients, seams and density cliffs in real time.");
+                action.predictedImpact = 0.48f;
+                action.confidence = 0.68f;
+                report.blueprint.push_back(action);
+        }
+
+        {
+                const TCHAR *const guidanceState = doc.isGuidanceOverlayEnabled() ? _T("active") : _T("idle");
+                const TCHAR *const guidanceDetail = doc.isGuidanceOverlayEnabled() ? _T("AI cues are projected across the map.") : _T("Enable to visualise AI guidance splines while iterating.");
+                CString module;
+                module.Format(_T("Guidance overlay %s – %s"), guidanceState, guidanceDetail);
+                report.copilotModules.push_back(module);
+        }
+
+        {
+                const TCHAR *const heatmapState = doc.isHeatmapPreviewEnabled() ? _T("active") : _T("idle");
+                const TCHAR *const heatmapDetail = doc.isHeatmapPreviewEnabled() ? _T("Heatmaps display affector influence live.") : _T("Enable to let the AI paint stress/coverage heatmaps.");
+                CString module;
+                module.Format(_T("Heatmap preview %s – %s"), heatmapState, heatmapDetail);
+                report.copilotModules.push_back(module);
+        }
+
+        {
+                const TCHAR *const guidelineState = doc.isGuidelineLayerEnabled() ? _T("active") : _T("idle");
+                const TCHAR *const guidelineDetail = doc.isGuidelineLayerEnabled() ? _T("Guideline layer is feeding AI layout hints.") : _T("Enable to unlock AI-drawn guide paths and silhouettes.");
+                CString module;
+                module.Format(_T("Guideline layer %s – %s"), guidelineState, guidelineDetail);
+                report.copilotModules.push_back(module);
+        }
+
+        {
+                CString module;
+                module.Format(_T("Blueprint runner primed – %d action%s queued."), static_cast<int>(report.blueprint.size()), (report.blueprint.size() == 1) ? _T("") : _T("s"));
+                report.copilotModules.push_back(module);
+        }
+
+        if (!stats.dormantLayers.empty())
+        {
+                CString automation;
+                automation.Format(_T("Auto-organise %d dormant layer%s with the archive/activation assistant."), static_cast<int>(stats.dormantLayers.size()), (stats.dormantLayers.size() == 1) ? _T("") : _T("s"));
+                report.automationOpportunities.push_back(automation);
+        }
+
+        if (!stats.emptyLayers.empty())
+        {
+                CString automation;
+                automation.Format(_T("Wire %d empty layer%s using AI affector presets."), static_cast<int>(stats.emptyLayers.size()), (stats.emptyLayers.size() == 1) ? _T("") : _T("s"));
+                report.automationOpportunities.push_back(automation);
+        }
+
+        if (report.structureScore < 65.0f)
+                report.automationOpportunities.push_back(_T("Run the structure balancer to distribute boundaries and filters."));
+
+        if (report.ecosystemScore < 65.0f)
+                report.automationOpportunities.push_back(_T("Launch the biome blender to synthesise additional shader, flora and radial mixes."));
+
+        if (report.workflowScore < 65.0f)
+                report.automationOpportunities.push_back(_T("Enable guided iteration mode to batch bakes, autosaves and previews."));
+
+        if (report.foresightScore < 80.0f)
+        {
+                CString automation;
+                automation.Format(_T("Schedule nightly audits aiming for a foresight score above %0.0f."), std::min(100.0f, report.foresightScore + 10.0f));
+                report.automationOpportunities.push_back(automation);
+        }
+
+        if (!report.blueprint.empty())
+                report.automationOpportunities.push_back(_T("Queue the blueprint runner to execute the recommended actions automatically."));
+
+        {
+                CString signal;
+                signal.Format(_T("Foresight tracking at %0.1f – rerun the audit after applying blueprint actions."), report.foresightScore);
+                report.monitoringSignals.push_back(signal);
+        }
+
+        if (doc.getLastAverageChunkGenerationTime() > CONST_REAL(0))
+        {
+                const float averageTime = static_cast<float>(doc.getLastAverageChunkGenerationTime());
+                CString signal;
+                signal.Format(_T("Recent bake averaged %.2fs (peak %.2fs)."), averageTime, static_cast<float>(doc.getLastMaximumChunkGenerationTime()));
+                report.monitoringSignals.push_back(signal);
+
+                if (averageTime > 2.5f)
+                        report.monitoringSignals.push_back(_T("Consider offloading heavy bakes to the async AI bake farm."));
+        }
+        else
+        {
+                report.monitoringSignals.push_back(_T("No recent bake telemetry – run a terrain bake to seed performance tracking."));
+        }
+
+        {
+                CString signal;
+                signal.Format(_T("%d total layers with %d hero focus layer%s – watch complexity as automation expands."), report.totalLayers, static_cast<int>(report.heroLayers.size()), (report.heroLayers.size() == 1) ? _T("") : _T("s"));
+                report.monitoringSignals.push_back(signal);
+        }
+
         return report;
 }
 
@@ -557,6 +703,45 @@ CString SmartTerrainAnalyzer::runAudit(const TerrainEditorDoc &doc)
         output += _T("\r\nAI Blueprint:\r\n");
         output += buildBlueprintOutput(report);
 
+        output += _T("\r\nAI Copilot Modules:\r\n");
+        if (report.copilotModules.empty())
+                output += _T("- Copilot modules will populate once terrain activity resumes.\r\n");
+        else
+        {
+                for (size_t i = 0; i < report.copilotModules.size(); ++i)
+                {
+                        CString line;
+                        line.Format(_T("- %s\r\n"), report.copilotModules[i].GetString());
+                        output += line;
+                }
+        }
+
+        output += _T("\r\nAutomation Opportunities:\r\n");
+        if (report.automationOpportunities.empty())
+                output += _T("- No automation hooks flagged – manual control is holding steady.\r\n");
+        else
+        {
+                for (size_t i = 0; i < report.automationOpportunities.size(); ++i)
+                {
+                        CString line;
+                        line.Format(_T("- %s\r\n"), report.automationOpportunities[i].GetString());
+                        output += line;
+                }
+        }
+
+        output += _T("\r\nAI Monitoring Signals:\r\n");
+        if (report.monitoringSignals.empty())
+                output += _T("- No telemetry yet – trigger a bake or iteration to collect signals.\r\n");
+        else
+        {
+                for (size_t i = 0; i < report.monitoringSignals.size(); ++i)
+                {
+                        CString line;
+                        line.Format(_T("- %s\r\n"), report.monitoringSignals[i].GetString());
+                        output += line;
+                }
+        }
+
         const real totalGenerationTime = doc.getLastTotalChunkGenerationTime();
         if (totalGenerationTime > CONST_REAL(0))
         {
@@ -571,6 +756,8 @@ CString SmartTerrainAnalyzer::runAudit(const TerrainEditorDoc &doc)
         output += _T("• Deploy the AI blueprint queue to auto-stage terrain polish passes.\r\n");
         output += _T("• Ask the blueprint runner to materialise suggested shader/flora families.\r\n");
         output += _T("• Combine the audit with console filters to jump directly to recommended layers.\r\n");
+        output += _T("• Enable copilot overlays to visualise AI guidance and coverage heatmaps live.\r\n");
+        output += _T("• Feed monitoring signals into the automation scheduler to track gains after each bake.\r\n");
 
         return output;
 }
