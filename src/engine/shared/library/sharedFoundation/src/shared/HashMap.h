@@ -3,14 +3,12 @@
 // HashMap.h
 // Copyright (c) 2024 Sony Online Entertainment
 //
-// A thin wrapper around the legacy <hash_map> header that suppresses
-// warnings emitted by the Visual C++ standard library when the header is
-// included.  Older code in this code base still relies on std::hash_map, and
-// Visual Studio 2013 generates warning C4183 (missing return type) and C4159
-// (mismatched #pragma pack) from <xhash>.  Both warnings originate inside the
-// implementation header and cannot be resolved without replacing the
-// container usage entirely.  Centralising the suppression keeps call sites
-// warning-free while we continue to support the existing data structures.
+// A compatibility shim for the legacy std::hash_map container.  Visual Studio
+// 2013 still ships <hash_map> but the header pulls in a large amount of
+// Dinkumware implementation detail that conflicts with STLPort, which is used
+// by parts of this code base.  Rather than rely on that implementation we map
+// the old container aliases onto std::unordered_map while preserving the
+// existing include surface.
 //
 // ============================================================================
 
@@ -21,25 +19,29 @@
 #pragma warning(push)
 #pragma warning(disable: 4159 4183)
 
-#include <string>
+#include <unordered_map>
 
-//
-// Visual Studio's legacy <hash_map> implementation lives in namespace
-// stdext but still makes use of the historical _STL namespace alias that
-// was provided by Dinkumware's STL when STLPort was commonplace.  Modern
-// versions of the compiler no longer declare that alias which leaves the
-// header referencing an unknown namespace.  Some of our Windows builds
-// also include STLPort which likewise omits the alias, so provide it
-// unconditionally.
-//
-namespace _STL = std;
-#endif // _MSC_VER
+namespace std
+{
+    /**
+     * Visual Studio 2013 still ships the deprecated <hash_map> header but
+     * the implementation is tightly coupled to the legacy Dinkumware
+     * internals and does not compile cleanly when STLPort headers are also
+     * present.  Provide aliases that map the old container names onto the
+     * C++11 equivalents so existing code can continue to include
+     * sharedFoundation/HashMap.h without pulling in <hash_map>.
+     */
+    template <typename _Kty, typename _Ty, typename _Hasher = std::hash<_Kty>, typename _Keyeq = std::equal_to<_Kty>, typename _Alloc = std::allocator<std::pair<const _Kty, _Ty> > >
+    using hash_map = std::unordered_map<_Kty, _Ty, _Hasher, _Keyeq, _Alloc>;
 
-#include <hash_map>
+    template <typename _Kty, typename _Ty, typename _Hasher = std::hash<_Kty>, typename _Keyeq = std::equal_to<_Kty>, typename _Alloc = std::allocator<std::pair<const _Kty, _Ty> > >
+    using hash_multimap = std::unordered_multimap<_Kty, _Ty, _Hasher, _Keyeq, _Alloc>;
+}
 
-#ifdef _MSC_VER
 #pragma warning(pop)
-#endif
+#else
+#include <hash_map>
+#endif // _MSC_VER
 
 #endif // INCLUDED_HashMap_H
 
