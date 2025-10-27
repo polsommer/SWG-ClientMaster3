@@ -15,7 +15,7 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 // ======================================================================
 

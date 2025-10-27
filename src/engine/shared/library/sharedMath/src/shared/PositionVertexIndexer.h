@@ -12,7 +12,7 @@
 
 #include "sharedMath/Vector.h"
 
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 // ======================================================================
 

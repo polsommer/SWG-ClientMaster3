@@ -12,7 +12,7 @@
 
 #include "Unicode.h"
 
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 //======================================================================
 

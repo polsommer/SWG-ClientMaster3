@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <map>
 #include <vector>
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 //===================================================================
 

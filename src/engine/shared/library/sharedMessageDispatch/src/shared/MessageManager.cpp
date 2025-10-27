@@ -7,7 +7,7 @@
 #include "sharedMessageDispatch/Receiver.h"
 
 #include <set>
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 namespace MessageDispatch {
 

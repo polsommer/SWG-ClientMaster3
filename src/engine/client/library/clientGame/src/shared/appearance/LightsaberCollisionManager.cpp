@@ -22,7 +22,7 @@
 #include "sharedObject/Object.h"
 #include "sharedRandom/Random.h"
 
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 #include <limits>
 #include <string>
 #include <vector>

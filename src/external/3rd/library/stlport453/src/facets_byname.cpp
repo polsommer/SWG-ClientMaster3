@@ -17,7 +17,7 @@
  */ 
 # include "stlport_prefix.h"
 
-#include <hash_map>
+#include "../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/HashMap.h"
 #include "locale_impl.h"
 #include "c_locale.h"
 
