@@ -26,7 +26,11 @@
 #include <vector>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 =======
 #include <unordered_map>
 >>>>>>> Stashed changes
