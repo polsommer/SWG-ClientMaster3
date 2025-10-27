@@ -21,20 +21,18 @@
 #pragma warning(push)
 #pragma warning(disable: 4159 4183)
 
-#ifndef _STLPORT_VERSION
 #include <string>
 
 //
 // Visual Studio's legacy <hash_map> implementation lives in namespace
 // stdext but still makes use of the historical _STL namespace alias that
 // was provided by Dinkumware's STL when STLPort was commonplace.  Modern
-// versions of the compiler no longer declare that alias, which leaves the
-// header referencing an unknown namespace.  Re-introduce the alias when
-// STLPort isn't in use so the implementation can find the expected
-// definitions without requiring changes to the generated headers.
+// versions of the compiler no longer declare that alias which leaves the
+// header referencing an unknown namespace.  Some of our Windows builds
+// also include STLPort which likewise omits the alias, so provide it
+// unconditionally.
 //
 namespace _STL = std;
-#endif
 #endif // _MSC_VER
 
 #include <hash_map>
