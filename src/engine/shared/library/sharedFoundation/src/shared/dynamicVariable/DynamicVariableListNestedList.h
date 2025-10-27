@@ -10,6 +10,7 @@
 
 #include "Archive/AutoDeltaMap.h"
 #include "sharedFoundation/DynamicVariable.h"
+#include <iterator>
 #include <string>
 
 class DynamicVariableList;
@@ -43,14 +44,23 @@ public:
 	* as it traverses the nested list will return "location" and "build_time".
 	*/
 
-	class const_iterator
-	{
-	public:
-		const_iterator (const DynamicVariableListNestedList &context, const MapType::const_iterator &position, bool atEnd);
+        class const_iterator
+        {
+        public:
+                typedef MapType::const_iterator BaseIterator;
+                typedef std::forward_iterator_tag iterator_category;
+                typedef typename BaseIterator::value_type value_type;
+                typedef typename BaseIterator::difference_type difference_type;
+                typedef value_type const * pointer;
+                typedef value_type const & reference;
 
-		const std::string                    getName          () const;
-		const std::string                    getNameWithPath  () const;
-		DynamicVariableListNestedList        getNestedList    () const;
+                const_iterator (const DynamicVariableListNestedList &context, const MapType::const_iterator &position, bool atEnd);
+
+                reference                           operator*        () const;
+                pointer                              operator->       () const;
+                const std::string                    getName          () const;
+                const std::string                    getNameWithPath  () const;
+                DynamicVariableListNestedList        getNestedList    () const;
 		DynamicVariable::DynamicVariableType getType          () const;
 		int                                  getPackedPosition() const;
 		const_iterator &                     operator++       ();

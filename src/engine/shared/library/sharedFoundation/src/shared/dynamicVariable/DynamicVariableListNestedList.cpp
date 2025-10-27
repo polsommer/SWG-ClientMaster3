@@ -204,10 +204,38 @@ NESTED_LIST_GET_ITEM(std::vector<Vector>)
 // DynamicVariableListNestedList::const_iterator
 
 DynamicVariableListNestedList::const_iterator::const_iterator(const DynamicVariableListNestedList &context, const DynamicVariableList::MapType::const_iterator &position, bool atEnd) :
-	m_context(context),
-	m_current(position),
-	m_atEnd(atEnd)
+        m_context(context),
+        m_current(position),
+        m_atEnd(atEnd)
 {
+}
+
+// ----------------------------------------------------------------------
+
+DynamicVariableListNestedList::const_iterator::reference DynamicVariableListNestedList::const_iterator::operator*() const
+{
+        if (m_atEnd)
+        {
+                static const value_type s_empty(value_type());
+                DEBUG_FATAL(true, ("Programmer bug: attempted to dereference end iterator.\n"));
+                return s_empty;
+        }
+
+        return *m_current;
+}
+
+// ----------------------------------------------------------------------
+
+DynamicVariableListNestedList::const_iterator::pointer DynamicVariableListNestedList::const_iterator::operator->() const
+{
+        if (m_atEnd)
+        {
+                static const value_type s_empty(value_type());
+                DEBUG_FATAL(true, ("Programmer bug: attempted to access end iterator.\n"));
+                return &s_empty;
+        }
+
+        return &(*m_current);
 }
 
 // ----------------------------------------------------------------------
