@@ -10,7 +10,7 @@
 #include "sharedFoundation/NetworkId.h"
 #include "sharedObject/Object.h"
 
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 #include <string>
 
 //-----------------------------------------------------------------------

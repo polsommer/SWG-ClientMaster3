@@ -8,7 +8,7 @@
 #include "_precompile.h"
 #include "UILowerString.h"
 
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 #include <memory>
 #include <assert.h>
 

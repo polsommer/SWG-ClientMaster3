@@ -19,7 +19,7 @@
 #include "sharedMessageDispatch/Transceiver.h"
 #include "unicodeArchive/UnicodeArchive.h"
 #include "UnicodeUtils.h"
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 // ======================================================================
 

@@ -69,7 +69,7 @@
 #include "LocalizationManager.h"
 
 #include <cstdio>
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 #include <list>
 #include <map>
 #include <set>

@@ -12,7 +12,7 @@
 #include "UITextStyleManager.h"
 #include "UIUtils.h"
 
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 #include <list>
 #include <vector>
 

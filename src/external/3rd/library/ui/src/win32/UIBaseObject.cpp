@@ -11,7 +11,7 @@
 
 #include <algorithm>
 #include <cassert>
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 #include <hash_set>
 #include <list>
 #include <map>

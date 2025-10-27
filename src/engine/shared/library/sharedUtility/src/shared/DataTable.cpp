@@ -13,7 +13,7 @@
 #include "sharedUtility/DataTableCell.h"
 
 #include <map>
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 //----------------------------------------------------------------------------
 

@@ -13,7 +13,7 @@
 #include "sharedFoundation/CrcString.h"
 #include "sharedNetworkMessages/NetworkMessageFactory.h"
 #include <algorithm>
-#include <hash_map>
+#include "sharedFoundation/HashMap.h"
 
 // ======================================================================
 
