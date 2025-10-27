@@ -1,1 +1,1 @@
-#include "../../../src/shared/core/GameLanguageManager.h"
+#include "../../src/shared/core/GameLanguageManager.h"

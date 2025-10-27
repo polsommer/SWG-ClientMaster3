@@ -16,6 +16,7 @@
 #include "sharedObject/SlottedContainmentProperty.h"
 #include "sharedObject/Object.h"
 
+#include <cstdio>
 #include <map>
 
 // ----------------------------------------------------------------------
@@ -48,7 +49,7 @@ SlottedContainer::~SlottedContainer()
 	if (m_slotMap)
 	{
 		delete m_slotMap;
-		m_slotMap = NULL;
+		m_slotMap = nullptr;
 	}
 }
 

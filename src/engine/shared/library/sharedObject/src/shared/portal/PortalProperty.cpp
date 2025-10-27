@@ -24,7 +24,9 @@
 #include "sharedObject/PortalPropertyTemplate.h"
 #include "sharedObject/PortalPropertyTemplateList.h"
 
+#include <algorithm>
 #include <limits>
+#include <cstdio>
 
 // ======================================================================
 
@@ -55,9 +57,9 @@ PropertyId PortalProperty::getClassPropertyId()
 
 PortalProperty::PortalProperty(Object &owner, const char *fileName)
 : Container(getClassPropertyId(), owner),
-	m_template(NULL),
+	m_template(nullptr),
 	m_cellList(new CellList),
-	m_fixupList(NULL),
+	m_fixupList(nullptr),
 	m_hasPassablePortalToParentCell(false)
 {
 #ifdef _DEBUG
@@ -65,7 +67,7 @@ PortalProperty::PortalProperty(Object &owner, const char *fileName)
 #endif // _DEBUG
 
 	m_template = PortalPropertyTemplateList::fetch(CrcLowerString(fileName));
-	m_cellList->resize(static_cast<CellList::size_type>(m_template->getNumberOfCells()), NULL);
+	m_cellList->resize(static_cast<CellList::size_type>(m_template->getNumberOfCells()), nullptr);
 
 #ifdef _DEBUG
 	DataLint::popAsset();
@@ -137,7 +139,7 @@ void PortalProperty::addToWorld()
 		int unloaded = 0;
 		int const numberOfCells = static_cast<int>(m_cellList->size());
 		for (int i = 1; i < numberOfCells; ++i)
-			if ((*m_cellList)[static_cast<CellList::size_type>(i)] == NULL)
+			if ((*m_cellList)[static_cast<CellList::size_type>(i)] == nullptr)
 			{
 				WARNING(true, ("cell %d/%d not loaded", i, numberOfCells));
 				++unloaded;
@@ -213,7 +215,7 @@ bool PortalProperty::serverEndBaselines(int serverObjectCrc, std::vector<Object*
 		uint const numberOfCells = m_cellList->size();
 		for (uint i = 1; i < numberOfCells; ++i)
 		{
-			if ((*m_cellList)[i] == NULL)
+			if ((*m_cellList)[i] == nullptr)
 			{
 				Object *object = ms_beginCreateObjectFunction(static_cast<int>(i));
 				IGNORE_RETURN(addToContents(*object, tmp));
@@ -227,7 +229,7 @@ bool PortalProperty::serverEndBaselines(int serverObjectCrc, std::vector<Object*
 		//-- fixupObject() causes the fixedup object to get added to the world before its parent has been
 		//-- for now, we won't queue anything for fixup
 
-#if 0
+#if 0	//TODO: see above
 		// go through the cells and remove objects 
 		for (size_t cell=1 ; cell< numberOfCells; ++cell)
 		{
@@ -458,8 +460,12 @@ void PortalProperty::debugPrint(std::string &buffer) const
 void PortalProperty::createAppearance()
 {
 	Appearance * const appearance = AppearanceTemplateList::createAppearance(m_template->getExteriorAppearanceName());
-	appearance->setShadowBlobAllowed();
-	getOwner().setAppearance(appearance);
+	if (appearance != nullptr) {
+		appearance->setShadowBlobAllowed();
+		getOwner().setAppearance(appearance);
+	} else {
+		DEBUG_WARNING(true, ("FIX ME: Appearance template for PortalProperty::createAppearance missing"));
+	}
 }
 
 // ----------------------------------------------------------------------
@@ -518,26 +524,6 @@ const CellProperty *PortalProperty::getCell(int index) const
 
 // ----------------------------------------------------------------------
 
-#if 0
-
-int PortalProperty::getNumberOfLights(int cellIndex) const
-{
-	DEBUG_FATAL(cellIndex < 0 || cellIndex >= static_cast<int>(m_cellList->size()), ("cell index out of range"));
-	return (*m_cellDataList)[cellIndex]->getNumberOfLights();
-}
-
-// ----------------------------------------------------------------------
-
-const PortalProperty::LightData &PortalProperty::getLightData(int cellIndex, int lightIndex) const
-{
-	DEBUG_FATAL(cellIndex < 0 || cellIndex >= static_cast<int>(m_cellList->size()), ("cell index out of range"));
-	return (*m_cellDataList)[cellIndex]->getLightData(lightIndex);
-}
-
-#endif
-
-// ----------------------------------------------------------------------
-
 const PortalProperty::CellNameList &PortalProperty::getCellNames() const
 {
 	return m_template->getCellNames();
@@ -557,7 +543,7 @@ CellProperty *PortalProperty::getCell(const char *desiredCellName)
 			return (*m_cellList)[static_cast<CellList::size_type>(i)];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ----------------------------------------------------------------------

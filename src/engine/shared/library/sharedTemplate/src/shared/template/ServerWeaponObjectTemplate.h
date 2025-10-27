@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerWeaponObjectTemplate_H
 
 #include "ServerTangibleObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -72,7 +72,9 @@ public:
 		WT_1handLightsaber,
 		WT_2handLightsaber,
 		WT_polearmLightsaber,
-		WeaponType_Last = WT_polearmLightsaber,
+		WT_groundTargetting,
+		WT_directionTargetting,
+		WeaponType_Last = WT_directionTargetting,
 	};
 
 public:

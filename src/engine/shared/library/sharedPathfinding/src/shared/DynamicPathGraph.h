@@ -20,7 +20,7 @@ class DynamicPathNode;
 // and remove nodes on the fly (such as city graphs)
 
 // DynamicPathGraph uses a sparse array to store its nodes. Calling
-// getNode with a nodeIndex in [0,nodeCount) may return NULL. If you
+// getNode with a nodeIndex in [0,nodeCount) may return nullptr. If you
 // want to know the number of live nodes in the graph, call getLiveNodeCount.
 
 class DynamicPathGraph : public PathGraph
@@ -68,8 +68,8 @@ protected:
 	DynamicPathNode *         _getNode        ( int nodeIndex );
 	DynamicPathNode const *   _getNode        ( int nodeIndex ) const;
 
-	typedef stdvector<DynamicPathNode *>::fwd NodeList;
-	typedef stdvector<int>::fwd IndexList;
+	typedef std::vector<DynamicPathNode *> NodeList;
+	typedef std::vector<int> IndexList;
 
 	NodeList *  m_nodeList;
 	IndexList * m_dirtyNodes;

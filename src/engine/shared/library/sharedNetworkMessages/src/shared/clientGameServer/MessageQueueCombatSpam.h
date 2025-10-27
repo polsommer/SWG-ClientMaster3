@@ -10,8 +10,8 @@
 
 //======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/NetworkId.h"
 #include "sharedMath/Vector.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 #include "Unicode.h"

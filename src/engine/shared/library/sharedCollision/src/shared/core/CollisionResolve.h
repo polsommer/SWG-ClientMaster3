@@ -27,22 +27,22 @@ class Floor;
 struct ObstacleInfo
 {
 	ObstacleInfo()
-	: m_cell(NULL),
-	  m_extent(NULL),
-	  m_floorContact(NULL)
+	: m_cell(nullptr),
+	  m_extent(nullptr),
+	  m_floorContact(nullptr)
 	{
 	}
 
 	ObstacleInfo ( CellProperty const * cell, SimpleExtent const * extent ) 
 	: m_cell(cell),
 	  m_extent(extent), 
-	  m_floorContact(NULL) 
+	  m_floorContact(nullptr) 
 	{
 	}
 
 	ObstacleInfo ( CellProperty const * cell, FloorContactShape * contact ) 
 	: m_cell(cell),
-	  m_extent(NULL), 
+	  m_extent(nullptr), 
 	  m_floorContact(contact)
 	{
 	}
@@ -65,11 +65,11 @@ struct CellPosition
 };
 
 
-typedef stdvector<CollisionProperty*>::fwd ColliderList;
-typedef stdvector<ObstacleInfo>::fwd ObstacleList;
-typedef stdvector<Contact>::fwd ContactList;
-typedef stdvector<FloorContactShape*>::fwd FloorContactList;
-typedef stdvector<CellPosition>::fwd CellPositionList;
+typedef std::vector<CollisionProperty*> ColliderList;
+typedef std::vector<ObstacleInfo> ObstacleList;
+typedef std::vector<Contact> ContactList;
+typedef std::vector<FloorContactShape*> FloorContactList;
+typedef std::vector<CellPosition> CellPositionList;
 
 struct MoveSegment
 {

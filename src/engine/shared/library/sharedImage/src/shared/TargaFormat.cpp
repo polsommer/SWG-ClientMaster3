@@ -88,10 +88,6 @@ namespace TargaFormatNamespace
 #pragma pack(pop)
 #endif
 
-	const uint ms_attributeMask       = BINARY2(0000,1111);
-	const uint ms_xOriginLocationMask = BINARY2(0001,0000);
-	const uint ms_yOriginLocationMask = BINARY2(0010,0000);
-
 	static bool _loadImage(AbstractFile *, Image **image, Image::PixelFormat format=Image::PF_nonStandard);
 
 	static void _readUncompressedColorMapped1(
@@ -224,7 +220,7 @@ bool TargaFormat::loadImage(const char *filename, Image **image) const
 
 	if (!image)
 	{
-		REPORT_LOG(true, ("TargaFormat::loadImage(): null image pointer\n"));
+		REPORT_LOG(true, ("TargaFormat::loadImage(): nullptr image pointer\n"));
 		return false;
 	}
 	*image            = 0;
@@ -257,7 +253,7 @@ bool TargaFormat::loadImageReformat(const char *filename, Image **image, Image::
 
 	if (!image)
 	{
-		REPORT_LOG(true, ("TargaFormat::loadImage(): null image pointer\n"));
+		REPORT_LOG(true, ("TargaFormat::loadImage(): nullptr image pointer\n"));
 		return false;
 	}
 	*image            = 0;
@@ -1197,8 +1193,8 @@ bool TargaFormat::saveImage(const Image &image, const char *filename)
 	numWritten = fwrite(&header, sizeof(header), 1, f);
    if (numWritten != 1)
    {
+	    fclose(f);
 		DEBUG_WARNING(true, ("Targa header not written successfully.\n"));
-		fclose(f);
       return false;
    }
 	//------------------------------------------
@@ -1231,6 +1227,7 @@ bool TargaFormat::saveImage(const Image &image, const char *filename)
 			numWritten = fwrite(destPixelsLine, destYStride, 1, f);
 			if (numWritten!=1)
 			{
+				fclose(f);
 				DEBUG_WARNING(true, ("Targa image data not written successfully for %s\n", filename));
 				return false;
 			}
@@ -1245,6 +1242,7 @@ bool TargaFormat::saveImage(const Image &image, const char *filename)
 			numWritten = fwrite(piter, sourceYStride, 1, f);
 			if (numWritten!=1)
 			{
+				fclose(f);
 				DEBUG_WARNING(true, ("Targa image data not written successfully for %s\n", filename));
 				return false;
 			}
@@ -1268,7 +1266,8 @@ bool TargaFormat::saveImage(const Image &image, const char *filename)
 	numWritten = fwrite(&footer, sizeof(footer), 1, f);
    if (numWritten != 1)
    {
-		DEBUG_WARNING(true, ("Targa footer not written successfully for %s\n", filename));
+	  fclose(f);
+	  DEBUG_WARNING(true, ("Targa footer not written successfully for %s\n", filename));
       return false;
    }
 	//------------------------------------------

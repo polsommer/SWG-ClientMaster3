@@ -1,1 +1,1 @@
-#include "../../../src/shared/core/GuildRankDataTable.h"
+#include "../../src/shared/core/GuildRankDataTable.h"

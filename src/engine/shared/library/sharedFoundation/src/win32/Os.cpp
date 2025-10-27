@@ -18,6 +18,7 @@
 #include "sharedFoundation/Clock.h"
 #include "sharedFoundation/ConfigFile.h"
 #include "sharedFoundation/ConfigSharedFoundation.h"
+#include "sharedFoundation/CrashReportInformation.h"
 #include "sharedFoundation/ExitChain.h"
 #include "sharedFoundation/FloatingPointUnit.h"
 #include "sharedFoundation/Production.h"
@@ -29,7 +30,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <windows.h>
 
 // ======================================================================
 
@@ -79,6 +79,7 @@ namespace OsNamespace
 	Os::IMEHookFunction                           ms_IMEHookFunction;
 	Os::QueueKeyDownHookFunction                  ms_queueKeyDownHookFunction;
 
+	int                                           ms_processorCount;
 	int                                           ms_debugKeyIndex;
 	int                                           ms_SystemMouseCursorPositionX;
 	int                                           ms_SystemMouseCursorPositionY;
@@ -214,63 +215,146 @@ void Os::remove()
 
 void Os::installCommon()
 {
-	DEBUG_FATAL(ms_installed, ("already installed"));
+    DEBUG_FATAL(ms_installed, ("already installed"));
 
-	ExitChain::add(Os::remove, "Os::remove", 0, true);
+    ExitChain::add(Os::remove, "Os::remove", 0, true);
 
-	// get startup folder.
-	GetCurrentDirectory(sizeof(ms_programStartupDirectory), ms_programStartupDirectory);
+    // Get startup folder
+    GetCurrentDirectory(std::size(ms_programStartupDirectory), ms_programStartupDirectory);
 
-	ms_numberOfUpdates = 0;
-	ms_mainThreadId = GetCurrentThreadId();
-	setThreadName(ms_mainThreadId, "Main");
-
-#if PRODUCTION == 0
-	ms_allowPopupDebugMenu = ConfigFile::getKeyBool("SharedFoundation", "allowPopupDebugMenu", false);
-#endif
-
-	// get the name of the executable
-	DWORD result = GetModuleFileName(NULL, ms_programName, sizeof(ms_programName));
-	FATAL(result == 0, ("GetModuleFileName failed"));
-
-	// get the file name without the path
-	ms_shortProgramName = strrchr(ms_programName, '\\');
-	if (ms_shortProgramName)
-		++ms_shortProgramName;
-	else
-		ms_shortProgramName = ms_programName;
-
-	// switch into single-precision floating point mode
-	FloatingPointUnit::install();
-
-	if (!GetKeyboardLayoutName(ms_keyboardLayout))
-		ms_keyboardLayout[0] = '\0';
-
-	ms_installed = true;
+    ms_numberOfUpdates = 0;
+    ms_mainThreadId = GetCurrentThreadId();
+    setThreadName(ms_mainThreadId, "Main");
 
 #if PRODUCTION == 0
-	DebugFlags::registerFlag(ms_validateGuardPatterns, "SharedFoundation", "validateGuardPatterns");
-	DebugFlags::registerFlag(ms_validateFreePatterns, "SharedFoundation", "validateFreePatterns");
+    ms_allowPopupDebugMenu = ConfigFile::getKeyBool("SharedFoundation", "allowPopupDebugMenu", false);
 #endif
 
-	switch (ConfigSharedFoundation::getProcessPriority())
-	{
-		case -1:
-			setProcessPriority(P_low);
-			break;
+    // Get the name of the executable
+    DWORD result = GetModuleFileName(nullptr, ms_programName, std::size(ms_programName));
+    FATAL(result == 0, ("GetModuleFileName failed"));
 
-		case 0:
-			setProcessPriority(P_normal);
-			break;
+    // Get the file name without the path
+    ms_shortProgramName = std::strrchr(ms_programName, '\\');
+    if (ms_shortProgramName)
+    {
+        ++ms_shortProgramName;
+    }
+    else
+    {
+        ms_shortProgramName = ms_programName;
+    }
 
-		case 1:
-			setProcessPriority(P_high);
-			break;
+    // Switch into single-precision floating point mode
+    FloatingPointUnit::install();
 
-		default:
-			DEBUG_WARNING(true, ("invalid process priority, %d should be betweein [-1..1]", ConfigSharedFoundation::getProcessPriority()));
-			break;
-	}
+    // Get the amount of memory
+    MEMORYSTATUSEX memoryStatus;
+    memoryStatus.dwLength = sizeof(memoryStatus);
+    if (GlobalMemoryStatusEx(&memoryStatus))
+    {
+        CrashReportInformation::addStaticText("Ram: %lldmb\n", memoryStatus.ullTotalPhys / (1024 * 1024));
+    }
+    else
+    {
+        CrashReportInformation::addStaticText("Failed to get memory status\n");
+    }
+
+    // Log the OS information
+    {
+        OSVERSIONINFO versionInfo = { sizeof(OSVERSIONINFO) };
+        if (GetVersionEx(&versionInfo))
+        {
+            CrashReportInformation::addStaticText("Os1: %d.%d.%d\n", versionInfo.dwMajorVersion, versionInfo.dwMinorVersion, versionInfo.dwBuildNumber);
+
+            const char* os = "Unknown";
+            if (versionInfo.dwMajorVersion == 4 && versionInfo.dwMinorVersion == 10)
+            {
+                os = "Windows 98";
+            }
+            else if (versionInfo.dwMajorVersion == 4 && versionInfo.dwMinorVersion == 90)
+            {
+                os = "Windows Me";
+            }
+            else if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0)
+            {
+                os = "Windows 2000";
+            }
+            else if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 1)
+            {
+                os = "Windows XP";
+            }
+            else if (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 2)
+            {
+                os = "Windows Server 2003";
+            }
+            else if (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion == 0)
+            {
+                os = "Windows Vista";
+            }
+
+            CrashReportInformation::addStaticText("Os2: %s %s\n", os, versionInfo.szCSDVersion);
+        }
+    }
+
+    // Get the number of processors
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    ms_processorCount = static_cast<int>(si.dwNumberOfProcessors);
+    REPORT_LOG(ConfigSharedFoundation::getVerboseHardwareLogging(), ("Processor Count: %i\n", ms_processorCount));
+    CrashReportInformation::addStaticText("NumProc: %d\n", ms_processorCount);
+
+    // Log processor speed
+    {
+        HKEY key;
+        LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_EXECUTE, &key);
+
+        if (result == ERROR_SUCCESS)
+        {
+            DWORD data;
+            DWORD type = REG_DWORD;
+            DWORD size = sizeof(data);
+            result = RegQueryValueEx(key, "~MHz", nullptr, &type, reinterpret_cast<LPBYTE>(&data), &size);
+            if ((result == ERROR_SUCCESS) && (size > 0))
+            {
+                REPORT_LOG(ConfigSharedFoundation::getVerboseHardwareLogging(), ("Processor Speed: %i MHz\n", data));
+            }
+
+            RegCloseKey(key);
+        }
+    }
+
+    // Get keyboard layout
+    if (!GetKeyboardLayoutName(ms_keyboardLayout))
+    {
+        ms_keyboardLayout[0] = '\0';
+    }
+
+    ms_installed = true;
+
+#if PRODUCTION == 0
+    DebugFlags::registerFlag(ms_validateGuardPatterns, "SharedFoundation", "validateGuardPatterns");
+    DebugFlags::registerFlag(ms_validateFreePatterns, "SharedFoundation", "validateFreePatterns");
+#endif
+
+    switch (ConfigSharedFoundation::getProcessPriority())
+    {
+        case -1:
+            setProcessPriority(P_low);
+            break;
+
+        case 0:
+            setProcessPriority(P_normal);
+            break;
+
+        case 1:
+            setProcessPriority(P_high);
+            break;
+
+        default:
+            DEBUG_WARNING(true, ("invalid process priority, %d should be between [-1..1]", ConfigSharedFoundation::getProcessPriority()));
+            break;
+    }
 }
 
 // ======================================================================
@@ -394,6 +478,30 @@ bool Os::wasFocusLost()
 }
 
 // ----------------------------------------------------------------------
+/**
+ * Return a flag indicating whether we are running a multiprocessor machine or not.
+ *
+ * @return True if the machine has more than one processor, false if not.
+ */
+
+bool Os::isMultiprocessor()
+{
+	return ms_processorCount > 1;
+}
+
+// ----------------------------------------------------------------------
+/**
+ * Return the number of processors.
+ *
+ * @return The number of processors in the machine.
+ */
+
+int Os::getProcessorCount()
+{
+	return ms_processorCount;
+}
+
+// ----------------------------------------------------------------------
 
 bool Os::isMainThread()
 {
@@ -422,7 +530,7 @@ void Os::abort()
 	if (!isMainThread())
 	{
 		ms_threadDied = true;
-		ExitThread(1);
+		return;
 	}
 
 	if (!ms_shouldReturnFromAbort)
@@ -531,7 +639,7 @@ void Os::setIMEHookFunction(IMEHookFunction imeHookFunction)
 	ms_IMEHookFunction = imeHookFunction;
 
 	// do not install the hotkey fix if the debugger is present.
-	if (ms_IMEHookFunction) //&& !IsDebuggerPresent() removed
+	if (ms_IMEHookFunction && !OsNamespace::IsDebuggerPresent()) 
 	{
 		RegisterHotKey(ms_window, ms_hotKeyId, 0, VK_F5);
 	}
@@ -668,24 +776,37 @@ void Os::checkChildThreads()
 
 void Os::setProcessPriority(Priority priority)
 {
-	switch (priority)
-	{
-		case P_low:
-			SetPriorityClass(GetCurrentProcess(),  IDLE_PRIORITY_CLASS);
-			break;
+    DWORD priorityClass;
 
-		case P_normal:
-			SetPriorityClass(GetCurrentProcess(),  NORMAL_PRIORITY_CLASS);
-			break;
+    switch (priority)
+    {
+        case P_low:
+            priorityClass = IDLE_PRIORITY_CLASS;
+            break;
 
-		case P_high:
-			SetPriorityClass(GetCurrentProcess(),  HIGH_PRIORITY_CLASS);
-			break;
+        case P_normal:
+            priorityClass = NORMAL_PRIORITY_CLASS;
+            break;
 
-		default:
-			DEBUG_FATAL(true, ("Invalid priority"));
-			break;
-	}
+        case P_high:
+            priorityClass = HIGH_PRIORITY_CLASS;
+            break;
+
+        default:
+            std::cerr << "Invalid priority: " << priority << std::endl;
+            DEBUG_FATAL(true, ("Invalid priority"));
+            return;
+    }
+
+    if (!SetPriorityClass(GetCurrentProcess(), priorityClass))
+    {
+        std::cerr << "Failed to set process priority: " << GetLastError() << std::endl;
+        DEBUG_FATAL(true, ("Failed to set process priority"));
+    }
+    else
+    {
+        std::cout << "Process priority set to " << priority << std::endl;
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -807,7 +928,7 @@ bool Os::handleDebugMenu()
 
 		// create the menu
 		HMENU menu = CreatePopupMenu();
-		const char *lastSection = "";
+		const char *lastSection.clear();
 		HMENU lastSubmenu = NULL;
 		int index = 1;
 		DebugFlags::FlagVector::const_iterator end = DebugFlags::ms_flagsSortedByName.end();
@@ -1332,34 +1453,34 @@ void Os::sleep(int ms)
  * Max 9 characters
  *
  */
-
 void Os::setThreadName(ThreadId threadID, const char* threadName)
 {
-	//used to give threads reasonable names in the MSDev debugger,
-	//see http://www.vcdj.com/upload/free/features/vcdj/2001/03mar01/et0103/et0103.asp for more info
-	struct ThreadNameInfo
-	{
-		DWORD dwType;
-		LPCSTR szName;							
-		DWORD dwThreadID;
-		DWORD dwFlags;
-	};
+    // Used to give threads reasonable names in the MSDev debugger,
+    // see http://www.vcdj.com/upload/free/features/vcdj/2001/03mar01/et0103/et0103.asp for more info
+    struct ThreadNameInfo
+    {
+        DWORD dwType;
+        LPCSTR szName;
+        DWORD dwThreadID;
+        DWORD dwFlags;
+    };
 
-	ThreadNameInfo info;
-	info.dwType = 0x1000;       //must be this value
-	info.szName = threadName;
-	info.dwThreadID = threadID;
-	info.dwFlags = 0;           //unused, reserved for future use
+    ThreadNameInfo info;
+    info.dwType = 0x1000; // must be this value
+    info.szName = threadName;
+    info.dwThreadID = threadID;
+    info.dwFlags = 0; // unused, reserved for future use
 
-	__try
-	{
-		// use the magic exception number MS picked for this purpose
-		RaiseException(0x406D1388, 0, sizeof(info) / sizeof(DWORD), reinterpret_cast<DWORD *>(&info));
-	}
-	__except (EXCEPTION_CONTINUE_EXECUTION)
-	{
-	}
+    __try
+    {
+        // Use the magic exception number MS picked for this purpose
+        RaiseException(0x406D1388, 0, sizeof(info) / sizeof(DWORD_PTR), reinterpret_cast<DWORD_PTR*>(&info));
+    }
+    __except (EXCEPTION_CONTINUE_EXECUTION)
+    {
+    }
 }
+
 
 // ----------------------------------------------------------------------
 /**
@@ -1422,7 +1543,7 @@ void Os::buildRelativePath(const char *baseDirectory, const char *targetPathname
 	}
 
 	//-- for each directory in base directory not matched, insert a "backup directory" string
-	relativePath = "";
+	relativePath.clear();
 	{
 		for (size_t i = matchCount; i < workingBaseDirectoryLength; ++i)
 			if (workingBaseDirectory[i] == directorySeparator)
@@ -1513,7 +1634,6 @@ bool Os::getUserName(char *buffer, int &bufferSize)
 	DWORD windowsBufferSize = static_cast<DWORD>(bufferSize);
 	buffer[0] = '\0';
 	bool result = GetUserName(buffer, &windowsBufferSize) == TRUE;
-	bufferSize = static_cast<int>(bufferSize);
 	return result;
 }
 
@@ -1536,7 +1656,10 @@ bool Os::isFocused()
 bool Os::launchBrowser(std::string const & website)
 {
 	std::string URL("http://");
-	URL=website;
+	if (strncmp(URL.c_str(), website.c_str(),7)!=0)
+		URL+=website;
+	else
+		URL=website;
 	int result = reinterpret_cast<int>(ShellExecute(NULL, "open", URL.c_str(), NULL, NULL, SW_SHOWNORMAL));
 	return (result > 32);
 }

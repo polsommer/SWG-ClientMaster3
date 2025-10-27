@@ -13,7 +13,7 @@
 
 #include "sharedMath/Vector.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Timer.h"
+#include "sharedFoundation/Timer.h"
 #include <vector>
 //-----------------------------------------------------------------------
 

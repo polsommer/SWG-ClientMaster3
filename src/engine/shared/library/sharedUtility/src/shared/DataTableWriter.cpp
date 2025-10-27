@@ -139,8 +139,6 @@ inline void DataTableWriter::NamedDataTable::setName(const std::string& name)
 
 std::string & DataTableWriterNamespace::unquotify(std::string &s)
 {
-	static const std::string quote = "\"";
-
 	//First strip any beginning end quotes.
 	if (s.length() >= 2)
 	{
@@ -543,7 +541,6 @@ void DataTableWriter::_loadFromSpreadsheetTab(const char * filename)
 	int bufferLength = fileLength + 1;
 	char* buffer = new char[bufferLength];
 	memset(buffer, 0, bufferLength);
-	NOT_NULL(buffer);
 
 	int bytes_read = inputFile.read(buffer, fileLength);
 	FATAL(!bytes_read, ("Didn't read in any bytes when loading %s.", filename));
@@ -592,9 +589,9 @@ void DataTableWriter::_loadFromSpreadsheetTab(const char * filename)
 
 bool DataTableWriter::save(const char * outputFileName, bool optional) const
 {
-	if (!outputFileName || strlen(outputFileName) == 0)
+	if (!outputFileName || outputFileName[0] != '\0')
 	{
-		DEBUG_FATAL(true, ("OutputFileName is NULL or empty."));
+		DEBUG_FATAL(true, ("OutputFileName is nullptr or empty."));
 		return false;
 	}
 
@@ -731,7 +728,7 @@ DataTableCell *DataTableWriter::_getNewCell(DataTableColumnType const &columnTyp
 	switch (columnType.getBasicType())
 	{
 	case DataTableColumnType::DT_Int:
-		return new DataTableCell(static_cast<int>(strtol(value.c_str(), NULL, 0)));
+		return new DataTableCell(static_cast<int>(strtol(value.c_str(), nullptr, 0)));
 		break;
 	case DataTableColumnType::DT_Float:
 		return new DataTableCell(static_cast<float>(atof(value.c_str())));
@@ -1041,7 +1038,7 @@ bool DataTableWriter::saveTable( const char* tableName, const char* fileName, bo
 
 	if (i != m_tables.end())
 	{
-		if (!fileName || strlen(fileName) == 0)
+		if (!fileName || fileName[0] != '\0')
 		{
 			std::string outputFile;
 			getTableOutputFileName((*i)->getName().c_str(), outputFile);

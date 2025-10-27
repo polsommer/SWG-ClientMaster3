@@ -102,9 +102,9 @@ CompilerIntegerParam * SharedCreatureObjectTemplate::getCompilerIntegerParam(con
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_gender;
 		}
@@ -116,9 +116,9 @@ CompilerIntegerParam * SharedCreatureObjectTemplate::getCompilerIntegerParam(con
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_niche;
 		}
@@ -130,9 +130,9 @@ CompilerIntegerParam * SharedCreatureObjectTemplate::getCompilerIntegerParam(con
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_species;
 		}
@@ -144,9 +144,9 @@ CompilerIntegerParam * SharedCreatureObjectTemplate::getCompilerIntegerParam(con
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_race;
 		}
@@ -154,7 +154,7 @@ CompilerIntegerParam * SharedCreatureObjectTemplate::getCompilerIntegerParam(con
 	}
 	else
 		return SharedTangibleObjectTemplate::getCompilerIntegerParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedCreatureObjectTemplate::getCompilerIntegerParam
 
 FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool deepCheck, int index)
@@ -165,9 +165,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, index))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_acceleration[index];
 		}
@@ -179,9 +179,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, index))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_speed[index];
 		}
@@ -193,9 +193,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, index))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_turnRate[index];
 		}
@@ -207,9 +207,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_slopeModAngle;
 		}
@@ -221,9 +221,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_slopeModPercent;
 		}
@@ -235,9 +235,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_waterModPercent;
 		}
@@ -249,9 +249,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_stepHeight;
 		}
@@ -263,9 +263,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_collisionHeight;
 		}
@@ -277,9 +277,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_collisionRadius;
 		}
@@ -291,9 +291,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_swimHeight;
 		}
@@ -305,9 +305,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_warpTolerance;
 		}
@@ -319,9 +319,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_collisionOffsetX;
 		}
@@ -333,9 +333,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_collisionOffsetZ;
 		}
@@ -347,9 +347,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_collisionLength;
 		}
@@ -361,9 +361,9 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_cameraHeight;
 		}
@@ -371,7 +371,7 @@ FloatParam * SharedCreatureObjectTemplate::getFloatParam(const char *name, bool 
 	}
 	else
 		return SharedTangibleObjectTemplate::getFloatParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedCreatureObjectTemplate::getFloatParam
 
 BoolParam * SharedCreatureObjectTemplate::getBoolParam(const char *name, bool deepCheck, int index)
@@ -382,9 +382,9 @@ BoolParam * SharedCreatureObjectTemplate::getBoolParam(const char *name, bool de
 		{
 			if (deepCheck && !isParamLoaded(name, false, index))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_postureAlignToTerrain[index];
 		}
@@ -392,7 +392,7 @@ BoolParam * SharedCreatureObjectTemplate::getBoolParam(const char *name, bool de
 	}
 	else
 		return SharedTangibleObjectTemplate::getBoolParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedCreatureObjectTemplate::getBoolParam
 
 StringParam * SharedCreatureObjectTemplate::getStringParam(const char *name, bool deepCheck, int index)
@@ -403,9 +403,9 @@ StringParam * SharedCreatureObjectTemplate::getStringParam(const char *name, boo
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_animationMapFilename;
 		}
@@ -417,9 +417,9 @@ StringParam * SharedCreatureObjectTemplate::getStringParam(const char *name, boo
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_movementDatatable;
 		}
@@ -427,7 +427,7 @@ StringParam * SharedCreatureObjectTemplate::getStringParam(const char *name, boo
 	}
 	else
 		return SharedTangibleObjectTemplate::getStringParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedCreatureObjectTemplate::getStringParam
 
 StringIdParam * SharedCreatureObjectTemplate::getStringIdParam(const char *name, bool deepCheck, int index)
@@ -527,12 +527,12 @@ char paramName[MAX_NAME_SIZE];
 		file.read_string(baseFilename);
 		file.exitChunk();
 		const ObjectTemplate *base = ObjectTemplateList::fetch(baseFilename);
-		DEBUG_WARNING(base == NULL, ("was unable to load base template %s", baseFilename.c_str()));
-		if (m_baseData == base && base != NULL)
+		DEBUG_WARNING(base == nullptr, ("was unable to load base template %s", baseFilename.c_str()));
+		if (m_baseData == base && base != nullptr)
 			base->releaseReference();
 		else
 		{
-			if (m_baseData != NULL)
+			if (m_baseData != nullptr)
 				m_baseData->releaseReference();
 			m_baseData = base;
 		}

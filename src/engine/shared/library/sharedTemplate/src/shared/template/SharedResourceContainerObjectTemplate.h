@@ -14,7 +14,7 @@
 #define _INCLUDED_SharedResourceContainerObjectTemplate_H
 
 #include "SharedTangibleObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 

@@ -17,6 +17,9 @@
 
 #include "sharedFoundation/CrcLowerString.h"
 
+#include <algorithm>
+#include <cstdio>
+
 //-----------------------------------------------------------------------
 
 namespace VolumeContainerNamespace
@@ -33,7 +36,7 @@ namespace VolumeContainerNamespace
 				return parent->getVolumeContainerProperty();
 			}
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	const VolumeContainer* getVolumeContainerParent(const VolumeContainer& self)
@@ -48,7 +51,7 @@ namespace VolumeContainerNamespace
 				return parent->getVolumeContainerProperty();
 			}
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	const unsigned int serverHolocronCrc = CrcLowerString::calculateCrc("object/player_quest/pgc_quest_holocron.iff");
@@ -289,7 +292,7 @@ int VolumeContainer::recalculateVolume()
 	if (volumeContainer)
 		IGNORE_RETURN (volumeContainer->recalculateVolume ());
 
-	WARNING_STRICT_FATAL(m_totalVolume > 0 && m_currentVolume > m_totalVolume, ("Recalculate Volume ended up being greater than our capacity"));
+	DEBUG_WARNING(m_totalVolume > 0 && m_currentVolume > m_totalVolume, ("Recalculate Volume ended up being greater than our capacity"));
 	return m_currentVolume;
 }
 

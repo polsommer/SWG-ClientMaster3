@@ -1,1 +1,1 @@
-#include "../../../src/shared/core/SocialsManager.h"
+#include "../../src/shared/core/SocialsManager.h"

@@ -12,7 +12,11 @@
 
 #include "Unicode.h"
 
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 
 //======================================================================
 
@@ -273,7 +277,7 @@ namespace ShipChassisSlotTypeNamespace
 		static_cast<int>(ShipComponentType::SCT_weapon),           // SCST_weapon_99
 	};
 
-	typedef stdhash_map<std::string, ShipChassisSlotType::Type>::fwd SlotNameTypeMap;
+	typedef std::unordered_map<std::string, ShipChassisSlotType::Type> SlotNameTypeMap;
 	SlotNameTypeMap s_slotNameTypeMap;
 
 	bool s_installed = false;

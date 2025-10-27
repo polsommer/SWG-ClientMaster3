@@ -1,2 +1,2 @@
-#include "../../../src/shared/objectTemplate/SharedBattlefieldMarkerObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedBattlefieldMarkerObjectTemplate.h"
 

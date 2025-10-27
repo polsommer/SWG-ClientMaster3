@@ -10,8 +10,8 @@
 #include "StringId.h"
 #include "Unicode.h"
 #include "localizationArchive/StringIdArchive.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
+#include "sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkIdArchive.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 #include "unicodeArchive/UnicodeArchive.h"
 

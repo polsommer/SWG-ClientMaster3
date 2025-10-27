@@ -41,7 +41,7 @@ static dvoid *mallocHook(dvoid *, size_t size)
 
 static dvoid *reallocHook(dvoid *, dvoid *memptr, size_t newsize)
 {
-	return reinterpret_cast<dvoid *>(MemoryManager::reallocate(memptr, newsize));
+	return reinterpret_cast<dvoid *>(realloc(memptr, newsize));
 }
 
 // ----------------------------------------------------------------------
@@ -56,11 +56,11 @@ static void freeHook(dvoid *, dvoid *memptr)
 
 DB::OCISession::OCISession(DB::OCIServer *server) :
 		m_server(server),
-		envhp(NULL),
-		errhp(NULL),
-		srvhp(NULL),
-		sesp(NULL),
-		svchp(NULL),
+		envhp(nullptr),
+		errhp(nullptr),
+		srvhp(nullptr),
+		sesp(nullptr),
+		svchp(nullptr),
 		autoCommitMode(true),
 		m_resetTime(server->getReconnectTime()==0 ?	0 : time(0) + server->getReconnectTime()),
 		m_okToFetch(true)
@@ -81,26 +81,6 @@ bool DB::OCISession::connect()
 	// so that each session can be used by a different thread concurrently.
 
 	sword result=OCI_ERROR;
-	if (m_server->getUseMemoryManager())
-	{
-		result = OCIEnvCreate(&envhp, // OCIEnv        **envhpp,
-							  OCI_THREADED | OCI_OBJECT, //ub4           mode, //TODO:  do we have to use threaded mode?
-							  0, // CONST dvoid   *ctxp,
-							  &mallocHook, // CONST dvoid   *(*malocfp)
-							  //           (dvoid *ctxp,
-							  //               size_t size),
-							  &reallocHook, // CONST dvoid   *(*ralocfp)
-							  //            (dvoid *ctxp,
-							  //             dvoid *memptr,
-							  //             size_t newsize),
-							  &freeHook, // CONST void    (*mfreefp)
-							  //            (dvoid *ctxp,
-							  //             dvoid *memptr))
-							  0, //size_t    xtramemsz,
-							  0 ); //dvoid     **usrmempp );
-	}
-	else
-	{
 		result = OCIEnvCreate(&envhp, // OCIEnv        **envhpp,
 							  OCI_THREADED | OCI_OBJECT, //ub4           mode, //TODO:  do we have to use threaded mode?
 							  0, // CONST dvoid   *ctxp,
@@ -117,7 +97,6 @@ bool DB::OCISession::connect()
 							  0, //size_t    xtramemsz,
 							  0 ); //dvoid     **usrmempp );
 		
-	}
 	FATAL(result != OCI_SUCCESS,("OciEnvCreate failed with error code %hd",result));
 	
 	// Create error handle.
@@ -235,11 +214,11 @@ bool DB::OCISession::disconnect()
 		success = false;
 	}
 
-	svchp = NULL;
-	sesp = NULL;
-	srvhp = NULL;
-	errhp = NULL;
-	envhp = NULL;
+	svchp = nullptr;
+	sesp = nullptr;
+	srvhp = nullptr;
+	errhp = nullptr;
+	envhp = nullptr;
 
 	connectLock.leave();
 	return success;

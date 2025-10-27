@@ -18,8 +18,8 @@
 
 namespace WatchedByListNamespace
 {
-	typedef stdvector<BaseWatcher *>::fwd List;
-	typedef stdvector<List *>::fwd ListList;
+	typedef std::vector<BaseWatcher *> List;
+	typedef std::vector<List *> ListList;
 
 	ListList ms_listList;
 
@@ -82,7 +82,7 @@ void WatchedByList::install()
 /**
  * Destroy a WatchedByList.
  *
- * All watchers currently watching the owner of this object will be reset to NULL.
+ * All watchers currently watching the owner of this object will be reset to nullptr.
  */
 
 WatchedByList::~WatchedByList()
@@ -92,7 +92,7 @@ WatchedByList::~WatchedByList()
 	if (m_list)
 	{
 		deleteList(m_list);
-		m_list = NULL;
+		m_list = nullptr;
 	}
 }
 

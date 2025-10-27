@@ -7,7 +7,11 @@
 #include "sharedMessageDispatch/Receiver.h"
 
 #include <set>
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 
 namespace MessageDispatch {
 
@@ -15,8 +19,8 @@ MessageManager MessageManager::ms_instance;
 
 struct MessageManager::Data
 {
-	std::hash_map<unsigned long int, std::set<Receiver *> > receivers;
-	std::hash_map<unsigned long int, std::set<void (*)(const Emitter &, const MessageBase &)> > staticCallbacks;
+	std::unordered_map<unsigned long int, std::set<Receiver *> > receivers;
+	std::unordered_map<unsigned long int, std::set<void (*)(const Emitter &, const MessageBase &)> > staticCallbacks;
 };
 
 //---------------------------------------------------------------------
@@ -72,7 +76,7 @@ void MessageManager::addReceiver(Receiver & target, const MessageBase & source)
 
 void MessageManager::addReceiver(Receiver & target, const unsigned long int messageType)
 {
-	std::hash_map<unsigned long int, std::set<Receiver *> >::iterator i = data->receivers.find(messageType);
+	std::unordered_map<unsigned long int, std::set<Receiver *> >::iterator i = data->receivers.find(messageType);
 	if(i != data->receivers.end())
 	{
 		target.setHasTargets(true);
@@ -92,7 +96,7 @@ void MessageManager::addReceiver(Receiver & target, const unsigned long int mess
 
 void MessageManager::addStaticCallback(void (*callback)(const Emitter &, const MessageBase &), const unsigned long int messageType)
 {
-	std::hash_map<unsigned long int, std::set<void (*)(const Emitter &, const MessageBase &)> >::iterator f = data->staticCallbacks.find(messageType);
+	std::unordered_map<unsigned long int, std::set<void (*)(const Emitter &, const MessageBase &)> >::iterator f = data->staticCallbacks.find(messageType);
 	if(f != data->staticCallbacks.end())
 	{
 		std::set<void (*)(const Emitter &, const MessageBase &)> & targets = f->second;
@@ -121,7 +125,7 @@ void MessageManager::addStaticCallback(void (*callback)(const Emitter &, const M
 void MessageManager::emitMessage(const Emitter & emitter, const MessageBase & message) const
 {
 	const unsigned long int messageType = message.getType();
-	std::hash_map<unsigned long int, std::set<Receiver *> >::const_iterator i = data->receivers.find(messageType);
+	std::unordered_map<unsigned long int, std::set<Receiver *> >::const_iterator i = data->receivers.find(messageType);
 	if(i != data->receivers.end())
 	{
 		const std::set<Receiver *> targets = (*i).second;
@@ -136,7 +140,7 @@ void MessageManager::emitMessage(const Emitter & emitter, const MessageBase & me
 		}
 	}
 
-	std::hash_map<unsigned long int, std::set<void (*)(const Emitter &, const MessageBase &)> >::iterator f = data->staticCallbacks.find(messageType);
+	std::unordered_map<unsigned long int, std::set<void (*)(const Emitter &, const MessageBase &)> >::iterator f = data->staticCallbacks.find(messageType);
 	if(f != data->staticCallbacks.end())
 	{
 		const std::set<void (*)(const Emitter &, const MessageBase &)> targets = f->second;
@@ -160,12 +164,12 @@ void MessageManager::receiverDestroyed(const Receiver & target)
 		return;
 	}
 	// find receiver
-	std::hash_map<unsigned long int, std::set<Receiver *> >::iterator i;
+	std::unordered_map<unsigned long int, std::set<Receiver *> >::iterator i;
 	for(i = data->receivers.begin(); i != data->receivers.end(); ++i)
 	{
 		std::set<Receiver *> & targets = (*i).second;
 		// const cast to satisfy STL semantics, target remains unchanged
-		std::set<Receiver *>::const_iterator j = targets.find(const_cast<Receiver *>(&target));
+		std::set<Receiver *>::iterator j = targets.find(const_cast<Receiver *>(&target));
 		if(j != targets.end())
 		{
 			targets.erase(j);
@@ -200,7 +204,7 @@ void MessageManager::removeReceiver(const Receiver & target, const char * const 
 
 void MessageManager::removeReceiver(const Receiver & target, const unsigned long int messageType)
 {
-	std::hash_map<unsigned long int, std::set<Receiver *> >::iterator i = data->receivers.find(messageType);
+	std::unordered_map<unsigned long int, std::set<Receiver *> >::iterator i = data->receivers.find(messageType);
 	if(i != data->receivers.end())
 	{
 		std::set<Receiver *> & targets = (*i).second;

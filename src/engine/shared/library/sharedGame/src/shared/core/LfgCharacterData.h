@@ -9,9 +9,9 @@
 #ifndef INCLUDED_LfgCharacterData_H
 #define INCLUDED_LfgCharacterData_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/BitArray.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
-#include "../../../../../../engine/shared/library/sharedGame/include/public/sharedGame/SharedCreatureObjectTemplate.h"
+#include "sharedFoundation/BitArray.h"
+#include "sharedFoundation/NetworkId.h"
+#include "sharedGame/SharedCreatureObjectTemplate.h"
 
 // ======================================================================
 
@@ -53,7 +53,7 @@ public:
 	static LfgCharacterData::Profession convertSkillTemplateToProfession(const std::string & skillTemplate);
 	static std::string getProfessionDebugString(LfgCharacterData::Profession profession);
 	static Unicode::String const & getProfessionDisplayString(LfgCharacterData::Profession profession);
-	static stdmap<std::string, int>::fwd const & calculateStatistics(stdmap<NetworkId, LfgCharacterData>::fwd const & connectedCharacterLfgData);
+	static std::map<std::string, int> const & calculateStatistics(std::map<NetworkId, LfgCharacterData> const & connectedCharacterLfgData);
 
 	std::string getDebugString() const;
 

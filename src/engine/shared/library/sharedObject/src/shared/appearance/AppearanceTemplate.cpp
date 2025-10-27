@@ -36,6 +36,7 @@
 namespace AppearanceTemplateNamespace
 {
 	const Tag TAG_APPR = TAG (A,P,P,R);
+	const Tag TAG_DTLA = TAG (D,T,L,A);
 	const Tag TAG_HPTS = TAG (H,P,T,S);
 	const Tag TAG_HPNT = TAG (H,P,N,T);
 	const Tag TAG_FLOR = TAG (F,L,O,R);
@@ -97,14 +98,14 @@ AppearanceTemplate::PreloadManager::~PreloadManager ()
 AppearanceTemplate::AppearanceTemplate(const char *newName)
 :	m_referenceCount(0),
 	m_crcName(new CrcLowerString(newName)),
-	m_extent(NULL),
-	m_collisionExtent(NULL),
-	m_hardpoints(NULL),
-	m_floorName(NULL),
+	m_extent(nullptr),
+	m_collisionExtent(nullptr),
+	m_hardpoints(nullptr),
+	m_floorName(nullptr),
 	m_preloadManager (0)
 {
 	//-- Save info on most recently constructed appearance template.
-	IGNORE_RETURN(snprintf(ms_crashReportInfo, sizeof(ms_crashReportInfo) - 1, "AppearanceTemplate: %s\n", newName ? newName : "<NULL>"));
+	IGNORE_RETURN(snprintf(ms_crashReportInfo, sizeof(ms_crashReportInfo) - 1, "AppearanceTemplate: %s\n", newName ? newName : "<nullptr>"));
 	ms_crashReportInfo[sizeof(ms_crashReportInfo) - 1] = '\0';
 }
 
@@ -118,10 +119,10 @@ AppearanceTemplate::~AppearanceTemplate(void)
 	delete m_crcName;
 
 	ExtentList::release(m_extent);
-	m_extent = NULL;
+	m_extent = nullptr;
 
 	ExtentList::release(m_collisionExtent);
-	m_collisionExtent = NULL;
+	m_collisionExtent = nullptr;
 
 	if (m_hardpoints)
 	{
@@ -144,6 +145,7 @@ AppearanceTemplate::~AppearanceTemplate(void)
 void AppearanceTemplate::install()
 {
 	AppearanceTemplateList::assignBinding(TAG_APPR, create);
+	AppearanceTemplateList::assignBinding(TAG_DTLA, createDtla);
 
 	ms_crashReportInfo[0] = '\0';
 	CrashReportInformation::addDynamicText(ms_crashReportInfo);
@@ -169,6 +171,17 @@ AppearanceTemplate *AppearanceTemplate::create(const char *newName, Iff *iff)
 }
 
 // ----------------------------------------------------------------------
+
+AppearanceTemplate *AppearanceTemplate::createDtla(const char *newName, Iff *iff)
+{
+	iff->enterForm(TAG_DTLA);
+	Tag version = iff->getCurrentName();
+	iff->enterForm(version);
+	return create(newName, iff);
+}
+
+// ----------------------------------------------------------------------
+
 /**
  * Create a unique Appearance for this AppearanceTemplate.
  * 
@@ -482,7 +495,7 @@ const CrcLowerString &AppearanceTemplate::getCrcName() const
 /**
  *Get the name of this AppearanceTemplate.
  *
- *This routine may return NULL.
+ *This routine may return nullptr.
  */
 
 const char *AppearanceTemplate::getName() const

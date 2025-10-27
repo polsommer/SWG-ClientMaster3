@@ -24,8 +24,8 @@
 
 typedef DataResourceList<ObjectTemplate>          ObjectTemplateListDataResourceList;
 
-template <> ObjectTemplateListDataResourceList::CreateDataResourceMap *ObjectTemplateListDataResourceList::ms_bindings = NULL;
-template <> ObjectTemplateListDataResourceList::LoadedDataResourceMap *ObjectTemplateListDataResourceList::ms_loaded = NULL;
+template <> ObjectTemplateListDataResourceList::CreateDataResourceMap *ObjectTemplateListDataResourceList::ms_bindings = nullptr;
+template <> ObjectTemplateListDataResourceList::LoadedDataResourceMap *ObjectTemplateListDataResourceList::ms_loaded = nullptr;
 
 namespace ObjectTemplateListNamespace
 {
@@ -194,7 +194,7 @@ void ObjectTemplateList::garbageCollect ()
 
 //----------------------------------------------------------------------
 
-void ObjectTemplateList::getAllTemplateNamesFromCrcStringTable(stdvector<const char *>::fwd & objectTemplateNames)
+void ObjectTemplateList::getAllTemplateNamesFromCrcStringTable(std::vector<const char *> & objectTemplateNames)
 {
 	ms_crcStringTable.getAllStrings(objectTemplateNames);
 }

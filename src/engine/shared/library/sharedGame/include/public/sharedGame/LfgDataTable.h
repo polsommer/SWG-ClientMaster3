@@ -1,1 +1,1 @@
-#include "../../../src/shared/core/LfgDataTable.h"
+#include "../../src/shared/core/LfgDataTable.h"

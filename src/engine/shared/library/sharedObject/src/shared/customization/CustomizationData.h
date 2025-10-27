@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
+#include "sharedFoundation/MemoryBlockManagerMacros.h"
 
 class CrcLowerString;
 class CustomizationVariable;
@@ -56,7 +56,7 @@ public:
 	typedef void (*ConstIteratorCallback)(const std::string &fullVariablePathName, const CustomizationVariable *customizationVariable, void *context);
 	typedef void (*IteratorCallback)(const std::string &fullVariablePathName, CustomizationVariable *customizationVariable, void *context);
 
-	typedef stdvector<byte>::fwd  ByteVector;
+	typedef std::vector<byte>  ByteVector;
 	
 public:
 
@@ -116,8 +116,8 @@ private:
 
 	struct ModificationCallbackData;
 
-	typedef stdmap<CustomizationData*, int>::fwd                       CustomizationDataIntMap;
-	typedef stdvector<ModificationCallbackData>::fwd                   ModificationCallbackDataVector;
+	typedef std::map<CustomizationData*, int>                       CustomizationDataIntMap;
+	typedef std::vector<ModificationCallbackData>                   ModificationCallbackDataVector;
 
 private:
 

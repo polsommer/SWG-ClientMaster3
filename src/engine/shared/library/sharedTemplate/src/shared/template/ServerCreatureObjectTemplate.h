@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerCreatureObjectTemplate_H
 
 #include "ServerTangibleObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -86,7 +86,7 @@ private:
 	FloatParam m_maxDrainModifier;		// //max drain rate in units/sec
 	FloatParam m_minFaucetModifier;		// //min regeneration rate in units/sec
 	FloatParam m_maxFaucetModifier;		// //max regeneration rate in units/sec
-	stdvector<StructParamOT *>::fwd m_attribMods;		// //(de)buffs the creature is created with
+	std::vector<StructParamOT *> m_attribMods;		// //(de)buffs the creature is created with
 	bool m_attribModsLoaded;
 	bool m_attribModsAppend;
 	CompilerIntegerParam m_shockWounds;		// //current shock wounds

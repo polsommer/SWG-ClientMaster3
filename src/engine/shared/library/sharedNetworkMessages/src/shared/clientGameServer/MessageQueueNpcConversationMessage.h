@@ -11,7 +11,7 @@
 #ifndef INCLUDED_MessageQueueNpcConversationMessage_H
 #define INCLUDED_MessageQueueNpcConversationMessage_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 class MemoryBlockManager;

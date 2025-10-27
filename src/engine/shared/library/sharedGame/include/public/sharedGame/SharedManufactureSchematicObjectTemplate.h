@@ -1,2 +1,2 @@
-#include "../../../src/shared/objectTemplate/SharedManufactureSchematicObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedManufactureSchematicObjectTemplate.h"
 

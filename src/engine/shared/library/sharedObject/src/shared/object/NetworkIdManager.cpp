@@ -10,7 +10,11 @@
 #include "sharedFoundation/NetworkId.h"
 #include "sharedObject/Object.h"
 
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 #include <string>
 
 //-----------------------------------------------------------------------

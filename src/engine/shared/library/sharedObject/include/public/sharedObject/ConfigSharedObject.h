@@ -1,1 +1,1 @@
-#include "../../../src/shared/core/ConfigSharedObject.h"
+#include "../../src/shared/core/ConfigSharedObject.h"

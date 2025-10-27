@@ -1,1 +1,1 @@
-#include "../../../src/shared/space/ShipComponentWeaponManager.h"
+#include "../../src/shared/space/ShipComponentWeaponManager.h"

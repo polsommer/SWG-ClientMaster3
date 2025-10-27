@@ -16,7 +16,7 @@ class XmlTreeNode;
 struct _xmlDoc;
 typedef struct _xmlDoc xmlDoc;
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
+#include "sharedFoundation/PersistentCrcString.h"
 #include <string>
 
 // ======================================================================

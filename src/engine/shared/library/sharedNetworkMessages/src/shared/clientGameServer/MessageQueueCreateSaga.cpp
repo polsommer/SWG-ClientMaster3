@@ -61,7 +61,6 @@ void MessageQueueCreateSaga::pack(const MessageQueue::Data* const data, Archive:
 MessageQueue::Data* MessageQueueCreateSaga::unpack(Archive::ReadIterator & source)
 {
 	MessageQueueCreateSaga* const msg = new MessageQueueCreateSaga();
-	NOT_NULL(msg);
 	
 	std::string questName;
 	std::string questDescription;
@@ -76,7 +75,6 @@ MessageQueue::Data* MessageQueueCreateSaga::unpack(Archive::ReadIterator & sourc
 
 	int numTasks;
 	int taskType, numParameters;
-	std::string parameter;
 	Archive::get(source, numTasks);
 	msg->setTotalTasks(numTasks);
 	for (int i = 0; i < numTasks; ++i)

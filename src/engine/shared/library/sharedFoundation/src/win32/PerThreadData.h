@@ -15,7 +15,7 @@
 
 class Gate;
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/ExitChain.h"
+#include "sharedFoundation/ExitChain.h"
 
 // ======================================================================
 

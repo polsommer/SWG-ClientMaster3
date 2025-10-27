@@ -1,1 +1,1 @@
-#include "../../../src/shared/objectTemplate/SharedJediManagerObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedJediManagerObjectTemplate.h"

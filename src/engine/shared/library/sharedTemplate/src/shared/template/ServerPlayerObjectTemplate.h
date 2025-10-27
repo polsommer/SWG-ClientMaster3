@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerPlayerObjectTemplate_H
 
 #include "ServerIntangibleObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 

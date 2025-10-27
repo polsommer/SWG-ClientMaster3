@@ -11,7 +11,7 @@
 #ifndef INCLUDED_MessageQueueCraftCustomization_H
 #define INCLUDED_MessageQueueCraftCustomization_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedGame/CraftingData.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 

@@ -54,7 +54,7 @@ ServerObjectTemplate::~ServerObjectTemplate()
 		for (iter = m_scripts.begin(); iter != m_scripts.end(); ++iter)
 		{
 			delete *iter;
-			*iter = NULL;
+			*iter = nullptr;
 		}
 		m_scripts.clear();
 	}
@@ -63,7 +63,7 @@ ServerObjectTemplate::~ServerObjectTemplate()
 		for (iter = m_visibleFlags.begin(); iter != m_visibleFlags.end(); ++iter)
 		{
 			delete *iter;
-			*iter = NULL;
+			*iter = nullptr;
 		}
 		m_visibleFlags.clear();
 	}
@@ -72,7 +72,7 @@ ServerObjectTemplate::~ServerObjectTemplate()
 		for (iter = m_deleteFlags.begin(); iter != m_deleteFlags.end(); ++iter)
 		{
 			delete *iter;
-			*iter = NULL;
+			*iter = nullptr;
 		}
 		m_deleteFlags.clear();
 	}
@@ -81,7 +81,7 @@ ServerObjectTemplate::~ServerObjectTemplate()
 		for (iter = m_moveFlags.begin(); iter != m_moveFlags.end(); ++iter)
 		{
 			delete *iter;
-			*iter = NULL;
+			*iter = nullptr;
 		}
 		m_moveFlags.clear();
 	}
@@ -90,7 +90,7 @@ ServerObjectTemplate::~ServerObjectTemplate()
 		for (iter = m_contents.begin(); iter != m_contents.end(); ++iter)
 		{
 			delete *iter;
-			*iter = NULL;
+			*iter = nullptr;
 		}
 		m_contents.clear();
 	}
@@ -99,7 +99,7 @@ ServerObjectTemplate::~ServerObjectTemplate()
 		for (iter = m_xpPoints.begin(); iter != m_xpPoints.end(); ++iter)
 		{
 			delete *iter;
-			*iter = NULL;
+			*iter = nullptr;
 		}
 		m_xpPoints.clear();
 	}
@@ -168,9 +168,9 @@ CompilerIntegerParam * ServerObjectTemplate::getCompilerIntegerParam(const char 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_volume;
 		}
@@ -218,9 +218,9 @@ CompilerIntegerParam * ServerObjectTemplate::getCompilerIntegerParam(const char 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_tintIndex;
 		}
@@ -228,7 +228,7 @@ CompilerIntegerParam * ServerObjectTemplate::getCompilerIntegerParam(const char 
 	}
 	else
 		return TpfTemplate::getCompilerIntegerParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::getCompilerIntegerParam
 
 FloatParam * ServerObjectTemplate::getFloatParam(const char *name, bool deepCheck, int index)
@@ -239,9 +239,9 @@ FloatParam * ServerObjectTemplate::getFloatParam(const char *name, bool deepChec
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_complexity;
 		}
@@ -253,9 +253,9 @@ FloatParam * ServerObjectTemplate::getFloatParam(const char *name, bool deepChec
 		{
 			if (deepCheck && !isParamLoaded(name, false, index))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_updateRanges[index];
 		}
@@ -263,7 +263,7 @@ FloatParam * ServerObjectTemplate::getFloatParam(const char *name, bool deepChec
 	}
 	else
 		return TpfTemplate::getFloatParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::getFloatParam
 
 BoolParam * ServerObjectTemplate::getBoolParam(const char *name, bool deepCheck, int index)
@@ -274,9 +274,9 @@ BoolParam * ServerObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_invulnerable;
 		}
@@ -288,9 +288,9 @@ BoolParam * ServerObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_persistByDefault;
 		}
@@ -302,9 +302,9 @@ BoolParam * ServerObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_persistContents;
 		}
@@ -312,7 +312,7 @@ BoolParam * ServerObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 	}
 	else
 		return TpfTemplate::getBoolParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::getBoolParam
 
 StringParam * ServerObjectTemplate::getStringParam(const char *name, bool deepCheck, int index)
@@ -323,9 +323,9 @@ StringParam * ServerObjectTemplate::getStringParam(const char *name, bool deepCh
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_sharedTemplate;
 		}
@@ -345,7 +345,7 @@ StringParam * ServerObjectTemplate::getStringParam(const char *name, bool deepCh
 	}
 	else
 		return TpfTemplate::getStringParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::getStringParam
 
 StringIdParam * ServerObjectTemplate::getStringIdParam(const char *name, bool deepCheck, int index)
@@ -366,9 +366,9 @@ DynamicVariableParam * ServerObjectTemplate::getDynamicVariableParam(const char 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getDynamicVariableParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_objvars;
 		}
@@ -376,7 +376,7 @@ DynamicVariableParam * ServerObjectTemplate::getDynamicVariableParam(const char 
 	}
 	else
 		return TpfTemplate::getDynamicVariableParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::getDynamicVariableParam
 
 StructParamOT * ServerObjectTemplate::getStructParamOT(const char *name, bool deepCheck, int index)
@@ -407,7 +407,7 @@ StructParamOT * ServerObjectTemplate::getStructParamOT(const char *name, bool de
 	}
 	else
 		return TpfTemplate::getStructParamOT(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::getStructParamOT
 
 TriggerVolumeParam * ServerObjectTemplate::getTriggerVolumeParam(const char *name, bool deepCheck, int index)
@@ -561,12 +561,12 @@ char paramName[MAX_NAME_SIZE];
 		file.read_string(baseFilename);
 		file.exitChunk();
 		const ObjectTemplate *base = ObjectTemplateList::fetch(baseFilename);
-		DEBUG_WARNING(base == NULL, ("was unable to load base template %s", baseFilename.c_str()));
-		if (m_baseData == base && base != NULL)
+		DEBUG_WARNING(base == nullptr, ("was unable to load base template %s", baseFilename.c_str()));
+		if (m_baseData == base && base != nullptr)
 			base->releaseReference();
 		else
 		{
-			if (m_baseData != NULL)
+			if (m_baseData != nullptr)
 				m_baseData->releaseReference();
 			m_baseData = base;
 		}
@@ -596,7 +596,7 @@ char paramName[MAX_NAME_SIZE];
 			for (iter = m_scripts.begin(); iter != m_scripts.end(); ++iter)
 			{
 				delete *iter;
-				*iter = NULL;
+				*iter = nullptr;
 			}
 			m_scripts.clear();
 			m_scriptsAppend = file.read_bool8();
@@ -619,7 +619,7 @@ char paramName[MAX_NAME_SIZE];
 			for (iter = m_visibleFlags.begin(); iter != m_visibleFlags.end(); ++iter)
 			{
 				delete *iter;
-				*iter = NULL;
+				*iter = nullptr;
 			}
 			m_visibleFlags.clear();
 			m_visibleFlagsAppend = file.read_bool8();
@@ -638,7 +638,7 @@ char paramName[MAX_NAME_SIZE];
 			for (iter = m_deleteFlags.begin(); iter != m_deleteFlags.end(); ++iter)
 			{
 				delete *iter;
-				*iter = NULL;
+				*iter = nullptr;
 			}
 			m_deleteFlags.clear();
 			m_deleteFlagsAppend = file.read_bool8();
@@ -657,7 +657,7 @@ char paramName[MAX_NAME_SIZE];
 			for (iter = m_moveFlags.begin(); iter != m_moveFlags.end(); ++iter)
 			{
 				delete *iter;
-				*iter = NULL;
+				*iter = nullptr;
 			}
 			m_moveFlags.clear();
 			m_moveFlagsAppend = file.read_bool8();
@@ -696,7 +696,7 @@ char paramName[MAX_NAME_SIZE];
 			for (iter = m_contents.begin(); iter != m_contents.end(); ++iter)
 			{
 				delete *iter;
-				*iter = NULL;
+				*iter = nullptr;
 			}
 			m_contents.clear();
 			m_contentsAppend = file.read_bool8();
@@ -715,7 +715,7 @@ char paramName[MAX_NAME_SIZE];
 			for (iter = m_xpPoints.begin(); iter != m_xpPoints.end(); ++iter)
 			{
 				delete *iter;
-				*iter = NULL;
+				*iter = nullptr;
 			}
 			m_xpPoints.clear();
 			m_xpPointsAppend = file.read_bool8();
@@ -979,9 +979,9 @@ CompilerIntegerParam * ServerObjectTemplate::_AttribMod::getCompilerIntegerParam
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_target;
 		}
@@ -993,9 +993,9 @@ CompilerIntegerParam * ServerObjectTemplate::_AttribMod::getCompilerIntegerParam
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_value;
 		}
@@ -1003,7 +1003,7 @@ CompilerIntegerParam * ServerObjectTemplate::_AttribMod::getCompilerIntegerParam
 	}
 	else
 		return TpfTemplate::getCompilerIntegerParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::_AttribMod::getCompilerIntegerParam
 
 FloatParam * ServerObjectTemplate::_AttribMod::getFloatParam(const char *name, bool deepCheck, int index)
@@ -1014,9 +1014,9 @@ FloatParam * ServerObjectTemplate::_AttribMod::getFloatParam(const char *name, b
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_time;
 		}
@@ -1028,9 +1028,9 @@ FloatParam * ServerObjectTemplate::_AttribMod::getFloatParam(const char *name, b
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_timeAtValue;
 		}
@@ -1042,9 +1042,9 @@ FloatParam * ServerObjectTemplate::_AttribMod::getFloatParam(const char *name, b
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_decay;
 		}
@@ -1052,7 +1052,7 @@ FloatParam * ServerObjectTemplate::_AttribMod::getFloatParam(const char *name, b
 	}
 	else
 		return TpfTemplate::getFloatParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::_AttribMod::getFloatParam
 
 BoolParam * ServerObjectTemplate::_AttribMod::getBoolParam(const char *name, bool deepCheck, int index)
@@ -1275,9 +1275,9 @@ BoolParam * ServerObjectTemplate::_Contents::getBoolParam(const char *name, bool
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_equipObject;
 		}
@@ -1285,7 +1285,7 @@ BoolParam * ServerObjectTemplate::_Contents::getBoolParam(const char *name, bool
 	}
 	else
 		return TpfTemplate::getBoolParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::_Contents::getBoolParam
 
 StringParam * ServerObjectTemplate::_Contents::getStringParam(const char *name, bool deepCheck, int index)
@@ -1296,9 +1296,9 @@ StringParam * ServerObjectTemplate::_Contents::getStringParam(const char *name, 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_slotName;
 		}
@@ -1310,9 +1310,9 @@ StringParam * ServerObjectTemplate::_Contents::getStringParam(const char *name, 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_content;
 		}
@@ -1320,7 +1320,7 @@ StringParam * ServerObjectTemplate::_Contents::getStringParam(const char *name, 
 	}
 	else
 		return TpfTemplate::getStringParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::_Contents::getStringParam
 
 StringIdParam * ServerObjectTemplate::_Contents::getStringIdParam(const char *name, bool deepCheck, int index)
@@ -1507,9 +1507,9 @@ CompilerIntegerParam * ServerObjectTemplate::_MentalStateMod::getCompilerInteger
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_target;
 		}
@@ -1517,7 +1517,7 @@ CompilerIntegerParam * ServerObjectTemplate::_MentalStateMod::getCompilerInteger
 	}
 	else
 		return TpfTemplate::getCompilerIntegerParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::_MentalStateMod::getCompilerIntegerParam
 
 FloatParam * ServerObjectTemplate::_MentalStateMod::getFloatParam(const char *name, bool deepCheck, int index)
@@ -1528,9 +1528,9 @@ FloatParam * ServerObjectTemplate::_MentalStateMod::getFloatParam(const char *na
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_value;
 		}
@@ -1542,9 +1542,9 @@ FloatParam * ServerObjectTemplate::_MentalStateMod::getFloatParam(const char *na
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_time;
 		}
@@ -1556,9 +1556,9 @@ FloatParam * ServerObjectTemplate::_MentalStateMod::getFloatParam(const char *na
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_timeAtValue;
 		}
@@ -1570,9 +1570,9 @@ FloatParam * ServerObjectTemplate::_MentalStateMod::getFloatParam(const char *na
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_decay;
 		}
@@ -1580,7 +1580,7 @@ FloatParam * ServerObjectTemplate::_MentalStateMod::getFloatParam(const char *na
 	}
 	else
 		return TpfTemplate::getFloatParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::_MentalStateMod::getFloatParam
 
 BoolParam * ServerObjectTemplate::_MentalStateMod::getBoolParam(const char *name, bool deepCheck, int index)
@@ -1793,9 +1793,9 @@ CompilerIntegerParam * ServerObjectTemplate::_Xp::getCompilerIntegerParam(const 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_type;
 		}
@@ -1807,9 +1807,9 @@ CompilerIntegerParam * ServerObjectTemplate::_Xp::getCompilerIntegerParam(const 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_level;
 		}
@@ -1821,9 +1821,9 @@ CompilerIntegerParam * ServerObjectTemplate::_Xp::getCompilerIntegerParam(const 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_value;
 		}
@@ -1831,7 +1831,7 @@ CompilerIntegerParam * ServerObjectTemplate::_Xp::getCompilerIntegerParam(const 
 	}
 	else
 		return TpfTemplate::getCompilerIntegerParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//ServerObjectTemplate::_Xp::getCompilerIntegerParam
 
 FloatParam * ServerObjectTemplate::_Xp::getFloatParam(const char *name, bool deepCheck, int index)

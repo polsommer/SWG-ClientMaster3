@@ -11,8 +11,8 @@ class Object;
 
 #include "Archive/AutoDeltaByteStream.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/Tag.h"
+#include "sharedFoundation/NetworkId.h"
 
 //-----------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ public: //ctor/dtor
 	                    const Archive::AutoByteStream & sourcePackage, 
 	                    const unsigned char packageId);
 
-	BaselinesMessage   (const NetworkId id, 
+	BaselinesMessage   (const NetworkId &id, 
 		                const Tag objectType, 
 	                    const unsigned char newPackageId, 
 						const Archive::ByteStream & newPackage);

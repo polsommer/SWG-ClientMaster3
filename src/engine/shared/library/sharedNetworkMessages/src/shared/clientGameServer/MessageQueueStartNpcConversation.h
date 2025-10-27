@@ -11,7 +11,7 @@
 #ifndef INCLUDED_MessageQueueStartNpcConversation_H
 #define INCLUDED_MessageQueueStartNpcConversation_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedGame/NpcConversationData.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 

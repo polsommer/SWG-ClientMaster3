@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerCellObjectTemplate_H
 
 #include "ServerObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 

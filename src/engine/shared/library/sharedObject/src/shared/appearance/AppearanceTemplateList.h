@@ -12,7 +12,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
+#include "sharedFoundation/Tag.h"
 
 class Appearance;
 class AppearanceTemplate;

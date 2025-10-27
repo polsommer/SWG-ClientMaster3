@@ -254,24 +254,6 @@ void Clock::update(void)
 		ms_lastFrameRate = RECIP(ms_lastFrameTime);
 	}
 
-#if 0
-	// -qq- debugging W2K QueryPerformanceCounter
-	static DWORD lastTick;
-	DWORD newTick = GetTickCount();
-
-	DEBUG_REPORT_LOG_PRINT(true, ("Clock::update %I64d %I64d %6I64d  %10d %10d %3d %6.2f=fps %6.4f=time\n", ms_lastPoll, newPoll, newPoll - ms_lastPoll, lastTick, newTick, newTick - lastTick, ms_lastFrameRate, ms_lastFrameTime));
-
-	static int bad = 0;
-
-	if (bad && ++bad > 64)
-		__asm int 3;
-
-	if (ms_lastFrameTime > 3.0)
-		bad = 1;
-
-	lastTick = newTick;
-#endif
-
 	ms_lastPoll = newPoll;
 
 
@@ -409,37 +391,26 @@ void Clock::limitFrameRate(void)
 		__int64 const frameRateLimitTicks = static_cast<__int64>(ms_frameFrequency / ms_frameRateLimit);
 		__int64 newPoll, delta;
 
-                for (;;)
-                {
-                        // get the current time
-                        result = QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *>(&newPoll));
-                        FATAL(!result, ("Clock::limitFrameRate QPC failed"));
+		for (;;)
+		{
+			// get the current time
+			result = QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *>(&newPoll));
+			FATAL(!result, ("Clock::limitFrameRate QPC failed"));
 
-                        // compute elapsed time
-                        delta = newPoll - ms_lastPoll;
-                        if (delta >= frameRateLimitTicks)
-                                break;
+			// compute elapsed time
+			delta = newPoll - ms_lastPoll;
+			if (delta >= frameRateLimitTicks)
+				break;
 
-                        const __int64 remainingTicks = frameRateLimitTicks - delta;
-                        if (remainingTicks <= 0)
-                                break;
-
-                        if (ms_useSleep)
-                        {
-                                const real remainingMs = static_cast<real>(remainingTicks) * 1000.0f / ms_frameFrequency;
-                                const int coarseSleepMs = static_cast<int>(remainingMs) - 1;
-
-                                if (coarseSleepMs > 0)
-                                {
-                                        Os::sleep(coarseSleepMs);
-                                        continue;
-                                }
-                        }
-
-                        // Yield the rest of the timeslice to avoid pegging the CPU while busy waiting.
-                        Os::sleep(0);
-                }
-        }
+			//@todo it looks like if delta is huge we will sleep a looong time.  shouldn't we check delta and the frameRatelimit before sleeping?
+			if (ms_useSleep)
+			{
+				const DWORD sleepTicks = static_cast<DWORD>(static_cast<real>((frameRateLimitTicks - delta) / ms_frameFrequency) * 1000.0f);
+				if (sleepTicks > 2)
+					Sleep(sleepTicks);
+			}
+		}
+	}
 }
 
 //-----------------------------------------------------------------------

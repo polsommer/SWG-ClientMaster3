@@ -11,6 +11,8 @@
 #include "sharedFoundation/ConfigFile.h"
 #include "sharedMath/ConfigSharedMath.h"
 
+#include <cmath>
+
 // ----------
 
 float RangeLoop::clip ( float x )
@@ -89,7 +91,7 @@ RangeLoop::RangeLoop ( float min, float max )
 : m_min( clip(min) ),
   m_max( clip(max) )
 {
-	if(abs(max-min) >= 1.0f)
+	if(std::abs(max-min) >= 1.0f)
 	{
 		m_min = 0.0f;
 		m_max = 1.0f;

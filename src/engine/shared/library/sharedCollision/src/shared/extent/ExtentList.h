@@ -17,7 +17,7 @@
 class Extent;
 class Iff;
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
+#include "sharedFoundation/Tag.h"
 
 // ======================================================================
 

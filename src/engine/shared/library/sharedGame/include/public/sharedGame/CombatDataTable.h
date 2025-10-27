@@ -1,1 +1,1 @@
-#include "../../../src/shared/combat/CombatDataTable.h"
+#include "../../src/shared/combat/CombatDataTable.h"

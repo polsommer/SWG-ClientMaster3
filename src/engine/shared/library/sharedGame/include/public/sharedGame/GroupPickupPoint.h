@@ -1,1 +1,1 @@
-#include "../../../src/shared/object/GroupPickupPoint.h"
+#include "../../src/shared/object/GroupPickupPoint.h"

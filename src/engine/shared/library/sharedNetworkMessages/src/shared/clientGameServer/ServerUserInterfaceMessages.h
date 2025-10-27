@@ -13,8 +13,8 @@
 
 #include "Archive/Archive.h"
 #include "Unicode.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
+#include "sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkIdArchive.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 #include "unicodeArchive/UnicodeArchive.h"
 
@@ -78,7 +78,7 @@ public:
 	 *  could be a new widget description, an item for a data source, a property to set, etc.
 	 */
 	typedef SuiCreatePage_Command Command;
-	typedef stdvector<Command>::fwd CommandVector;
+	typedef std::vector<Command> CommandVector;
 
 	           SuiCreatePage ();
 	explicit   SuiCreatePage (Archive::ReadIterator & source);

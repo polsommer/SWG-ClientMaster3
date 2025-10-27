@@ -1,1 +1,1 @@
-#include "../../../src/shared/space/ShipComponentDescriptor.h"
+#include "../../src/shared/space/ShipComponentDescriptor.h"

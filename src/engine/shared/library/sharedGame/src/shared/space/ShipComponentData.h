@@ -10,7 +10,7 @@
 
 //======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkId.h"
 
 // ======================================================================
 
@@ -25,7 +25,7 @@ class ShipComponentData
 public:
 
 	typedef std::pair<std::string, Unicode::String> AttributePair;
-	typedef stdvector<AttributePair>::fwd           AttributeVector;
+	typedef std::vector<AttributePair>           AttributeVector;
 
 	explicit ShipComponentData (ShipComponentDescriptor const & shipComponentDescriptor);
 	virtual ~ShipComponentData () = 0;

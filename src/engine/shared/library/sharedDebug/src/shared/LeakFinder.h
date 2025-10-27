@@ -17,7 +17,11 @@
 
 #include <vector>
 #include <list>
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 
 // ======================================================================
 
@@ -89,7 +93,7 @@ protected:
 		ReferenceCountingData *referenceData;
 	};
 
-	typedef std::hash_map<void *, ObjectData, ptr_hash> ObjectMap;
+	typedef std::unordered_map<void *, ObjectData, ptr_hash> ObjectMap;
 
 	ObjectMap liveObjects;
 };

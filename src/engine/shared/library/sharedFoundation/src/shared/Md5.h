@@ -11,11 +11,6 @@
 
 // ======================================================================
 
-#include "sharedFoundation/FirstPlatform.h"
-#include "sharedFoundationTypes/FoundationTypes.h"
-
-#include <cstddef>
-
 class Md5
 {
 public:
@@ -33,15 +28,14 @@ public:
 
 	public:
 
-Value();
-Value(Value const &rhs);
+		Value();
+		Value(Value const &rhs);
 
-bool operator ==(Value const &rhs) const;
-bool operator !=(Value const &rhs) const;
-void format(char *buffer, int bufferLength) const;
+		bool operator ==(Value const &rhs) const;
+		bool operator !=(Value const &rhs) const;
+		void format(char *buffer, int bufferLength) const;
 
-void *getData();
-void const *getConstData() const;
+		void *getData();
 
 	private:
 
@@ -96,13 +90,6 @@ public:
 // ======================================================================
 
 inline void * Md5::Value::getData()
-{
-	return m_data;
-}
-
-// ----------------------------------------------------------------------
-
-inline void const * Md5::Value::getConstData() const
 {
 	return m_data;
 }

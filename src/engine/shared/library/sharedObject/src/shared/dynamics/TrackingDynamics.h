@@ -12,8 +12,8 @@
 // ======================================================================
 
 #include "sharedObject/SimpleDynamics.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Watcher.h"
+#include "sharedFoundation/MemoryBlockManagerMacros.h"
+#include "sharedFoundation/Watcher.h"
 #include "sharedMath/Vector.h"
 
 class MemoryBlockManager;

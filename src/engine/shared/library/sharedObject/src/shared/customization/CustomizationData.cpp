@@ -22,6 +22,7 @@
 #include "sharedObject/Object.h"
 #include "UnicodeUtils.h"
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
@@ -276,10 +277,10 @@ CustomizationData::CustomizationData(Object &owner) :
 
 void CustomizationData::addVariableTakeOwnership(const std::string &fullVariablePathName, CustomizationVariable *variable)
 {
-	//-- check for null variable
+	//-- check for nullptr variable
 	if (!variable)
 	{
-		WARNING(true, ("addVariableTakeOwnership() called with null variable.\n"));
+		WARNING(true, ("addVariableTakeOwnership() called with nullptr variable.\n"));
 		return;
 	}
 
@@ -590,7 +591,7 @@ std::string CustomizationData::writeLocalDataToString() const
 	
 	saveToByteVector(binaryData);
 
-	//-- Convert binary data to string.  We're escaping the 0 for the database so this is a non-null string.
+	//-- Convert binary data to string.  We're escaping the 0 for the database so this is a non-nullptr string.
 	//   We translate 0x00 => 0xff 0x01
 	//                0xff => 0xff 0x02
 	std::string  returnValue;
@@ -1138,7 +1139,7 @@ void CustomizationData::notifyPendingRemoteDestruction(const CustomizationData *
 	//-- validate arg
 	if (!customizationData)
 	{
-		DEBUG_WARNING(true, ("notifyPendingRemoteDestruction(): customizationData arg is null"));
+		DEBUG_WARNING(true, ("notifyPendingRemoteDestruction(): customizationData arg is nullptr"));
 		return;
 	}
 

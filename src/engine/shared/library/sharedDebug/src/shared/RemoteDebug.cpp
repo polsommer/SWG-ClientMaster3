@@ -92,10 +92,10 @@ void RemoteDebug::remove(void)
 		return;
 	}
 
-	ms_removeFunction = NULL;
-	ms_openFunction = NULL;
-	ms_closeFunction = NULL;
-	ms_sendFunction = NULL;
+	ms_removeFunction = nullptr;
+	ms_openFunction = nullptr;
+	ms_closeFunction = nullptr;
+	ms_sendFunction = nullptr;
 
 	//empty out session-level data
 	for (StreamMap::iterator it = ms_streams->begin(); it != ms_streams->end(); ++it)
@@ -147,7 +147,7 @@ uint32 RemoteDebug::registerStream(const std::string& streamName)
 	DEBUG_FATAL(!ms_installed, ("remoteDebug not installed"));
 
 	uint32 streamNum = 0;
-	Channel *parent = NULL;
+	Channel *parent = nullptr;
 	std::string base;
 	std::string rest = streamName;
 	//look for subchannels with a double backslash
@@ -203,7 +203,7 @@ uint32 RemoteDebug::registerStaticView(const std::string& channelName)
 {
 	DEBUG_FATAL(!ms_installed, ("remoteDebug not installed"));
 	uint32 staticViewNum = 0;
-	Channel *parent = NULL;
+	Channel *parent = nullptr;
 	std::string base;
 	std::string rest = channelName;
 	//look for subchannels with a double backslash
@@ -356,7 +356,7 @@ uint32 RemoteDebug::registerVariable(const char* variableName, void *memLoc, VAR
 	std::string variable = variableName;
 
 	uint32 variableNum = 0;
-	Channel *parent = NULL;
+	Channel *parent = nullptr;
 	std::string base;
 	std::string rest = variable;
 	//look for subchannels with a double backslash
@@ -375,7 +375,7 @@ uint32 RemoteDebug::registerVariable(const char* variableName, void *memLoc, VAR
 		//only add the variable if we don't have it yet
 		if (variableNumber == -1)
 		{
-			registerVariable(newBase.c_str(), NULL, BOOL, sendToClients);
+			registerVariable(newBase.c_str(), nullptr, BOOL, sendToClients);
 		}
 		//look for any other subChannel
 		uint32 oldRestIndex = restIndex;
@@ -674,7 +674,7 @@ void RemoteDebug::send(MESSAGE_TYPE type, const char* theName)
 
 	if (explicitMessageLength != 0)
 		messageLength         = explicitMessageLength;
-	else if (ms_varArgs_buffer)
+	else if (ms_varArgs_buffer[0] == '\0')
 	{
 		//only grab buffer sizes if needed
 		messageLength         = strlen(ms_varArgs_buffer)+1;
@@ -688,7 +688,7 @@ void RemoteDebug::send(MESSAGE_TYPE type, const char* theName)
 
 	uint32 packetLength = static_cast<uint32>(messageTypeLength + channelNumberLength + messageLengthLength + static_cast<int>(messageLength));
 
-	if (ms_varArgs_buffer)
+	if (ms_varArgs_buffer[0] == '\0')
 	{
 		//copy data into the packet
 		memcpy(ms_buffer, &messageType, static_cast<uint32>(messageTypeLength));

@@ -105,7 +105,6 @@ void HyperspaceManager::install()
 			return;
 		}
 		DataTable const * const hyperspaceLocationsTable = DataTableManager::getTable(cms_hyperspaceLocationsTableName, true);
-		std::string hyperspacePointName;
 		if(hyperspaceLocationsTable)
 		{
 			HyperspaceLocation hyperspaceLoc;
@@ -126,11 +125,11 @@ void HyperspaceManager::install()
 		HyperspaceLocation hyperspaceLoc;
 
 		hyperspaceLoc.name = cms_hyperspaceHomeLocationHyperspacePointName;
-		hyperspaceLoc.sceneName = "";
+		hyperspaceLoc.sceneName.clear();
 		hyperspaceLoc.location.x = 0;
 		hyperspaceLoc.location.y = 0;
 		hyperspaceLoc.location.z = 0;
-		hyperspaceLoc.requiredCommand = "";
+		hyperspaceLoc.requiredCommand.clear();
 		
 		ms_hyperspaceLocationNameToHyperspaceLocations[hyperspaceLoc.name] = hyperspaceLoc;
 	}

@@ -9,7 +9,7 @@
 #define INCLUDED_MatchMakingCharacterPreferenceId_H
 
 #include "Archive/AutoByteStream.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/BitArray.h"
+#include "sharedFoundation/BitArray.h"
 
 //-----------------------------------------------------------------------------
 class MatchMakingCharacterPreferenceId

@@ -12,10 +12,10 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/LabelHash.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
-#include "../../../../../../engine/shared/library/sharedMath/include/public/sharedMath/Vector.h"
-#include "../../../../../../engine/shared/library/sharedMath/include/public/sharedMath/Transform.h"
+#include "sharedFoundation/LabelHash.h"
+#include "sharedFoundation/Tag.h"
+#include "sharedMath/Vector.h"
+#include "sharedMath/Transform.h"
 
 class AppearanceTemplate;
 class AxialBox;
@@ -206,7 +206,7 @@ private:
 /**
  * Get the AppearanceTemplate for this Appearance.
  *
- * The AppearanceTemplate may be NULL.
+ * The AppearanceTemplate may be nullptr.
  *
  * AppearanceTemplates may be shared by multiple Appearances.
  *

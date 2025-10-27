@@ -12,10 +12,6 @@
 
 // ======================================================================
 
-#include "sharedFile/FirstSharedFile.h"
-
-#include <string>
-
 class Compressor;
 
 // @todo codereorg remove dependency on mutex
@@ -108,7 +104,7 @@ public:
 
 private:
 
-	typedef stdvector<SearchNode *>::fwd  SearchNodes;
+	typedef std::vector<SearchNode *>  SearchNodes;
 
 private:
 

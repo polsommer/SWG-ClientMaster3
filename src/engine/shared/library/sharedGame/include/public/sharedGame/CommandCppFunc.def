@@ -1,1 +1,1 @@
-#include "../../../src/shared/command/CommandCppFunc.def"
+#include "../../src/shared/command/CommandCppFunc.def"

@@ -13,7 +13,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Production.h"
+#include "sharedFoundation/Production.h"
 
 // ======================================================================
 
@@ -40,6 +40,7 @@ public:
 
 	static void flushOutput();
 };
+
 #endif
 
 // ======================================================================

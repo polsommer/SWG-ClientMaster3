@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 // ======================================================================

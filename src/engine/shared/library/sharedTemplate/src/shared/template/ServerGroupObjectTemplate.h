@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerGroupObjectTemplate_H
 
 #include "ServerUniverseObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 

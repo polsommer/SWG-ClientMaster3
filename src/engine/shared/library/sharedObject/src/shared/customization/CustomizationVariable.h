@@ -11,6 +11,7 @@
 
 // ======================================================================
 
+class CustomizationData;
 class CustomizationVariable;
 class ObjectTemplateCustomizationDataWriter;
 
@@ -22,7 +23,7 @@ friend class CustomizationData;
 
 public:
 
-	typedef stdvector<byte>::fwd  ByteVector;
+	typedef std::vector<byte>  ByteVector;
 	
 public:
 

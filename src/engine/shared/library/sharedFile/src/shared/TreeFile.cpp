@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
-#include <cstring>
 
 // ======================================================================
 
@@ -65,38 +64,8 @@ namespace TreeFileNamespace
 		}
 	};
 
-        typedef std::map<const char *, AbstractFile *, CachedFilesComparator> CachedFilesMap;
-        static CachedFilesMap cachedFilesMap;
-
-        bool computeAlternateTreePath(char const *fileName, char *alternatePath, size_t alternatePathSize)
-        {
-                if (!fileName || !alternatePath || alternatePathSize == 0)
-                        return false;
-
-                std::string const originalPath(fileName);
-                std::string::size_type const dotPos = originalPath.find_last_of('.');
-                if (dotPos == std::string::npos)
-                        return false;
-
-                std::string const extension = originalPath.substr(dotPos);
-                char const *replacement = nullptr;
-
-                if (_stricmp(extension.c_str(), ".tre") == 0)
-                        replacement = ".tres";
-                else if (_stricmp(extension.c_str(), ".tres") == 0)
-                        replacement = ".tre";
-                else
-                        return false;
-
-                std::string alternate(originalPath.substr(0, dotPos));
-                alternate.append(replacement);
-
-                if (alternate.size() + 1 > alternatePathSize)
-                        return false;
-
-                strcpy(alternatePath, alternate.c_str());
-                return true;
-        }
+	typedef std::map<const char *, AbstractFile *, CachedFilesComparator> CachedFilesMap;
+	static CachedFilesMap cachedFilesMap;
 
 #if PRODUCTION == 0
 	bool ms_debugLogSynchronousOnly;
@@ -154,7 +123,7 @@ void TreeFile::install(uint32 skuBits)
 				sprintf(buffer, "searchPath%s%d", skuText, priority);
 
 				char const * result;
-				for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", buffer, index, NULL)) != NULL; ++index)
+				for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", buffer, index, nullptr)) != nullptr; ++index)
 					TreeFile::addSearchPath(result, priority);
 			}
 
@@ -164,7 +133,7 @@ void TreeFile::install(uint32 skuBits)
 				sprintf(buffer, "searchTree%s%d", skuText, priority);
 
 				char const * result;
-				for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", buffer, index, NULL)) != NULL; ++index)
+				for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", buffer, index, nullptr)) != nullptr; ++index)
 					TreeFile::addSearchTree(result, priority);
 			}
 
@@ -174,7 +143,7 @@ void TreeFile::install(uint32 skuBits)
 				sprintf(buffer, "searchTOC%s%d", skuText, priority);
 
 				char const * result;
-				for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", buffer, index, NULL)) != NULL; ++index)
+				for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", buffer, index, nullptr)) != nullptr; ++index)
 					TreeFile::addSearchTOC(result, priority);
 			}
 		}
@@ -390,25 +359,16 @@ void TreeFile::addSearchCache(int priority)
 
 void TreeFile::addSearchTree(const char *fileName, int priority)
 {
-        if (FileStreamer::exists (fileName))
-        {
-                addSearchNode(new SearchTree(priority, fileName));
-                return;
-        }
-
-        char alternatePath[Os::MAX_PATH_LENGTH];
-        if (computeAlternateTreePath(fileName, alternatePath, sizeof(alternatePath)) && FileStreamer::exists(alternatePath))
-        {
-                WARNING(true, ("TreeFile::addSearchTree - [%s] not found, using [%s] instead", fileName, alternatePath));
-                addSearchNode(new SearchTree(priority, alternatePath));
-                return;
-        }
-
+	if (FileStreamer::exists (fileName))
+		addSearchNode(new SearchTree(priority, fileName));
+	else
+	{
 #ifdef _DEBUG
-        DEBUG_FATAL(true, ("TreeFile::addSearchTree - [%s] not found", fileName));
+		DEBUG_FATAL(true, ("TreeFile::addSearchTree - [%s] not found", fileName));
 #else
-        WARNING(true, ("TreeFile::addSearchTree - [%s] not found", fileName));
+		WARNING(true, ("TreeFile::addSearchTree - [%s] not found", fileName));
 #endif
+	}
 }
 
 // ----------------------------------------------------------------------
@@ -441,14 +401,7 @@ void TreeFile::addSearchTOC(const char *fileName, int priority)
 
 bool TreeFile::validateSearchTree(const char *fileName)
 {
-        if (SearchTree::validate(fileName))
-                return true;
-
-        char alternatePath[Os::MAX_PATH_LENGTH];
-        if (computeAlternateTreePath(fileName, alternatePath, sizeof(alternatePath)))
-                return SearchTree::validate(alternatePath);
-
-        return false;
+	return SearchTree::validate(fileName);
 }
 
 // ----------------------------------------------------------------------
@@ -477,7 +430,7 @@ void TreeFile::removeAllSearches(void)
  * Find the node (if any) the requested file is in.
  *
  * @return Pointer to the highest priority node containing the file.  If the
- * file is not found, NULL is returned.  If checking for filename collisions is
+ * file is not found, nullptr is returned.  If checking for filename collisions is
  * set on, then this function DEBUG_FATALS if multiple files match
  */
 
@@ -487,14 +440,14 @@ TreeFile::SearchNode *TreeFile::find(const char *fileName)
 
 	if (!fileName)
 	{
-		DEBUG_WARNING(true, ("TreeFile::find() Cannot find a null filename"));
-		return NULL;
+		DEBUG_WARNING(true, ("TreeFile::find() Cannot find a nullptr filename"));
+		return nullptr;
 	}
 
 	if (fileName[0] == '\0')
 	{
 		DEBUG_WARNING(true, ("TreeFile::find() Cannot find an empty filename"));
-		return NULL;
+		return nullptr;
 	}
 
 	// search the list of nodes looking to see if the specified file exists
@@ -504,7 +457,7 @@ TreeFile::SearchNode *TreeFile::find(const char *fileName)
 		if ((*i)->exists(fileName, deleted))
 			return *i;
 
-	return NULL;
+	return nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -526,7 +479,7 @@ bool TreeFile::exists(const char *fileName)
 	FileManifest::addNewManifestEntry(fixedFileName, 0);
 #endif
 
-	return (find(fixedFileName) != NULL);
+	return (find(fixedFileName) != nullptr);
 }
 
 // ----------------------------------------------------------------------
@@ -668,7 +621,7 @@ void TreeFile::fixUpFileName(const char *fileName, char *outName)
  * Find the node (if any) the requested file is in.
  *
  * @return Pointer to the highest priority node containing the file.  If the
- * file is not found, NULL is returned.
+ * file is not found, nullptr is returned.
  */
 
 bool TreeFile::getPathName(const char *fileName, char *pathName, int pathNameLength)
@@ -702,12 +655,12 @@ bool TreeFile::getPathName(const char *fileName, char *pathName, int pathNameLen
  *
  * @param fileName  File name to open
  * @param allowFail  True to return false on failure, otherwise Fatal
- * @return pointer to a newly allocated AbstractFile-derived class (caller must delete), NULL if failure.
+ * @return pointer to a newly allocated AbstractFile-derived class (caller must delete), nullptr if failure.
  */
 
 AbstractFile* TreeFile::open(const char *fileName, AbstractFile::PriorityType priority, bool allowFail)
 {
-	AbstractFile *file = NULL;
+	AbstractFile *file = nullptr;
 
 	char fixedFileName[Os::MAX_PATH_LENGTH];
 	fixUpFileName(fixedFileName, fileName, true);
@@ -725,7 +678,7 @@ AbstractFile* TreeFile::open(const char *fileName, AbstractFile::PriorityType pr
 			if (cachedIterator != cachedFilesMap.end())
 			{
 				file = cachedIterator->second;
-				cachedIterator->second = NULL;
+				cachedIterator->second = nullptr;
 			}
 
 		ms_criticalSection.leave();
@@ -794,7 +747,7 @@ AbstractFile* TreeFile::open(const char *fileName, AbstractFile::PriorityType pr
 		FileManifest::addNewManifestEntry(fixedFileName, 0);
 #endif
 
-		return NULL;
+		return nullptr;
 	}
 
 	const int length = file->length();
@@ -834,7 +787,7 @@ const char *TreeFile::getSearchPath(int index)
 	for (SearchNodes::iterator i = ms_searchNodes.begin(); i != iEnd; ++i)
 	{
 		const SearchPath *searchPath = dynamic_cast<const SearchPath*>(*i);
-		if (searchPath != NULL)
+		if (searchPath != nullptr)
 		{
 			if (count == index)
 				return searchPath->getPathName();
@@ -842,14 +795,14 @@ const char *TreeFile::getSearchPath(int index)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------
 /**
  * This function will return the shortest trailing path of its input that
  * can be loaded by the TreeFile.  If no files can be loaded, this routine
- * will return NULL.
+ * will return nullptr.
  */
 
 const char *TreeFile::getShortestExistingPath(const char *path)
@@ -857,9 +810,9 @@ const char *TreeFile::getShortestExistingPath(const char *path)
 	NOT_NULL(path);
 
 	if (!*path)
-		return NULL;
+		return nullptr;
 
-	const char *result = NULL;
+	const char *result = nullptr;
 	do
 	{
 		// check if this one exists
@@ -913,7 +866,7 @@ bool TreeFile::stripTreeFileSearchPathFromFile(const char *inputPath, char *outp
 	{
 		// make sure it's a relative search path
 		const SearchPath *searchPath = dynamic_cast<const SearchPath*>(*i);
-		if (searchPath != NULL)
+		if (searchPath != nullptr)
 		{
 			// check to see if the the search path is a prefix for the requested path
 			const char *path = searchPath->getPathName();

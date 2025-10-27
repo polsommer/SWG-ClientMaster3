@@ -24,7 +24,11 @@
 #include <algorithm>
 #include <map>
 #include <vector>
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 
 //===================================================================
 
@@ -710,7 +714,7 @@ WorldSnapshotReaderWriter::Node const *WorldSnapshotReaderWriter::addObject (
 	//-- find objectTemplateNameIndex
 	uint objectTemplateNameIndex = 0;
 
-	std::hash_map<uint32, uint>::const_iterator i = m_objectTemplateCrcMap->find(objectTemplateName.getCrc());
+	ObjectTemplateCrcMap::const_iterator i = m_objectTemplateCrcMap->find(objectTemplateName.getCrc());
 	if (i != m_objectTemplateCrcMap->end())
 		objectTemplateNameIndex = (*i).second;
 	else

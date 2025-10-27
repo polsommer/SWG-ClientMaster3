@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
+#include "sharedFoundation/PersistentCrcString.h"
 #include "sharedMath/Transform.h"
 
 // ======================================================================

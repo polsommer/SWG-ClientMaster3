@@ -805,7 +805,7 @@ void ServerProceduralTerrainAppearance::generateBetween(Vector const & start_o, 
 		}
 	}
 
-	// add on all chunks to be generated to chunkList. if we encounter invalid chunks (null), don't include them
+	// add on all chunks to be generated to chunkList. if we encounter invalid chunks (nullptr), don't include them
 	const Chunk* chunk;
 	for (GenerateList::iterator iter = generateList.begin(); iter != generateList.end(); ++iter)
 	{
@@ -1135,7 +1135,7 @@ void ServerProceduralTerrainAppearance::addChunk (Chunk* const chunk, const int 
 	UNREF (result);
 	DEBUG_FATAL (!result, (""));
 	result = m_chunksCreatedThisFrame->insert (key).second;
-	DEBUG_FATAL (!result, ("Failed to insert chunk into map for chunks created per frame"));
+	DEBUG_WARNING(!result, ("Failed to insert chunk into map for chunks created per frame"));
 	++m_chunksGeneratedThisFrame;
 
 	//-- add to sphere tree

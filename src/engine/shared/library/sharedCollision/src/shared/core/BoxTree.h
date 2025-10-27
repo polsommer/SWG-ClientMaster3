@@ -12,7 +12,7 @@
 #define INCLUDED_BoxTree_H
 
 #include "sharedMath/AxialBox.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
+#include "sharedFoundation/Tag.h"
 
 class BoxTreeNode;
 class DebugShapeRenderer;
@@ -24,9 +24,9 @@ class VectorArgb;
 class BoxTreeNode;
 class Iff;
 
-typedef stdvector<BoxTreeNode>::fwd BoxTreeNodeVec;
-typedef stdvector<AxialBox>::fwd BoxVec;
-typedef stdvector<int>::fwd IdVec;
+typedef std::vector<BoxTreeNode> BoxTreeNodeVec;
+typedef std::vector<AxialBox> BoxVec;
+typedef std::vector<int> IdVec;
 
 // ----------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ inline int BoxTree::getTestCounter ( void ) const
 
 inline bool BoxTree::isFlat ( void ) const
 {
-	return m_flatNodes != NULL;
+	return m_flatNodes != nullptr;
 }
 
 // ======================================================================

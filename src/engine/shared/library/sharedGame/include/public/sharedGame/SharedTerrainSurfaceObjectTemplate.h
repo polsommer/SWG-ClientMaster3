@@ -1,2 +1,2 @@
-#include "../../../src/shared/objectTemplate/SharedTerrainSurfaceObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedTerrainSurfaceObjectTemplate.h"
 

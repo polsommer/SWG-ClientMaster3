@@ -27,12 +27,12 @@
  * Class constructor.
  */
 TpfFile::TpfFile(void) :
-	m_template(NULL),
+	m_template(nullptr),
 	m_baseTemplateName(),
-	m_currTemplateDef(NULL),
-	m_templateData(NULL),
-	m_highestTemplateData(NULL),
-	m_parameter(NULL),
+	m_currTemplateDef(nullptr),
+	m_templateData(nullptr),
+	m_highestTemplateData(nullptr),
+	m_parameter(nullptr),
 	m_path(),
 	m_iffPath(),
 	m_templateLocation(LOC_NONE)
@@ -53,14 +53,14 @@ TpfFile::~TpfFile()
  */
 void TpfFile::cleanup(void)
 {
-	m_parameter = NULL;
+	m_parameter = nullptr;
 	m_fp.close();
-	if (m_template != NULL)
+	if (m_template != nullptr)
 	{
 		delete m_template;
-		m_template = NULL;
+		m_template = nullptr;
 	}
-	m_currTemplateDef = NULL;
+	m_currTemplateDef = nullptr;
 	IGNORE_RETURN(m_baseTemplateName.erase());
 }	// TpfFile::cleanup
 
@@ -174,7 +174,7 @@ int TpfFile::loadTemplate(const Filename & filename)
 		if (lineLen == -1)
 		{
 			// if we are a base template, check for missing parameters
-			if (m_highestTemplateData != NULL && m_template != NULL &&
+			if (m_highestTemplateData != nullptr && m_template != nullptr &&
 				!m_highestTemplateData->verifyTemplate(m_template, m_fp))
 			{
 				result = -1;
@@ -190,7 +190,7 @@ int TpfFile::loadTemplate(const Filename & filename)
 		// parse the 1st token: comment, @flag, or variable name
 		const char *line = m_buffer;
 		line = getNextToken(line, m_token);
-		if (*m_token == '\0' && line == NULL)
+		if (*m_token == '\0' && line == nullptr)
 		{
 			// empty line or comment
 			continue;
@@ -201,7 +201,7 @@ int TpfFile::loadTemplate(const Filename & filename)
 		}
 		else if (isalpha(*m_token))
 		{
-			if (m_template == NULL)
+			if (m_template == nullptr)
 			{
 				m_fp.printError("unable to parse parameters, no template class defined");
 				return -1;
@@ -209,7 +209,7 @@ int TpfFile::loadTemplate(const Filename & filename)
 			line = parseAssignment(line);
 			if (line == CHAR_ERROR)
 				result = -1;
-			else if (line != NULL)
+			else if (line != nullptr)
 			{
 				char buffer[1024];
 				if (getNextToken(line, buffer))
@@ -237,7 +237,7 @@ int TpfFile::loadTemplate(const Filename & filename)
 		}
 		else
 		{
-			m_iffPath = "";
+			m_iffPath.clear();
 			m_fp.printError("can't find \"dsrc\" in template path");
 			result = -1;
 		}
@@ -261,7 +261,7 @@ int TpfFile::makeIffFiles(const Filename & filename)
 	if (result != 0)
 		return result;
 
-	Filename iffname(NULL, m_iffPath.c_str(), filename.getName().c_str(),
+	Filename iffname(nullptr, m_iffPath.c_str(), filename.getName().c_str(),
 		IFF_EXTENSION);
 	Iff iffFile(1024, true, true);
 	m_template->save(iffFile);
@@ -291,20 +291,20 @@ int TpfFile::WriteIffFile(Iff & iffData, const Filename & fileName)
 		{
 			// there are problems with long path names in Windows that changing to
 			// the directory seems to fix
-			char *buffer = NULL;
+			char *buffer = nullptr;
 			DWORD buflen;
 			// get our current path
-			buflen = GetFullPathName(".", 0, buffer, NULL);
+			buflen = GetFullPathName(".", 0, buffer, nullptr);
 			buffer = new char[buflen + 1];
-			buflen = GetFullPathName(".", buflen + 1, buffer, NULL);
+			buflen = GetFullPathName(".", buflen + 1, buffer, nullptr);
 			Unicode::String srcPath = Unicode::narrowToWide(buffer);
 			delete[] buffer;
 			srcPath = L"\\\\?\\" + srcPath;
 			// get the destination path
 			std::string correctPath(fileName.getDrive() + fileName.getPath());
-			buflen = GetFullPathName(correctPath.c_str(), 0, buffer, NULL);
+			buflen = GetFullPathName(correctPath.c_str(), 0, buffer, nullptr);
 			buffer = new char[buflen + 1];
-			buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, NULL);
+			buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, nullptr);
 			Unicode::String destPath = Unicode::narrowToWide(buffer);
 			delete[] buffer;
 			destPath = L"\\\\?\\" + destPath;
@@ -323,19 +323,18 @@ int TpfFile::WriteIffFile(Iff & iffData, const Filename & fileName)
 		}
 		else
 		{
-			char *buffer = NULL;
+			char *buffer = nullptr;
 			DWORD buflen;
 			// get our current path
-			buflen = GetFullPathName(".", 0, buffer, NULL);
+			buflen = GetFullPathName(".", 0, buffer, nullptr);
 			buffer = new char[buflen + 1];
-			buflen = GetFullPathName(".", buflen + 1, buffer, NULL);
-			std::string srcPath = buffer;
+			buflen = GetFullPathName(".", buflen + 1, buffer, nullptr);
 			delete[] buffer;
 			// get the destination path
 			std::string correctPath(fileName.getDrive() + fileName.getPath());
-			buflen = GetFullPathName(correctPath.c_str(), 0, buffer, NULL);
+			buflen = GetFullPathName(correctPath.c_str(), 0, buffer, nullptr);
 			buffer = new char[buflen + 1];
-			buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, NULL);
+			buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, nullptr);
 			std::string destPath = buffer;
 			delete[] buffer;
 			// change to the destination path
@@ -390,7 +389,7 @@ int result = 0;
 	cleanup();
 
 	File temp_fp;
-	if (!temp_fp.open(tmpnam(NULL), "wt"))
+	if (!temp_fp.open(tmpnam(nullptr), "wt"))
 	{
 		fprintf(stderr, "error opening temp file for template replacement\n");
 		return -1;
@@ -420,7 +419,7 @@ int result = 0;
 		// parse the 1st token: comment, @flag, or variable name
 		const char *line = m_buffer;
 		line = getNextToken(line, m_token);
-		if (*m_token == '\0' && line == NULL)
+		if (*m_token == '\0' && line == nullptr)
 		{
 			// empty line or comment
 			if (temp_fp.puts(m_buffer) < 0)
@@ -433,7 +432,7 @@ int result = 0;
 		{
 			// @base or @class
 			const char *templine = getNextToken(line, m_token);
-			if (templine == NULL)
+			if (templine == nullptr)
 			{
 				m_fp.printEolError();
 				return -1;
@@ -453,7 +452,7 @@ int result = 0;
 			else
 			{
 				// if we are a base template, check for missing parameters
-				if (m_highestTemplateData != NULL && m_template != NULL)
+				if (m_highestTemplateData != nullptr && m_template != nullptr)
 				{
 					m_highestTemplateData->updateTemplate(m_template, temp_fp);
 				}
@@ -463,7 +462,7 @@ int result = 0;
 		else if (isalpha(*m_token))
 		{
 			m_parameter = m_templateData->getParameter(m_token);
-			if (m_parameter == NULL)
+			if (m_parameter == nullptr)
 			{
 			}
 			else
@@ -495,14 +494,14 @@ int result = 0;
 int TpfFile::parseTemplateCommand(const char *line)
 {
 	line = getNextToken(line, m_token);
-	if (line == NULL)
+	if (line == nullptr)
 	{
 		m_fp.printEolError();
 		return -1;
 	}
 	if (strcmp(m_token, "base") == 0)
 	{
-		if (m_template != NULL && !m_template->getBaseTemplateName().empty())
+		if (m_template != nullptr && !m_template->getBaseTemplateName().empty())
 		{
 			m_fp.printError("base template already defined");
 			return -1;
@@ -510,7 +509,7 @@ int TpfFile::parseTemplateCommand(const char *line)
 		line = getNextWhitespaceToken(line, m_token);
 		if (isalpha(*m_token))
 		{
-			if (m_template != NULL)
+			if (m_template != nullptr)
 			{
 				if (m_template->setBaseTemplateName(m_token) != 0)
 				{
@@ -537,7 +536,7 @@ int TpfFile::parseTemplateCommand(const char *line)
 		{
 			// if we are a base template, check for missing parameters
 			// @todo: fix so we can verify non-base templates
-			if (m_highestTemplateData != NULL && m_template != NULL &&
+			if (m_highestTemplateData != nullptr && m_template != nullptr &&
 				!m_highestTemplateData->verifyTemplate(m_template, m_fp))
 			{
 				return -1;
@@ -565,7 +564,7 @@ int TpfFile::parseTemplateCommand(const char *line)
 			}
 			int result = 0;
 
-			if(m_currTemplateDef == NULL)
+			if(m_currTemplateDef == nullptr)
 			{
 				result = m_templateDef.parse(fp);
 				m_currTemplateDef = &m_templateDef;
@@ -580,7 +579,7 @@ int TpfFile::parseTemplateCommand(const char *line)
 
 				while(lookingForMatchingData)
 				{
-					if(templateDataChild == NULL) // DHERMAN Check here for template definition names not matching
+					if(templateDataChild == nullptr) // DHERMAN Check here for template definition names not matching
 					{
 						char errbuf[256];
 
@@ -619,7 +618,7 @@ int TpfFile::parseTemplateCommand(const char *line)
 			int version = static_cast<int>(atol(m_token));
 
 			m_templateData = m_currTemplateDef->getTemplateData(version);
-			if (m_templateData == NULL)
+			if (m_templateData == nullptr)
 			{
 				char errbuf[256];
 				sprintf(errbuf, "can't find version %d in template definition %s",
@@ -635,14 +634,14 @@ int TpfFile::parseTemplateCommand(const char *line)
 				return -1;
 			}
 
-			if (m_template == NULL)
+			if (m_template == nullptr)
 			{
 				// this is the highest class level, make a blank template
 				// with it
 				const TagInfo & templateId = m_currTemplateDef->getTemplateId();
 				m_template = dynamic_cast<TpfTemplate*>(TpfTemplate::createTemplate(
 					templateId.tag));
-				if (m_template == NULL)
+				if (m_template == nullptr)
 				{
 					m_fp.printError("Unable to create template class. May not be installed.");
 					return -1;
@@ -709,12 +708,12 @@ enum
 	PARSE_ENUM_ASSIGNMENT,
 	PARSE_ENUM_VALUE
 } parseState = PARSE_ENUM_TOKEN;
-TemplateData::EnumList * enumList = NULL;	// current list being defined
-TemplateData::EnumData * enumData = NULL;	// current item being defined
+TemplateData::EnumList * enumList = nullptr;	// current list being defined
+TemplateData::EnumData * enumData = nullptr;	// current item being defined
 int currentEnumValue = 0;
 
 	File fp;
-	Filename headerFilename(NULL, NULL, headerName, NULL);
+	Filename headerFilename(nullptr, nullptr, headerName, nullptr);
 	int i = 0;
 	while (!fp.exists(headerFilename) && i < MAX_DIRECTORY_DEPTH)
 	{
@@ -745,7 +744,7 @@ int currentEnumValue = 0;
 		}
 
 		const char * line = m_buffer;
-		while (line != NULL)
+		while (line != nullptr)
 		{
 			const char * templine = getNextToken(line, m_token);
 			switch (parseState)
@@ -789,7 +788,7 @@ int currentEnumValue = 0;
 				case PARSE_END_BRACKET :
 					if (*m_token == '}')
 					{
-						enumList = NULL;
+						enumList = nullptr;
 						parseState = PARSE_ENUM_TOKEN;
 					}
 					else
@@ -799,7 +798,7 @@ int currentEnumValue = 0;
 					}
 					break;
 				case PARSE_ENUM_DEF:
-					if (isalpha(*m_token) && enumList != NULL)
+					if (isalpha(*m_token) && enumList != nullptr)
 					{
 						enumList->push_back(TemplateData::EnumData());
 						enumData = &enumList->back();
@@ -816,7 +815,7 @@ int currentEnumValue = 0;
 					{
 						enumData->value = currentEnumValue++;
 						templine = line;
-						enumData = NULL;
+						enumData = nullptr;
 						parseState = PARSE_END_BRACKET;
 					}
 					break;
@@ -839,7 +838,7 @@ int currentEnumValue = 0;
 						}
 						currentEnumValue = (*iter).value;
 						enumData->value = currentEnumValue++;
-						enumData = NULL;
+						enumData = nullptr;
 						parseState = PARSE_END_BRACKET;
 					}
 					else
@@ -896,7 +895,7 @@ const char * TpfFile::parseAssignment(const char *line)
 
 	// get the parameter type info
 	m_parameter = m_templateData->getParameter(m_token);
-	if (m_parameter == NULL)
+	if (m_parameter == nullptr)
 	{
 		std::string errmsg = "cannot find parameter ";
 		errmsg += m_token;
@@ -916,7 +915,7 @@ const char * TpfFile::parseAssignment(const char *line)
 			m_fp.printError("non-array parameter being assigned as array");
 			return CHAR_ERROR;
 		}
-		if (line == NULL)
+		if (line == nullptr)
 		{
 			// we need to read the next line to continue parsing
 			line = goToNextLine();
@@ -944,7 +943,7 @@ const char * TpfFile::parseAssignment(const char *line)
 		}
 		// check for the ending ]
 		line = getNextToken(line, m_token);
-		if (line == NULL)
+		if (line == nullptr)
 		{
 			m_fp.printEolError();
 			return CHAR_ERROR;
@@ -955,13 +954,13 @@ const char * TpfFile::parseAssignment(const char *line)
 			return CHAR_ERROR;
 		}
 		line = getNextToken(line, m_token);
-		if (line == NULL)
+		if (line == nullptr)
 		{
 			m_fp.printEolError();
 			return CHAR_ERROR;
 		}
 	}
-	else if (line == NULL)
+	else if (line == nullptr)
 	{
 		m_fp.printEolError();
 		return CHAR_ERROR;
@@ -1039,7 +1038,7 @@ const char * TpfFile::parseAssignment(const char *line)
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseIntegerParameter(CompilerIntegerParam & param, const char *line)
@@ -1065,7 +1064,7 @@ const char * TpfFile::parseIntegerParameter(CompilerIntegerParam & param, const 
 		if (line == CHAR_ERROR)
 			return CHAR_ERROR;
 
-		if (line != NULL && *line == 'd')
+		if (line != nullptr && *line == 'd')
 		{
 			// rolling die
 			int base = 0;
@@ -1116,7 +1115,7 @@ const char * TpfFile::parseIntegerParameter(CompilerIntegerParam & param, const 
 			}
 			param.setValue(num_dice, num_sides, base);
 		}
-		else if (line != NULL && *line == '.' && *(line+1) == '.')
+		else if (line != nullptr && *line == '.' && *(line+1) == '.')
 		{
 			// range
 			int min_value = value;
@@ -1169,7 +1168,7 @@ const char * TpfFile::parseIntegerParameter(CompilerIntegerParam & param, const 
 				tempLine = m_token;
 				char tempBuffer[64];
 				std::vector<std::string> enumList;
-				while (tempLine != NULL)
+				while (tempLine != nullptr)
 				{
 					tempLine = getNextToken(tempLine, tempBuffer);
 					if (isalpha(*tempBuffer))
@@ -1179,7 +1178,7 @@ const char * TpfFile::parseIntegerParameter(CompilerIntegerParam & param, const 
 			}
 		}
 	}
-	else if (*m_token == '.' && tempLine != NULL && *tempLine == '.')
+	else if (*m_token == '.' && tempLine != nullptr && *tempLine == '.')
 	{
 		// range with lower bound of INT_MIN
 		line = tempLine + 1;
@@ -1233,7 +1232,7 @@ const char * TpfFile::parseIntegerParameter(CompilerIntegerParam & param, const 
 			return CHAR_ERROR;
 		}
 		line = parseIntegerParameter(param, line);
-		if (line != NULL && *line == '%')
+		if (line != nullptr && *line == '%')
 		{
 			// % offset from base value
 			line = getNextToken(line, m_token);
@@ -1258,7 +1257,7 @@ const char * TpfFile::parseIntegerParameter(CompilerIntegerParam & param, const 
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseFloatParameter(FloatParam & param, const char *line)
@@ -1279,7 +1278,7 @@ const char * TpfFile::parseFloatParameter(FloatParam & param, const char *line)
 	}
 	else if (isfloat(m_token))
 	{
-		if (line != NULL && *line == '.' && *(line+1) == '.')
+		if (line != nullptr && *line == '.' && *(line+1) == '.')
 		{
 			// range
 			float min_value = static_cast<float>(atof(m_token));
@@ -1326,7 +1325,7 @@ const char * TpfFile::parseFloatParameter(FloatParam & param, const char *line)
 			param.setValue(value);
 		}
 	}
-	else if (*m_token == '.' && line != NULL && *line == '.')
+	else if (*m_token == '.' && line != nullptr && *line == '.')
 	{
 		// range with lower bound of -FLT_MAX
 		++line;
@@ -1379,7 +1378,7 @@ const char * TpfFile::parseFloatParameter(FloatParam & param, const char *line)
 			return CHAR_ERROR;
 		}
 		line = parseFloatParameter(param, line);
-		if (line != NULL && *line == '%')
+		if (line != nullptr && *line == '%')
 		{
 			// % offset from base value
 			line = getNextToken(line, m_token);
@@ -1415,7 +1414,7 @@ const char * TpfFile::parseFloatParameter(FloatParam & param, const char *line)
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseBoolParameter(BoolParam & param, const char *line)
@@ -1456,7 +1455,7 @@ const char * TpfFile::parseBoolParameter(BoolParam & param, const char *line)
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseStringParameter(StringParam & param, const char *line)
@@ -1495,7 +1494,7 @@ const char * TpfFile::parseStringParameter(StringParam & param, const char *line
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseStringIdParameter(StringIdParam & param, const char *line)
@@ -1531,7 +1530,7 @@ const char * TpfFile::parseStringIdParameter(StringIdParam & param, const char *
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseFilenameParameter(StringParam & param, const char *line)
@@ -1563,10 +1562,11 @@ const char * TpfFile::parseFilenameParameter(StringParam & param, const char *li
 		{
 			if (!islower(lowername[i]) &&
 				!isdigit(lowername[i]) &&
+				lowername[i] != '-' &&
 				lowername[i] != '_')
 			{
 				m_fp.printError("Illegal character in filename, only lowercase, "
-					"numbers, and \"_\" allowed");
+					"numbers, \"-\" and \"_\" allowed");
 				return CHAR_ERROR;
 			}
 		}
@@ -1586,7 +1586,7 @@ const char * TpfFile::parseFilenameParameter(StringParam & param, const char *li
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseVectorParameter(VectorParam & param, const char *line)
@@ -1648,7 +1648,7 @@ const char * TpfFile::parseVectorParameter(VectorParam & param, const char *line
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseTemplateParameter(StringParam & param, const char *line)
@@ -1662,7 +1662,7 @@ const char * TpfFile::parseTemplateParameter(StringParam & param, const char *li
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseEnumParameter(CompilerIntegerParam & param, const char *line)
@@ -1707,7 +1707,7 @@ const char * TpfFile::parseEnumParameter(CompilerIntegerParam & param, const cha
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseDynamicVariableParameter(DynamicVariableParam & param,
@@ -1731,7 +1731,7 @@ const char * TpfFile::parseDynamicVariableParameter(DynamicVariableParam & param
 	if (*m_token == '+')
 	{
 		// extending an objevar list
-		if (m_template != NULL && m_template->getBaseTemplateName().empty())
+		if (m_template != nullptr && m_template->getBaseTemplateName().empty())
 		{
 			m_fp.printError("trying to extend an objvar list from a base template");
 			return CHAR_ERROR;
@@ -1746,7 +1746,7 @@ const char * TpfFile::parseDynamicVariableParameter(DynamicVariableParam & param
 	}
 	else
 	{
-		if (line == NULL)
+		if (line == nullptr)
 		{
 			// we need to read the next line to continue parsing
 			line = goToNextLine();
@@ -1769,7 +1769,7 @@ const char * TpfFile::parseDynamicVariableParameter(DynamicVariableParam & param
 			m_fp.printError("objvar parser given non-empty param");
 			return CHAR_ERROR;
 		}
-		data.m_name = "";
+		data.m_name.clear();
 		data.m_type = DynamicVariableParamData::LIST;
 		data.m_data.lparam = new std::vector<DynamicVariableParamData *>;
 
@@ -1786,7 +1786,7 @@ const char * TpfFile::parseDynamicVariableParameter(DynamicVariableParam & param
  * @param param		a DynamicVariableParamData containing an empty list
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseDynamicVariableParameterList(
@@ -1797,7 +1797,7 @@ std::string name;
 	NOT_NULL(line);
 
 	if (data.m_type != DynamicVariableParamData::LIST ||
-		data.m_data.lparam == NULL)
+		data.m_data.lparam == nullptr)
 	{
 		m_fp.printError("parse objvar list not given a list");
 		return CHAR_ERROR;
@@ -1917,7 +1917,6 @@ std::string name;
 		// now parse the objvar data
 		line = paramStart;
 		CompilerDynamicVariableParamData *newData = new CompilerDynamicVariableParamData(name, type);
-		NOT_NULL(newData);
 		switch (type)
 		{
 			case DynamicVariableParamData::INTEGER:
@@ -1939,7 +1938,7 @@ std::string name;
 				}
 				else
 				{
-					if (line == NULL)
+					if (line == nullptr)
 					{
 						// we need to read the next line to continue parsing
 						line = goToNextLine();
@@ -1985,7 +1984,7 @@ std::string name;
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseStructParameter(StructParamOT & param, const char *line)
@@ -2078,7 +2077,7 @@ const char * TpfFile::parseStructParameter(StructParamOT & param, const char *li
  * @param param		template parameter
  * @param line		buffer containing the assignment statement
  *
- * @return character in line where parsing stopped, or NULL if at eol, or -1 if
+ * @return character in line where parsing stopped, or nullptr if at eol, or -1 if
  *		error
  */
 const char * TpfFile::parseTriggerVolumeParameter(TriggerVolumeParam & param,
@@ -2314,7 +2313,7 @@ Q * param;
 			file.m_fp.printError("expected [ at start of list");
 			return CHAR_ERROR;
 		}
-		if (line == NULL)
+		if (line == nullptr)
 		{
 			// we need to read the next line to continue parsing
 			line = file.goToNextLine();
@@ -2340,7 +2339,7 @@ Q * param;
 			// get the next parameters in the list
 			param = (*getParamFunc)(*file.m_template,
 				file.m_parameter->name, index);
-			if (param == NULL)
+			if (param == nullptr)
 			{
 				std::string errmsg = "cannot find parameter " + file.m_parameter->name;
 				file.m_fp.printError(errmsg.c_str());
@@ -2386,7 +2385,7 @@ Q * param;
 			arrayIndex = 0;
 		param = (*getParamFunc)(*file.m_template,
 			file.m_parameter->name, arrayIndex);
-		if (param == NULL)
+		if (param == nullptr)
 		{
 			// if the tpf version is less than the current version, print a 
 			// warning and ignore
@@ -2397,7 +2396,7 @@ Q * param;
 					" due to being removed from later version (need to update the "
 					"template to the latest version)";
 				file.m_fp.printWarning(errmsg.c_str());
-				return NULL;
+				return nullptr;
 			}
 			else
 			{
@@ -2430,15 +2429,13 @@ const char *parseWeightedList(
 	TpfFile &file, Q & param, const char *line)
 {
 	LIST *list = new LIST;
-	NOT_NULL(list);
 	param.setValue(list);
 	int totalWeight = 0;
 	for (;;)
 	{
 		VALUE value;
-		Q *valueParam = NULL;
+		Q *valueParam = nullptr;
 		value.value = valueParam = new Q;
-		NOT_NULL(valueParam);
 		list->push_back(value);
 		VALUE *newValue = &list->back();
 		// test to see if we need to go to the next line
@@ -2508,7 +2505,7 @@ std::string TpfFile::getFileName() const
 
 const std::string & TpfFile::getBaseTemplateName() const
 {
-	if (m_template != NULL)
+	if (m_template != nullptr)
 		return m_template->getBaseTemplateName();
 	return m_baseTemplateName;
 }

@@ -11,9 +11,9 @@
 //#pragma warning ( disable : 4514 ) // unreferenced inline function has been removed (STL)
 //#pragma warning ( disable : 4702 ) // unreachable code (STL)
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FirstSharedFoundation.h"
+#include "sharedFoundation/FirstSharedFoundation.h"
 #include "sharedDebug/FirstSharedDebug.h"
-#include "sharedMemoryManager/FirstSharedMemoryManager.h"
+
 
 #include <string>
 

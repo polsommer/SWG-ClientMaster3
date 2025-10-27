@@ -11,7 +11,6 @@
 
 #include "sharedDebug/DebugFlags.h"
 #include "sharedFoundation/ExitChain.h"
-#include "sharedMemoryManager/MemoryManager.h"
 #include "sharedSynchronization/Mutex.h"
 
 #include "zlib.h"
@@ -43,9 +42,6 @@ voidpf ZlibCompressorNamespace::allocateWrapper(voidpf opaque, uInt items, uInt 
 	UNREF(opaque);
 		void *result = 0;
 
-#if 0
-	result = operator new(items * size);
-#else
 	int totalSize = items * size;
 	if (totalSize > cms_poolElementThreshold)
 	{
@@ -67,7 +63,6 @@ voidpf ZlibCompressorNamespace::allocateWrapper(voidpf opaque, uInt items, uInt 
 
 		ms_mutex.leave();
 	}
-#endif
 
 	return result;
 }
@@ -78,9 +73,6 @@ void ZlibCompressorNamespace::freeWrapper(voidpf opaque, voidpf address)
 {
 	UNREF(opaque);
 
-#if 0
-	operator delete(address);
-#else
 	if (address < ms_memoryBottom || address >= ms_memoryTop)
 		operator delete(address);
 	else
@@ -89,17 +81,16 @@ void ZlibCompressorNamespace::freeWrapper(voidpf opaque, voidpf address)
 			ms_memoryPool.push_back(address);
 		ms_mutex.leave();
 	}
-#endif
 }
 
 // ======================================================================
 
 void ZlibCompressor::install(int numberOfParallelThreads)
 {
-	if (numberOfParallelThreads <= 1 || MemoryManager::getLimit() < 260)
+	if (numberOfParallelThreads <= 1)
 		ms_poolElementCount = 5;
 	else
-		if (numberOfParallelThreads <= 2 || MemoryManager::getLimit() < 375)
+		if (numberOfParallelThreads <= 2)
 			ms_poolElementCount = 10;
 		else
 			ms_poolElementCount = 15;
@@ -121,8 +112,8 @@ void ZlibCompressorNamespace::remove()
 
 		DEBUG_FATAL(static_cast<int>(ms_memoryPool.size()) != ms_poolElementCount, ("ZLibCompressor memory pool entries not all released"));
 		operator delete(ms_memoryBottom);
-		ms_memoryBottom = NULL;
-		ms_memoryTop = NULL;
+		ms_memoryBottom = nullptr;
+		ms_memoryTop = nullptr;
 		ms_memoryPool.clear();
 
 	ms_mutex.leave();
@@ -155,12 +146,12 @@ int ZlibCompressor::compress(const void *inputBuffer, int inputSize, void *outpu
 	z.avail_out = outputSize;
 	z.total_out = 0;
 
-	z.msg = NULL;
-	z.state = NULL;
+	z.msg = nullptr;
+	z.state = nullptr;
 
 	z.zalloc = allocateWrapper;
 	z.zfree = freeWrapper;
-	z.opaque = NULL;
+	z.opaque = nullptr;
 
 	z.data_type = Z_BINARY;
 	z.adler = 0;
@@ -196,12 +187,12 @@ int ZlibCompressor::expand(const void *inputBuffer, int inputSize, void *outputB
 	z.avail_out = outputSize;
 	z.total_out = 0;
 
-	z.msg = NULL;
-	z.state = NULL;
+	z.msg = nullptr;
+	z.state = nullptr;
 
 	z.zalloc = allocateWrapper;
 	z.zfree = freeWrapper;
-	z.opaque = NULL;
+	z.opaque = nullptr;
 
 	z.data_type = Z_BINARY;
 	z.adler = 0;

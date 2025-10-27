@@ -1,20 +1,20 @@
 // ClientNotificationBoxMessage.h
-// Copyright 2005, Sony Online Entertainment Inc., all rights reserved. 
+// Copyright 2005, Sony Online Entertainment Inc., all rights reserved.
 
 #ifndef	_INCLUDED_ClientNotificationBoxMessage_H
 #define	_INCLUDED_ClientNotificationBoxMessage_H
 
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkId.h"
 #include "Unicode.h"
 
 class ClientNotificationBoxMessage : public GameNetworkMessage
 {
 
 public:
-	
+
 	static const char * const MessageType;
-	
+
 	enum IconStyle
 	{
 		IS_NONE,
@@ -33,9 +33,9 @@ public:
 
 
 	ClientNotificationBoxMessage( int sequenceId, NetworkId player, Unicode::String const & contents, bool useNotificationIcon, int iconStyle, float timeout, int channel, std::string const & sound );
-	
+
 	explicit ClientNotificationBoxMessage(Archive::ReadIterator & source);
-	
+
 public:
 	int getSequenceId() const;
 	const NetworkId &getPlayer() const;

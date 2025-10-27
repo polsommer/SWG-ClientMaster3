@@ -17,9 +17,9 @@
 class ObjectTemplate;
 
 #include "sharedFile/Iff.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/CrcLowerString.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DataResource.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DataResourceList.h"
+#include "sharedFoundation/CrcLowerString.h"
+#include "sharedFoundation/DataResource.h"
+#include "sharedFoundation/DataResourceList.h"
 
 
 

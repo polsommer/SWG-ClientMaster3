@@ -13,9 +13,9 @@
 #ifndef _INCLUDED_SharedObjectTemplate_H
 #define _INCLUDED_SharedObjectTemplate_H
 
-#include "../../../../../../engine/shared/library/sharedObject/include/public/sharedObject/ObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
-#include "../../../../../../engine/shared/library/sharedUtility/include/public/sharedUtility/TemplateParameter.h"
+#include "sharedObject/ObjectTemplate.h"
+#include "sharedFoundation/DynamicVariable.h"
+#include "sharedUtility/TemplateParameter.h"
 
 
 class ArrangementDescriptor;

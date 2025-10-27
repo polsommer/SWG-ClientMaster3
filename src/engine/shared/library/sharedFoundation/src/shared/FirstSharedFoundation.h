@@ -17,8 +17,6 @@
 
 #define _CRT_SECURE_NO_DEPRECATE 1
 
-#include "sharedFoundation/WinApiFamily.h"
-
 #ifndef DEBUG_LEVEL
 	#ifdef _DEBUG
 		#define DEBUG_LEVEL DEBUG_LEVEL_DEBUG
@@ -34,9 +32,9 @@
 // ======================================================================
 // things we really have to have
 
-#include "../../../../../../engine/shared/library/sharedFoundationTypes/include/public/sharedFoundationTypes/FoundationTypes.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FirstPlatform.h"
-#include "../../../../../../engine/shared/library/sharedMemoryManager/include/public/sharedMemoryManager/MemoryManager.h"
+#include "sharedFoundationTypes/FoundationTypes.h"
+#include "sharedFoundation/FirstPlatform.h"
+
 
 // ======================================================================
 
@@ -50,13 +48,7 @@ typedef float real;
 #define CONST_REAL(a)  static_cast<float>(a)
 #define RECIP(a)       (1.0f / (a))
 
-#ifdef REAL_MIN
-#undef REAL_MIN
-#endif
 const float REAL_MIN = FLT_MIN;
-#ifdef REAL_MAX
-#undef REAL_MAX
-#endif
 const float REAL_MAX = FLT_MAX;
 
 // ======================================================================
@@ -78,16 +70,16 @@ const float REAL_MAX = FLT_MAX;
 #include <ctype.h>
 #include <stdarg.h>
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MacroFoundation.h"
+#include "sharedFoundation/MacroFoundation.h"
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Binary.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Fatal.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/StlForwardDeclaration.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Misc.h"
-#include "../../../../../../engine/shared/library/sharedDebug/include/public/sharedDebug/RemoteDebug.h"
-#include "../../../../../../engine/shared/library/sharedDebug/include/public/sharedDebug/Report.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FloatMath.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/SafeCast.h"
+#include "sharedFoundation/Binary.h"
+#include "sharedFoundation/Fatal.h"
+#include "sharedFoundation/StlForwardDeclaration.h"
+#include "sharedFoundation/Misc.h"
+#include "sharedDebug/RemoteDebug.h"
+#include "sharedDebug/Report.h"
+#include "sharedFoundation/FloatMath.h"
+#include "sharedFoundation/SafeCast.h"
 
 // ======================================================================
 

@@ -22,6 +22,8 @@ struct HN
 
 HN::HN()
 {
+    WSADATA wsaData;
+    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	char name[512] = {"\0"};
 	if(gethostname(name, sizeof(name)) == 0)
 	{
@@ -36,6 +38,22 @@ const std::string & NetworkHandler::getHostName()
 {
 	static HN hn;
 	return hn.hostName;
+}
+
+const std::string & NetworkHandler::getHumanReadableHostName()
+{
+	char name[512] = {"\0"};
+	static std::string nameString;
+	if(nameString.empty())
+	{
+		if(gethostname(name, sizeof(name)) == 0)
+		{
+			name[sizeof(name) - 1] = 0;
+			//hostName = name;
+			nameString = name;
+		}
+	}
+	return nameString;
 }
 
 //-----------------------------------------------------------------------

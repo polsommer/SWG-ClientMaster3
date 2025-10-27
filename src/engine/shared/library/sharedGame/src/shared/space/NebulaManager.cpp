@@ -15,6 +15,7 @@
 #include "sharedMath/SphereTree.h"
 #include "sharedUtility/DataTable.h"
 #include "sharedUtility/DataTableManager.h"
+#include "sharedFile/TreeFile.h"
 
 #include <algorithm>
 #include <map>
@@ -24,7 +25,7 @@
 namespace NebulaManagerNamespace
 {
 	typedef NebulaManager::NebulaVector NebulaVector;
-	typedef stdmap<int, Nebula const *>::fwd NebulaMap;
+	typedef std::map<int, Nebula const *> NebulaMap;
 	typedef std::map<std::string, NebulaVector> NebulasByScene;
 
 	//-- nebula vector OWNS the nebulas
@@ -51,7 +52,7 @@ namespace NebulaManagerNamespace
 	};
 
 	typedef SphereTree<Nebula const *, NebulaSphereAccessor> NebulaSphereTree;
-	NebulaSphereTree * s_collisionSphereTree = NULL;
+	NebulaSphereTree * s_collisionSphereTree = nullptr;
 
 	enum DatatableColumns
 	{
@@ -109,7 +110,7 @@ namespace NebulaManagerNamespace
 
 	//----------------------------------------------------------------------
 
-	NebulaManager::ImplementationClearFunction s_clearFunction = NULL;
+	NebulaManager::ImplementationClearFunction s_clearFunction = nullptr;
 }
 
 using namespace NebulaManagerNamespace;
@@ -157,10 +158,10 @@ void NebulaManager::clear()
 
 	s_nebulaMap.clear();
 
-	if (s_collisionSphereTree != NULL)
+	if (s_collisionSphereTree != nullptr)
 	{
 		delete s_collisionSphereTree;
-		s_collisionSphereTree = NULL;
+		s_collisionSphereTree = nullptr;
 	}
 
 	//-- Remove nebulas for the current scene from the scene map
@@ -175,9 +176,9 @@ void NebulaManager::clear()
 		}
 	}
 
-	s_currentSceneId = "";
+	s_currentSceneId.clear();
 
-	if (s_clearFunction != NULL)
+	if (s_clearFunction != nullptr)
 		s_clearFunction();
 }
 
@@ -194,16 +195,15 @@ void NebulaManager::loadSceneData(std::string const & sceneId)
 
 	std::string const & filename = "datatables/space/nebula/" + sceneId + ".iff";
 	
-	DataTable * const dt = DataTableManager::getTable(filename, true);
-	
-	if (dt == NULL)
+	//technically this means that this will be called twice for existing nebula tables
+	// but it's worth it to kill that fucking annoying warning
+	// not a space scene...or a missing space scene
+	if (!TreeFile::exists(filename.c_str()))
 	{
-		//-- apparently not a space scene
-		// @todo: need better way to detect this
-		if (!strncmp(sceneId.c_str(), "space_", 6) != 0)
-			WARNING(true, ("NebulaManager no such datatable [%s]", filename.c_str()));
 		return;
 	}
+
+	DataTable * const dt = DataTableManager::getTable(filename, true);
 	
 	float styleWeightings[16] = {0};
 
@@ -319,11 +319,11 @@ void NebulaManager::getNebulasInSphere(Vector const & pos, float const radius, N
 
 Nebula const * NebulaManager::getClosestNebula(Vector const & pos, float const maxDistance, float & outMinDistance, float & outMaxDistance)
 {
-	Nebula const * nebula = NULL;
+	Nebula const * nebula = nullptr;
 	if (NON_NULL(s_collisionSphereTree)->findClosest(pos, maxDistance, nebula, outMinDistance, outMaxDistance))
 		return nebula;
 
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -334,7 +334,7 @@ Nebula const * NebulaManager::getNebulaById(int const id)
 	if (it != s_nebulaMap.end())
 		return (*it).second;
 
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------

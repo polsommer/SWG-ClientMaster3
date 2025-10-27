@@ -1,6 +1,6 @@
 // SphereGrid.h
 // Copyright 2000-05, Sony Online Entertainment Inc., all rights reserved.
-// Author: Neal Kettler 
+// Author: Neal Kettler
 
 #ifndef	_INCLUDED_SphereGrid_H
 #define	_INCLUDED_SphereGrid_H
@@ -45,9 +45,9 @@ public:
 	void onObjectMoved( ObjectType object );
 
 	// search functions which check multiple pobs
-	void findInRange( Vector const &center_w, float radius, std::set<ObjectType> &results); 
+	void findInRange( Vector const &center_w, float radius, std::set<ObjectType> &results);
 	void findInRange(Vector const &center_w, float radius, SpatialSubdivisionFilter<ObjectType> const &filter, std::set<ObjectType> &results);
-	void findInRange( Capsule const &queryCapsule_w, std::set<ObjectType> &results); 
+	void findInRange( Capsule const &queryCapsule_w, std::set<ObjectType> &results);
 	void findInRange(Capsule const &queryCapsule_w, SpatialSubdivisionFilter<ObjectType> const &filter, std::set<ObjectType> &results);
 
 	// search functions which check a single pob
@@ -83,7 +83,7 @@ private:
 
 	const float	m_fGridSize;
 	const float	m_fGridMaxDimension;
-	const int	m_iGridSquareWidth;	
+	const int	m_iGridSquareWidth;
 
 };
 
@@ -135,7 +135,7 @@ inline void SphereGrid< ObjectType,  Accessor>::onObjectRemoved(ObjectType objec
 	for( square_iter = squares.begin(); square_iter != squares.end(); ++square_iter )
 	{
 		std::set< ObjectType >& object_set = ( m_contents[ *square_iter ] ) ;
-		std::set< ObjectType >::iterator iter = object_set.find( object );
+		typename std::set< ObjectType >::iterator iter = object_set.find( object );
 		if ( iter != object_set.end() )
 		{
 	       		object_set.erase( iter );
@@ -164,7 +164,7 @@ inline void SphereGrid< ObjectType,  Accessor>::onObjectMoved( ObjectType object
 	Sphere end_sphere = Accessor::getExtent(object);
 	Sphere start_sphere( end_sphere );
 
-	Vector& start=m_locations[object];   
+	Vector& start=m_locations[object];
 
 	start_sphere.setCenter( start );
 
@@ -183,7 +183,7 @@ inline void SphereGrid< ObjectType,  Accessor>::onObjectMoved( ObjectType object
 	for ( square_iter = start_squares.begin(); square_iter != start_squares.end(); ++square_iter )
 	{
 		std::set< ObjectType >& set = ( m_contents[ *square_iter ] );
-		std::set< ObjectType >::iterator iter = set.find( object );
+		typename std::set< ObjectType >::iterator iter = set.find( object );
 		if ( iter == set.end() )
 		{
 			DEBUG_FATAL(true, ("SphereGrid::onObjectMoved, couldn't find object to move!  %p",object));
@@ -204,8 +204,8 @@ inline void SphereGrid< ObjectType,  Accessor>::onObjectMoved( ObjectType object
 
 
 //
-//  Get a list of all the squares needed to contain this capsule 
-// 
+//  Get a list of all the squares needed to contain this capsule
+//
 template<class ObjectType, class Accessor>
 inline void SphereGrid<ObjectType, Accessor>::getContainingSquares(const Capsule & range, std::vector<int> & results) const
 {
@@ -245,8 +245,8 @@ inline void SphereGrid<ObjectType, Accessor>::getContainingSquares(const Capsule
 
 
 //
-//  Get a list of all the squares needed to contain this sphere 
-// 
+//  Get a list of all the squares needed to contain this sphere
+//
 template<class ObjectType, class Accessor>
 inline void SphereGrid<ObjectType, Accessor>::getContainingSquares(const Sphere & bounds, std::vector<int> & results) const
 {
@@ -287,7 +287,7 @@ inline void SphereGrid<ObjectType, Accessor>::getContainingSquares(const Sphere 
 // Common private method called by all findInRange() public methods using a sphere
 //
 template<class ObjectType, class ExtentAccessor>
-inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeSphere( Object const *pob, Vector const &center_w, float radius, 
+inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeSphere( Object const *pob, Vector const &center_w, float radius,
 	SpatialSubdivisionFilter<ObjectType> const *filter, std::set<ObjectType> &results)
 {
 	Sphere range(center_w, radius);
@@ -296,7 +296,7 @@ inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeSphere( Object co
 	std::vector< int >::iterator citer;
 	for ( citer = squares.begin(); citer != squares.end(); ++citer )
 	{
-		std::set< ObjectType >::const_iterator oiter;
+		typename std::set< ObjectType >::const_iterator oiter;
 		int square_id = *citer;
 		std::set<  ObjectType >& objects = m_contents[ square_id ];   // objects in this square
 
@@ -328,10 +328,10 @@ inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeSphere( Object co
 
 
 //
-// Common private method called by all findInRange() public methods using a capsule 
+// Common private method called by all findInRange() public methods using a capsule
 //
 template<class ObjectType, class ExtentAccessor>
-inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeCapsule( Object const *pob, Capsule const &range, 
+inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeCapsule( Object const *pob, Capsule const &range,
 	SpatialSubdivisionFilter<ObjectType> const *filter, std::set<ObjectType> &results)
 {
 	std::vector< int > squares;
@@ -339,7 +339,7 @@ inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeCapsule( Object c
 	std::vector< int >::iterator citer;
 	for ( citer = squares.begin(); citer != squares.end(); ++citer )
 	{
-		std::set< ObjectType >::const_iterator oiter;
+		typename std::set< ObjectType >::const_iterator oiter;
 		int square_id = *citer;
 		std::set<  ObjectType >& objects = m_contents[ square_id ];   // objects in this square
 
@@ -371,16 +371,16 @@ inline void SphereGrid<ObjectType, ExtentAccessor>::findInRangeCapsule( Object c
 
 
 template<class ObjectType, class ExtentAccessor>
-inline void SphereGrid<ObjectType, ExtentAccessor>::findInRange( const Capsule & range, std::set<ObjectType> & results) 
+inline void SphereGrid<ObjectType, ExtentAccessor>::findInRange( const Capsule & range, std::set<ObjectType> & results)
 {
-	findInRangeCapsule( INVALID_POB, range, NULL, results );
+	findInRangeCapsule( INVALID_POB, range, nullptr, results );
 }
 
 
 template<class ObjectType, class ExtentAccessor>
 inline void SphereGrid<ObjectType, ExtentAccessor>::findInRange( Vector const &center_w, float radius, std::set<ObjectType> & results)
 {
-	findInRangeSphere( INVALID_POB, center_w, radius, NULL, results );
+	findInRangeSphere( INVALID_POB, center_w, radius, nullptr, results );
 }
 
 
@@ -401,7 +401,7 @@ inline void SphereGrid<ObjectType, ExtentAccessor>::findInRange( Vector const &c
 template<class ObjectType, class ExtentAccessor>
 inline void SphereGrid<ObjectType, ExtentAccessor>::findInRange( Object const *pob, Vector const &center_w, float radius, std::set<ObjectType> & results)
 {
-	findInRangeSphere( pob, center_w, radius, NULL, results );
+	findInRangeSphere( pob, center_w, radius, nullptr, results );
 }
 
 template<class ObjectType, class ExtentAccessor>
@@ -434,7 +434,7 @@ public:
 	// search functions which check multiple pobs
 	void findInRange( Vector const &center_w, float radius, std::set<ObjectType> &results); // const;
 	void findInRange(Vector const &center_w, float radius, SpatialSubdivisionFilter<ObjectType> const &filter, std::set<ObjectType> &results);
-	void findInRange( Capsule const &queryCapsule_w, std::set<ObjectType> &results); 
+	void findInRange( Capsule const &queryCapsule_w, std::set<ObjectType> &results);
 	void findInRange(Capsule const &queryCapsule_w, SpatialSubdivisionFilter<ObjectType> const &filter, std::set<ObjectType> &results);
 
 	// search functions which check a single pob
@@ -503,18 +503,18 @@ inline void DoubleSphereGrid<ObjectType, Accessor>::onObjectMoved( ObjectType ob
 
 
 template<class ObjectType, class Accessor>
-inline void DoubleSphereGrid<ObjectType, Accessor>::findInRange( const Capsule & range, std::set<ObjectType> & results) 
+inline void DoubleSphereGrid<ObjectType, Accessor>::findInRange( const Capsule & range, std::set<ObjectType> & results)
 {
-	m_largeGrid.findInRange( range, results );	
-	m_smallGrid.findInRange( range, results );	
+	m_largeGrid.findInRange( range, results );
+	m_smallGrid.findInRange( range, results );
 }
 
 
 template<class ObjectType, class Accessor>
-inline void DoubleSphereGrid<ObjectType, Accessor>::findInRange(Vector const &center_w, float radius, std::set<ObjectType> & results) 
+inline void DoubleSphereGrid<ObjectType, Accessor>::findInRange(Vector const &center_w, float radius, std::set<ObjectType> & results)
 {
-	m_largeGrid.findInRange( center_w, radius, results);	
-	m_smallGrid.findInRange( center_w, radius, results);	
+	m_largeGrid.findInRange( center_w, radius, results);
+	m_smallGrid.findInRange( center_w, radius, results);
 }
 
 

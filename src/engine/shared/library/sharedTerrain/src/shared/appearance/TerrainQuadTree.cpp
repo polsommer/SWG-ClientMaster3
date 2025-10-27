@@ -200,8 +200,7 @@ TerrainQuadTree::Node::Node (const int x, const int z, const int size, const flo
 
 TerrainQuadTree::Node::~Node ()
 {
-	if (m_chunk)
-		delete m_chunk;
+	delete m_chunk;
 
 	m_chunk = 0;
 }
@@ -535,9 +534,9 @@ void TerrainQuadTree::Node::pruneTree ()
 /**
 * Find the leaf node which directly contains this chunk.
 *
-* @param aChunk the chunk to be located.  If non null, the parameters ax and az are ignored.
-* @param ax the chunkspace coordinate of the chunk to be located.  Only used if param aChunk is null
-* @param az the chunkspace coordinate of the chunk to be located.  Only used if param aChunk is null
+* @param aChunk the chunk to be located.  If non nullptr, the parameters ax and az are ignored.
+* @param ax the chunkspace coordinate of the chunk to be located.  Only used if param aChunk is nullptr
+* @param az the chunkspace coordinate of the chunk to be located.  Only used if param aChunk is nullptr
 */
 TerrainQuadTree::Node * TerrainQuadTree::Node::findChunkNode (const ProceduralTerrainAppearance::Chunk * const chunk, int x, int z, int size)
 {
@@ -567,7 +566,6 @@ TerrainQuadTree::Node * TerrainQuadTree::Node::findChunkNode (const ProceduralTe
 
 TerrainQuadTree::Node * TerrainQuadTree::Node::findFirstRenderablePeerNeighbor (const TerrainQuadTree::Node * const otherNode, const int dir)
 {
-	NOT_NULL (this);
 	NOT_NULL (otherNode);
 	
 	const int dir_offsets[4][2] =
@@ -595,7 +593,6 @@ TerrainQuadTree::Node * TerrainQuadTree::Node::findFirstRenderablePeerNeighbor (
 
 TerrainQuadTree::Node * TerrainQuadTree::Node::findFirstRenderableLowerNeighbor (const TerrainQuadTree::Node * const otherNode, const int dir)
 {
-	NOT_NULL (this);
 	NOT_NULL (otherNode);
 	
 	const int halfSize = otherNode->getSize () / 2;
@@ -757,9 +754,9 @@ TerrainQuadTree::Node * TerrainQuadTree::Node::findFirstRenderableNode (const in
 /**
 * hasChunk is a wrapper for findChunkNode
 *
-* @param aChunk the chunk to be located. If non null, the parameters ax and az are ignored.
-* @param ax the chunkspace coordinate of the chunk to be located. Only used if param aChunk is null
-* @param az the chunkspace coordinate of the chunk to be located. Only used if param aChunk is null
+* @param aChunk the chunk to be located. If non nullptr, the parameters ax and az are ignored.
+* @param ax the chunkspace coordinate of the chunk to be located. Only used if param aChunk is nullptr
+* @param az the chunkspace coordinate of the chunk to be located. Only used if param aChunk is nullptr
 * @param chunkSize the relative size of the chunk in chunkspace.
 */
 bool TerrainQuadTree::Node::hasChunk (const ProceduralTerrainAppearance::Chunk * const chunk, const int x, const int z, const int size)

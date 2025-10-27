@@ -53,7 +53,6 @@ void Portal::install()
 	{
 		delete ms_doorStyleTable;
 		ms_doorStyleTable = new DataTable();
-		NOT_NULL(ms_doorStyleTable);
 		ms_doorStyleTable->load(dataTableIff);
 	}
 
@@ -65,7 +64,7 @@ void Portal::install()
 void Portal::remove()
 {
 	delete ms_doorStyleTable;
-	ms_doorStyleTable = NULL;
+	ms_doorStyleTable = nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -106,11 +105,11 @@ Portal::Portal(const PortalPropertyTemplateCellPortal &portalTemplate, CellPrope
 	m_template(portalTemplate),
 	m_relativeToObject(relativeTo),
 	m_closed(false),
-	m_neighbor(NULL),
+	m_neighbor(nullptr),
 	m_parentCell(parentCell),
-	m_dpvsPortal(NULL),
-	m_door(NULL),
-	m_appearance(NULL)
+	m_dpvsPortal(nullptr),
+	m_door(nullptr),
+	m_appearance(nullptr)
 {
 	if(ms_createDoors)
 	{
@@ -127,13 +126,13 @@ Portal::~Portal()
 		m_relativeToObject->removeDpvsObject(m_dpvsPortal);
 		NOT_NULL(ms_destroyDpvsPortalHookFunction);
 		(*ms_destroyDpvsPortalHookFunction)(m_dpvsPortal);
-		m_dpvsPortal = NULL;
+		m_dpvsPortal = nullptr;
 	}
 
-	m_relativeToObject = NULL;
-	m_neighbor = NULL;
-	m_parentCell = NULL;
-	m_door = NULL;
+	m_relativeToObject = nullptr;
+	m_neighbor = nullptr;
+	m_parentCell = nullptr;
+	m_door = nullptr;
 	delete m_appearance;
 }
 

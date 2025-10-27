@@ -8,7 +8,7 @@
 #ifndef INCLUDED_ProsePackageParticipant_H
 #define INCLUDED_ProsePackageParticipant_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkId.h"
 
 //======================================================================
 

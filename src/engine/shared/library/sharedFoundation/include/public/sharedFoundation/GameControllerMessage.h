@@ -1,1 +1,1 @@
-#include "../../../src/shared/GameControllerMessage.h"
+#include "../../src/shared/GameControllerMessage.h"

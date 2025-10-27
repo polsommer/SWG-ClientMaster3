@@ -1,1 +1,1 @@
-#include "../../../src/shared/CrashReportInformation.h"
+#include "../../src/shared/CrashReportInformation.h"

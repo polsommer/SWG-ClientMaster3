@@ -18,6 +18,7 @@ class UdpConnectionHandlerInternal: public UdpConnectionHandler
 {
 public:
 	UdpConnectionHandlerInternal();
+	virtual ~UdpConnectionHandlerInternal();
 
 	void setOwner(UdpConnectionHandlerMT *owner);
 	void processReceive(UdpConnectionMT *conMT, unsigned char const *data, int dataLen);
@@ -28,7 +29,6 @@ public:
 	virtual void OnConnectComplete(UdpConnection *con);
 	virtual void OnTerminated(UdpConnection *con);
 	virtual void OnPacketCorrupt(UdpConnection *con, const uchar *data, int dataLen, UdpCorruptionReason reason);
-
 private:
 	UdpConnectionHandlerInternal(UdpConnectionHandlerInternal const &);
 	UdpConnectionHandlerInternal &operator=(UdpConnectionHandlerInternal const &);
@@ -43,6 +43,8 @@ UdpConnectionHandlerInternal::UdpConnectionHandlerInternal() :
 	m_owner(0)
 {
 }
+
+UdpConnectionHandlerInternal::~UdpConnectionHandlerInternal(){}
 
 // ----------------------------------------------------------------------
 

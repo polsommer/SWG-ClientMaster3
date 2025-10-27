@@ -11,8 +11,8 @@
 #ifndef INCLUDED_MessageQueueCreateSaga_H
 #define INCLUDED_MessageQueueCreateSaga_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 class MemoryBlockManager;
@@ -43,8 +43,8 @@ public:
 		
 		int						  numParameters;
 		std::vector<std::string>  parameters;
-	private:
-		TaskInfo & operator = (const TaskInfo &);
+	//private:
+	//	TaskInfo & operator = (const TaskInfo &);
 	};
 
 public:

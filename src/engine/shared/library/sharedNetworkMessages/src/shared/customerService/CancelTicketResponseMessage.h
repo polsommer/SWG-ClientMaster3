@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 #include "Archive/AutoDeltaByteStream.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
+#include "sharedFoundation/NetworkIdArchive.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 
 //-----------------------------------------------------------------------

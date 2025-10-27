@@ -5,8 +5,8 @@
 #ifndef _INCLUDED_VoiceChatMiscMessages_H
 #define _INCLUDED_VoiceChatMiscMessages_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
+#include "sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkIdArchive.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 
 #include <string>

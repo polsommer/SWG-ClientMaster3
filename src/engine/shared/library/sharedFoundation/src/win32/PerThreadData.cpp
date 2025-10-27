@@ -16,7 +16,7 @@
 
 #include "sharedFoundation/Os.h"
 
-#include <windows.h>
+#include <winbase.h>
 #include <vector>
 
 // ======================================================================

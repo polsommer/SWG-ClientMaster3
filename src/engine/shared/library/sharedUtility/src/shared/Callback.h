@@ -14,7 +14,7 @@ class CallbackReceiver;
 class MemoryBlockManager;
 
 #include <vector>
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
+#include "sharedFoundation/MemoryBlockManagerMacros.h"
 
 // ======================================================================
 
@@ -44,7 +44,7 @@ private:
 
 private:
 
-	typedef stdvector<CallbackReceiver *>::fwd CallbackReceiverVector;
+	typedef std::vector<CallbackReceiver *> CallbackReceiverVector;
 
 	int                       m_referenceCount;
 	CallbackReceiverVector    m_receivers;

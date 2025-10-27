@@ -14,7 +14,7 @@
 #include "Archive/AutoDeltaByteStream.h"
 #include "sharedNetworkMessages/AuctionErrorCodes.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
+#include "sharedFoundation/NetworkIdArchive.h"
 
 //-----------------------------------------------------------------------
 

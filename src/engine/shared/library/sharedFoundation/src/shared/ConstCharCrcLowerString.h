@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/CrcLowerString.h"
+#include "sharedFoundation/CrcLowerString.h"
 
 // ======================================================================
 

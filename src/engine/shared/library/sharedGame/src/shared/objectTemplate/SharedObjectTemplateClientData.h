@@ -12,7 +12,7 @@
 
 //===================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DataResource.h"
+#include "sharedFoundation/DataResource.h"
 
 //===================================================================
 

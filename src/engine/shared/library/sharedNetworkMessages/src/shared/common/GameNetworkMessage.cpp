@@ -13,7 +13,11 @@
 #include "sharedFoundation/CrcString.h"
 #include "sharedNetworkMessages/NetworkMessageFactory.h"
 #include <algorithm>
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 
 // ======================================================================
 
@@ -22,7 +26,7 @@ std::string const GameNetworkMessage::NetworkVersionId = "20100225-17:43";
 
 namespace GameNetworkMessageNamespace
 {
-	std::hash_map<unsigned long, int>  gs_messageCount;
+	std::unordered_map<unsigned long, int>  gs_messageCount;
 
 	// ----------------------------------------------------------------------
 
@@ -34,7 +38,7 @@ namespace GameNetworkMessageNamespace
 		}
 	};
 
-	std::hash_map<unsigned long, std::string> s_messageTypes;
+	std::unordered_map<unsigned long, std::string> s_messageTypes;
 }
 
 using namespace GameNetworkMessageNamespace;
@@ -105,7 +109,7 @@ std::vector<std::pair<std::string, int> > const GameNetworkMessage::getMessageCo
 {
 	std::vector<std::pair<std::string, int> > result;
 
-	for (std::hash_map<unsigned long, int>::const_iterator i = gs_messageCount.begin(); i != gs_messageCount.end(); ++i)
+	for (std::unordered_map <unsigned long, int>::const_iterator i = gs_messageCount.begin(); i != gs_messageCount.end(); ++i)
 		result.push_back(std::make_pair(s_messageTypes[(*i).first], (*i).second));
 
 	std::sort(result.begin(), result.end(), SortPair());

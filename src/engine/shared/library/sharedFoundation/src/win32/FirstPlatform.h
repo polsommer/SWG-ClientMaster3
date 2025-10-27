@@ -9,6 +9,30 @@
 #ifndef INCLUDED_FirstPlatform_H
 #define INCLUDED_FirstPlatform_H
 
+
+#ifdef WIN32
+
+//fucks up use of std::min std::max
+#define NOMINMAX 
+
+#include <windows.h>
+
+#ifndef __wtypes_h__
+#include <wtypes.h>
+#endif
+
+#ifndef __WINDEF_
+#include <windef.h>
+#endif
+
+#include <WinNT.h>
+
+//laziness
+#include <stdio.h>
+#include <cstdlib>
+
+#endif
+
 // ======================================================================
 
 // C4127 conditional expression is constant
@@ -58,7 +82,7 @@ typedef HINSTANCE__    *HINSTANCE;
 typedef HWND__         *HWND;
 
 // @todo codereorg still working on this
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/WindowsWrapper.h"
+#include "sharedFoundation/WindowsWrapper.h"
 
 // ======================================================================
 // convienent fatal macros that check windows HRESULT codes
@@ -69,7 +93,7 @@ typedef HWND__         *HWND;
 // ======================================================================
 // include anything we need to replace missing functionality that other platforms provide
 
-#include "../../../../../../engine/shared/library/sharedFoundation/src/win32/PlatformGlue.h"
+#include "sharedFoundation/PlatformGlue.h"
 
 // ======================================================================
 

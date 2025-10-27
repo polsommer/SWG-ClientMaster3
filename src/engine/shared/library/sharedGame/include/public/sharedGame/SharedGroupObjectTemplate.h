@@ -1,1 +1,1 @@
-#include "../../../src/shared/objectTemplate/SharedGroupObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedGroupObjectTemplate.h"

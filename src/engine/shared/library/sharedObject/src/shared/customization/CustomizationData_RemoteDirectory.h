@@ -13,7 +13,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
+#include "sharedFoundation/MemoryBlockManagerMacros.h"
 #include "sharedObject/CustomizationData_Directory.h"
 
 class MemoryBlockManager;
@@ -47,11 +47,6 @@ public:
 	virtual void                         deleteLinksTo(const CustomizationData &customizationData);
 
 	virtual bool                         isLocalDirectory() const;
-#if 0	
-	virtual std::string                  writeLocalDirectoryToString() const;
-
-	virtual void                         loadLocalDirectoryFromString(int version, const std::string &string, int startIndex);
-#endif
 	
 private:
 

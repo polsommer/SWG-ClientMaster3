@@ -102,9 +102,9 @@ CompilerIntegerParam * SharedObjectTemplate::getCompilerIntegerParam(const char 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_containerType;
 		}
@@ -116,9 +116,9 @@ CompilerIntegerParam * SharedObjectTemplate::getCompilerIntegerParam(const char 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_containerVolumeLimit;
 		}
@@ -130,9 +130,9 @@ CompilerIntegerParam * SharedObjectTemplate::getCompilerIntegerParam(const char 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_gameObjectType;
 		}
@@ -144,9 +144,9 @@ CompilerIntegerParam * SharedObjectTemplate::getCompilerIntegerParam(const char 
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getCompilerIntegerParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_surfaceType;
 		}
@@ -154,7 +154,7 @@ CompilerIntegerParam * SharedObjectTemplate::getCompilerIntegerParam(const char 
 	}
 	else
 		return TpfTemplate::getCompilerIntegerParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedObjectTemplate::getCompilerIntegerParam
 
 FloatParam * SharedObjectTemplate::getFloatParam(const char *name, bool deepCheck, int index)
@@ -165,9 +165,9 @@ FloatParam * SharedObjectTemplate::getFloatParam(const char *name, bool deepChec
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_scale;
 		}
@@ -179,9 +179,9 @@ FloatParam * SharedObjectTemplate::getFloatParam(const char *name, bool deepChec
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_scaleThresholdBeforeExtentTest;
 		}
@@ -193,9 +193,9 @@ FloatParam * SharedObjectTemplate::getFloatParam(const char *name, bool deepChec
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_clearFloraRadius;
 		}
@@ -207,9 +207,9 @@ FloatParam * SharedObjectTemplate::getFloatParam(const char *name, bool deepChec
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_noBuildRadius;
 		}
@@ -221,9 +221,9 @@ FloatParam * SharedObjectTemplate::getFloatParam(const char *name, bool deepChec
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getFloatParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_locationReservationRadius;
 		}
@@ -231,7 +231,7 @@ FloatParam * SharedObjectTemplate::getFloatParam(const char *name, bool deepChec
 	}
 	else
 		return TpfTemplate::getFloatParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedObjectTemplate::getFloatParam
 
 BoolParam * SharedObjectTemplate::getBoolParam(const char *name, bool deepCheck, int index)
@@ -242,9 +242,9 @@ BoolParam * SharedObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_snapToTerrain;
 		}
@@ -256,9 +256,9 @@ BoolParam * SharedObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_sendToClient;
 		}
@@ -270,9 +270,9 @@ BoolParam * SharedObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_onlyVisibleInTools;
 		}
@@ -284,9 +284,9 @@ BoolParam * SharedObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getBoolParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_forceNoCollision;
 		}
@@ -294,7 +294,7 @@ BoolParam * SharedObjectTemplate::getBoolParam(const char *name, bool deepCheck,
 	}
 	else
 		return TpfTemplate::getBoolParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedObjectTemplate::getBoolParam
 
 StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCheck, int index)
@@ -305,9 +305,9 @@ StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCh
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_tintPalette;
 		}
@@ -319,9 +319,9 @@ StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCh
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_slotDescriptorFilename;
 		}
@@ -333,9 +333,9 @@ StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCh
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_arrangementDescriptorFilename;
 		}
@@ -347,9 +347,9 @@ StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCh
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_appearanceFilename;
 		}
@@ -361,9 +361,9 @@ StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCh
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_portalLayoutFilename;
 		}
@@ -375,9 +375,9 @@ StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCh
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_clientDataFile;
 		}
@@ -385,7 +385,7 @@ StringParam * SharedObjectTemplate::getStringParam(const char *name, bool deepCh
 	}
 	else
 		return TpfTemplate::getStringParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedObjectTemplate::getStringParam
 
 StringIdParam * SharedObjectTemplate::getStringIdParam(const char *name, bool deepCheck, int index)
@@ -396,9 +396,9 @@ StringIdParam * SharedObjectTemplate::getStringIdParam(const char *name, bool de
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringIdParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_objectName;
 		}
@@ -410,9 +410,9 @@ StringIdParam * SharedObjectTemplate::getStringIdParam(const char *name, bool de
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringIdParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_detailedDescription;
 		}
@@ -424,9 +424,9 @@ StringIdParam * SharedObjectTemplate::getStringIdParam(const char *name, bool de
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != NULL)
+				if (getBaseTemplate() != nullptr)
 					return getBaseTemplate()->getStringIdParam(name, deepCheck, index);
-				return NULL;
+				return nullptr;
 			}
 			return &m_lookAtText;
 		}
@@ -434,7 +434,7 @@ StringIdParam * SharedObjectTemplate::getStringIdParam(const char *name, bool de
 	}
 	else
 		return TpfTemplate::getStringIdParam(name, deepCheck, index);
-	return NULL;
+	return nullptr;
 }	//SharedObjectTemplate::getStringIdParam
 
 VectorParam * SharedObjectTemplate::getVectorParam(const char *name, bool deepCheck, int index)
@@ -512,12 +512,12 @@ char paramName[MAX_NAME_SIZE];
 		file.read_string(baseFilename);
 		file.exitChunk();
 		const ObjectTemplate *base = ObjectTemplateList::fetch(baseFilename);
-		DEBUG_WARNING(base == NULL, ("was unable to load base template %s", baseFilename.c_str()));
-		if (m_baseData == base && base != NULL)
+		DEBUG_WARNING(base == nullptr, ("was unable to load base template %s", baseFilename.c_str()));
+		if (m_baseData == base && base != nullptr)
 			base->releaseReference();
 		else
 		{
-			if (m_baseData != NULL)
+			if (m_baseData != nullptr)
 				m_baseData->releaseReference();
 			m_baseData = base;
 		}

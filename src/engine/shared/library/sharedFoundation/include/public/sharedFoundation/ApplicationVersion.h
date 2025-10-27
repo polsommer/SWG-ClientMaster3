@@ -1,1 +1,1 @@
-#include "../../../src/shared/ApplicationVersion.h"
+#include "../../src/shared/ApplicationVersion.h"

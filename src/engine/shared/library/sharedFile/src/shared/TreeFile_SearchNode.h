@@ -17,7 +17,6 @@ class MemoryBlockManager;
 
 #include "sharedFile/TreeFile.h"
 #include "sharedFile/FileStreamer.h"
-#include "sharedFile/TreeFileEncryption.h"
 #include "sharedFoundation/LessPointerComparator.h"
 #include "sharedFoundation/Os.h"
 #include "sharedFoundation/Tag.h"
@@ -160,8 +159,7 @@ private:
 
 private:
 
-        bool localExists(const char *fileName, int *index, bool &deleted) const;
-        int  readPayload(int offset, void *buffer, int length, AbstractFile::PriorityType priority) const;
+	bool localExists(const char *fileName, int *index, bool &deleted) const;
 
 private:
 
@@ -200,14 +198,12 @@ public:
 
 private:
 
-        char                   *m_treeFileName;
-        FileStreamer::File     *m_treeFile;
-        uint32                  m_version;
-        int                     m_numberOfFiles;
-        char                   *m_fileNames;
-        TableOfContentsEntry   *m_tableOfContents;
-        bool                    m_isEncrypted;
-        Md5::Value              m_encryptionKey;
+	char                   *m_treeFileName;
+	FileStreamer::File     *m_treeFile;
+	uint32                  m_version;
+	int                     m_numberOfFiles;
+	char                   *m_fileNames;
+	TableOfContentsEntry   *m_tableOfContents;
 };
 
 // ======================================================================
@@ -251,7 +247,7 @@ private:
 
 private:
 
-	bool TreeFile::SearchTOC::localExists(const char *fileName, int *index) const;
+	bool localExists(const char *fileName, int *index) const;
 
 private:
 
@@ -341,7 +337,7 @@ private:
 private:
 
 	class CachedFile;
-	typedef stdmap<CrcString const *, CachedFile *, LessPointerComparator>::fwd CachedFileMap;
+	typedef std::map<CrcString const *, CachedFile *, LessPointerComparator> CachedFileMap;
 	CachedFileMap * const m_cachedFileMap;
 };
 

@@ -133,11 +133,11 @@ namespace DB
 		std::string getValueASCII() const;
 
 /** Allocate a new string and copy the buffer to it.  The caller takes responsibility
-	for delete[]ing it later.  (If the string is NULL, this returns a null pointer.)
+	for delete[]ing it later.  (If the string is nullptr, this returns a nullptr pointer.)
  */
 		char *makeCopyOfValue() const;
 
-/** Set the value of the bindable string from another (null-terminated) string
+/** Set the value of the bindable string from another (nullptr-terminated) string
 
 	If the source buffer is too big, it	FATAL's.  Another alternative would be to have
 	it truncate the string.  Right now, it's better to FATAL to avoid hard-to-find bugs
@@ -168,7 +168,7 @@ namespace DB
 
 	  private:
 
-		char   m_value[S+1]; // column of size S, plus one byte for a trailing null
+		char   m_value[S+1]; // column of size S, plus one byte for a trailing nullptr
 	};
 
 // ======================================================================
@@ -206,7 +206,7 @@ namespace DB
 	{
 		if (isNull())
 		{
-			return strncpy(buffer,"\0",1); // in the database, a zero-length string and a NULL aren't really
+			return strncpy(buffer,"\0",1); // in the database, a zero-length string and a nullptr aren't really
 			// the same thing, but this is the closest we can do here.
 		}
 		return strncpy(buffer,m_value,(bufsize>(S+1))?(S+1):bufsize);
@@ -249,33 +249,51 @@ namespace DB
 			return;
 		}
 
-	// the following is strncpy, but keeps a count of the number of characters
-		unsigned int i;
-		for (i=0;i<S+1;++i)
-		{
-			m_value[i]=buffer[i];
-			if (m_value[i]=='\0')
-				break;
+		size_t bufsize = strlen(buffer);
+
+		if (bufsize >= S) {
+			WARNING(true, ("Attmpted to insert %s which is too long. Truncating.", buffer));
+			indicator = S;
+		} else {
+			indicator = bufsize;
 		}
-		FATAL((i==S+1) && (m_value[S]!='\0'),("Attempt to save string \"%s\" to the database.  It is too long for the column.",buffer));
-		indicator=i;   // set indicator to actual length of string
-//	m_value[S]='\0'; // guarantee null terminator -- uncomment if you remove the above FATAL
+
+		memcpy(m_value, buffer, indicator);
+                m_value[indicator] = '\0';
 	}
 
 	template<int S>
 	void BindableString<S>::setValue(const Unicode::String &buffer)
 	{
-		FATAL(buffer.size()>S,("Attempt to save a Unicode::String \"%s\"that is too long to the database.", Unicode::wideToNarrow(buffer).c_str()));
-		strncpy(m_value, Unicode::wideToNarrow(buffer).c_str(), S+1);
-		indicator=buffer.size();
+                size_t bufsize = buffer.size();
+
+                if (bufsize >= S) {
+                        WARNING(true, ("Attmpted to insert %s which is too long. Truncating.", buffer.c_str()));
+                        indicator = S;
+			memcpy(m_value, Unicode::wideToNarrow(buffer).c_str(), indicator-1);
+                } else {
+                        indicator = bufsize;
+                }
+
+        	memcpy(m_value, Unicode::wideToNarrow(buffer).c_str(), indicator);
+		m_value[indicator] = '\0';
 	}
 
 	template<int S>
 	void BindableString<S>::setValue(const std::string &buffer)
 	{
-		FATAL(strlen(buffer.c_str())>S,("Attempt to save a std::string \"%s\"that is too long to the database.", buffer.c_str()));
-		strncpy(m_value, buffer.c_str(), S+1);
-		indicator=strlen(buffer.c_str());
+                size_t bufsize = buffer.size();
+
+                if (bufsize >= S) {
+                        WARNING(true, ("Attmpted to insert %s which is too long. Truncating.", buffer.c_str()));
+                        indicator = S;
+                } else {
+                        indicator = bufsize;
+			memcpy(m_value, buffer.c_str(), indicator);
+                }
+
+		memcpy(m_value, buffer.c_str(), indicator);
+                m_value[indicator] = '\0';
 	}
 
 	template<int S>

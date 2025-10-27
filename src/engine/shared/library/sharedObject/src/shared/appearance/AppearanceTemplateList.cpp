@@ -29,7 +29,6 @@
 #include <set>
 #include <algorithm>
 #include <vector>
-#include <cstring>
 
 // ======================================================================
 // AppearanceTemplateListNamespace
@@ -220,7 +219,7 @@ const AppearanceTemplate *AppearanceTemplateList::fetch(const char *const fileNa
 	char const * actualFileName = fileName;
 	if (!fileName)
 	{
-		DEBUG_WARNING(true, ("AppearanceTemplateList::fetch passed NULL fileName, using default"));
+		DEBUG_WARNING(true, ("AppearanceTemplateList::fetch passed nullptr fileName, using default"));
 		actualFileName = getDefaultAppearanceTemplateName();
 	}
 	else if (!*fileName)
@@ -233,21 +232,28 @@ const AppearanceTemplate *AppearanceTemplateList::fetch(const char *const fileNa
 		DEBUG_WARNING(true, ("AppearanceTemplateList::fetch could not open '%s', using default", fileName));
 		actualFileName = getDefaultAppearanceTemplateName();
 	}
-	else
+	
+	if (actualFileName) 
+	{
 		found = true;
 
-	//-- search for the appearance
-	AppearanceTemplate *const appearanceTemplate = create(actualFileName);
+		//-- search for the appearance
+		AppearanceTemplate *const appearanceTemplate = create(actualFileName);
 
-	//-- up the reference count
-	return fetch(appearanceTemplate);
+		//-- up the reference count
+		return fetch(appearanceTemplate);
+	}
+
+	DEBUG_WARNING(true, ("AppearanceTemplateList::fetch actualFileName fetch for %s failed.", actualFileName));
+
+	return nullptr;
 }
 
 // ----------------------------------------------------------------------
 /**
  * Add a reference to the specified Appearance.
  * 
- * This routine will do nothing if passed in NULL.  Otherwise, it will
+ * This routine will do nothing if passed in nullptr.  Otherwise, it will
  * increase the reference count of the specified AppearanceTemplate
  * by one.
  * 
@@ -287,11 +293,11 @@ const AppearanceTemplate *AppearanceTemplateList::fetch(Iff *const iff)
 	{
 		char tagString[5];
 		ConvertTagToString(tag, tagString);
-		DEBUG_FATAL(true, ("AppearanceTemplate binding %s not found", tagString));
+		WARNING(true, ("AppearanceTemplate binding %s not found", tagString));
 		return 0; //lint !e527 // unreachable
 	}
 
-	AppearanceTemplate *const appearanceTemplate = (*iter).second(NULL, iff);
+	AppearanceTemplate *const appearanceTemplate = (*iter).second(nullptr, iff);
 	NOT_NULL(appearanceTemplate);
 
 	addAnonymousAppearanceTemplate(appearanceTemplate);
@@ -345,7 +351,7 @@ const AppearanceTemplate *AppearanceTemplateList::fetchNew(AppearanceTemplate *c
 /**
  * Remove a reference to the specified AppearanceTemplate.
  * 
- * This routine will do nothing if passed in NULL.
+ * This routine will do nothing if passed in nullptr.
  * 
  * If the reference count drops to 0, the AppearanceTemplate will be deleted.
  * 
@@ -390,12 +396,18 @@ Appearance *AppearanceTemplateList::createAppearance(const char *const fileName)
 {
 	DEBUG_FATAL(!ms_installed, ("not installed"));
 
-#ifdef _DEBUG
-	DataLint::pushAsset(fileName);
-#endif
-
 	//-- get the appearance template
 	const AppearanceTemplate *const appearanceTemplate = fetch(fileName);
+
+#ifdef _DEBUG 
+        DataLint::pushAsset(fileName);
+#endif	
+	
+	//probably should modify the macro sometime to just be quiet if this isn't defined
+	if (appearanceTemplate == nullptr){
+	    DEBUG_WARNING(true, ("FIX ME: Appearance template for %s could not be fetched - is it missing?", fileName));
+	    return nullptr;  // Cekis: TODO: Figure out why the template can't be fetched. DarthArgus: always is due to a missing file or one of the redirectors having a bad path
+	}
 
 	//-- creating the appearance will increment the reference count
 	Appearance *const appearance = appearanceTemplate->createAppearance();
@@ -514,7 +526,7 @@ AppearanceTemplate *AppearanceTemplateListNamespace::create(const char *const fi
 	if (strstr(fileName, ".apt") != 0)
 	{
 		//-- is the filename in the redirector map?
-		RedirectorMap::iterator iter = ms_redirectorMap.find(&actualFileName);
+		RedirectorMap::iterator iter = ms_redirectorMap.find((const CrcString*)&actualFileName);
 		if (iter == ms_redirectorMap.end())
 		{
 			//-- extract the real name from the apt
@@ -543,7 +555,7 @@ AppearanceTemplate *AppearanceTemplateListNamespace::create(const char *const fi
 
 	//-- search for the appearance in the named list
 	{
-		NamedTemplates::iterator iter = ms_namedTemplates.find(&actualFileName);
+		NamedTemplates::iterator iter = ms_namedTemplates.find((const CrcString*)&actualFileName);
 		if (iter != ms_namedTemplates.end())
 			return iter->second;
 	}
@@ -553,7 +565,7 @@ AppearanceTemplate *AppearanceTemplateListNamespace::create(const char *const fi
 	//-- search for the appearance in the named timed list
 	if (ms_useTimedTemplates)
 	{
-		NamedTimedTemplates::iterator iter = ms_namedTimedTemplates.find(&actualFileName);
+		NamedTimedTemplates::iterator iter = ms_namedTimedTemplates.find((const CrcString*)&actualFileName);
 		if (iter != ms_namedTimedTemplates.end())
 		{
 			appearanceTemplate = iter->second.second;
@@ -569,36 +581,28 @@ AppearanceTemplate *AppearanceTemplateListNamespace::create(const char *const fi
 		// DEBUG_REPORT_LOG_PRINT(true, ("Loading mesh %s\n", actualFileName.getString()));
 		TagBindingMap::iterator iter = ms_tagBindingMap.find(TAG_MESH);
 		if (iter != ms_tagBindingMap.end())
-			appearanceTemplate = iter->second(actualFileName.getString(), NULL);
+			appearanceTemplate = iter->second(actualFileName.getString(), nullptr);
 	}
 
 	//-- we now need to create the appearance from disk
-        if (!appearanceTemplate)
-        {
-                Iff iff;
-                if (!iff.open(actualFileName.getString(), true))
-                {
-                        const char *const defaultAppearanceTemplateName = getDefaultAppearanceTemplateName();
-                        if (strcmp(actualFileName.getString(), defaultAppearanceTemplateName) != 0)
-                        {
-                                DEBUG_WARNING(true, ("Could not open appearance file %s, using default appearance %s", actualFileName.getString(), defaultAppearanceTemplateName));
-                                return create(defaultAppearanceTemplateName);
-                        }
+	if (!appearanceTemplate)
+	{
+		Iff iff;
+		if (!iff.open(actualFileName.getString(), true))
+			FATAL(true, ("Could not open appearance file %s", actualFileName.getString()));
 
-                        FATAL(true, ("Could not open appearance file %s", actualFileName.getString()));
-                }
-
-                const Tag tag = iff.getCurrentName();
-                TagBindingMap::iterator iter = ms_tagBindingMap.find(tag);
-                if (iter != ms_tagBindingMap.end())
-                        appearanceTemplate = iter->second(actualFileName.getString(), &iff);
-                else
-                {
-                        char tagString[5];
-                        ConvertTagToString(tag, tagString);
-                        DEBUG_FATAL(true, ("AppearanceTemplate binding %s not found", tagString));
-                }
-        }
+		const Tag tag = iff.getCurrentName();
+		TagBindingMap::iterator iter = ms_tagBindingMap.find(tag);
+		if (iter != ms_tagBindingMap.end()) {
+			appearanceTemplate = iter->second(actualFileName.getString(), &iff);
+		}
+		else
+		{
+			char tagString[5];
+			ConvertTagToString(tag, tagString);
+			DEBUG_WARNING(true, ("AppearanceTemplate binding %s not found for file %s", tagString, actualFileName.getString()));
+		}
+	}
 
 	//-- add the appearance template to the named list
 	if (appearanceTemplate)
@@ -640,7 +644,7 @@ void AppearanceTemplateListNamespace::addNamedAppearanceTemplate(AppearanceTempl
 	NOT_NULL(appearanceTemplate);
 
 	//-- add to named list
-	std::pair<NamedTemplates::iterator, bool> result = ms_namedTemplates.insert(std::make_pair(&appearanceTemplate->getCrcName(), appearanceTemplate));
+	std::pair<NamedTemplates::iterator, bool> result = ms_namedTemplates.insert(std::make_pair((const CrcString*)&appearanceTemplate->getCrcName(), appearanceTemplate));
 
 	//-- make sure it's not already there
 	DEBUG_FATAL(!result.second, ("tried to add existing named appearanceTemplate %s", appearanceTemplate->getName()));
@@ -659,7 +663,7 @@ void AppearanceTemplateListNamespace::addNamedTimedAppearanceTemplate(Appearance
 	NOT_NULL(appearanceTemplate);
 
 	//-- add to named list
-	std::pair<NamedTimedTemplates::iterator, bool> result = ms_namedTimedTemplates.insert(std::make_pair(&appearanceTemplate->getCrcName(), std::make_pair(ms_keepTime + Random::randomReal(ms_keepEpsilon), appearanceTemplate)));
+	std::pair<NamedTimedTemplates::iterator, bool> result = ms_namedTimedTemplates.insert(std::make_pair((const CrcString*)&appearanceTemplate->getCrcName(), std::make_pair(ms_keepTime + Random::randomReal(ms_keepEpsilon), appearanceTemplate)));
 
 	//-- make sure it's not already there
 	DEBUG_FATAL(!result.second, ("tried to add existing named timed appearanceTemplate %s", appearanceTemplate->getName()));
@@ -682,7 +686,7 @@ void AppearanceTemplateListNamespace::removeAppearanceTemplate(AppearanceTemplat
 	if (crcString && *crcString)
 	{
 		//-- remove appearance template from the named list
-		NamedTemplates::iterator iter = ms_namedTemplates.find(&appearanceTemplate->getCrcName());
+		NamedTemplates::iterator iter = ms_namedTemplates.find((const CrcString*)&appearanceTemplate->getCrcName());
 		if (iter != ms_namedTemplates.end())
 			ms_namedTemplates.erase(iter);
 		else

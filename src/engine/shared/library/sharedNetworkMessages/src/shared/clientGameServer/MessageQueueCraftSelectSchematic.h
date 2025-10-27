@@ -11,7 +11,7 @@
 #ifndef INCLUDED_MessageQueueCraftSelectSchematic_H
 #define INCLUDED_MessageQueueCraftSelectSchematic_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 class MemoryBlockManager;

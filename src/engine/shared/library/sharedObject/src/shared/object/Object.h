@@ -42,11 +42,11 @@ namespace DPVS
 	class Object;
 };
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Watcher.h"
+#include "sharedFoundation/Tag.h"
+#include "sharedFoundation/Watcher.h"
 #include "sharedMath/Transform.h"
 #include "sharedMath/Vector.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkId.h"
 
 // ======================================================================
 
@@ -90,7 +90,7 @@ public:
 		DF_world		// Place the object into the world cell.
 	};
 
-	typedef stdvector<DPVS::Object *>::fwd  DpvsObjects;
+	typedef std::vector<DPVS::Object *>  DpvsObjects;
 	typedef uint64                          ScheduleTime;
 
 	class NotificationList;
@@ -327,7 +327,7 @@ public:
 	bool getUseAlterScheduler() const;
 	void setUseAlterScheduler(bool const useAlterScheduler);
 
-	virtual void getObjectInfo(stdmap<std::string, stdmap<std::string, Unicode::String>::fwd >::fwd & propertyMap) const;
+	virtual void getObjectInfo(std::map<std::string, std::map<std::string, Unicode::String> > & propertyMap) const;
 
 	bool getShouldBakeIntoMesh() const;
 	void setShouldBakeIntoMesh(bool bake);
@@ -416,7 +416,7 @@ private:
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 public:
-	typedef stdvector<Property *>::fwd PropertyList;
+	typedef std::vector<Property *> PropertyList;
 
 protected:
 	PropertyList * const m_propertyList;
@@ -448,7 +448,7 @@ private:
 	Dynamics                 *m_dynamics;
 
 	Object                   *m_attachedToObject;
-	typedef stdvector<Object *>::fwd AttachedObjects;
+	typedef std::vector<Object *> AttachedObjects;
 	AttachedObjects          *m_attachedObjects;
 	DpvsObjects              *m_dpvsObjects;
 
@@ -495,7 +495,7 @@ inline const ObjectTemplate *Object::getObjectTemplate() const
 //
 // Remarks:
 //
-//   This return may return NULL.
+//   This return may return nullptr.
 
 inline const char *Object::getDebugName() const
 {
@@ -518,7 +518,7 @@ inline const Vector &Object::getScale() const
 /**
  * Get the controller for an object.
  *
- * The return value may be NULL.
+ * The return value may be nullptr.
  *
  * @return Const pointer to the controller
  */
@@ -532,7 +532,7 @@ inline const Controller *Object::getController() const
 /**
  * Get the controller for an object.
  *
- * The return value may be NULL.
+ * The return value may be nullptr.
  *
  * @return Non-const pointer to the controller
  */
@@ -546,7 +546,7 @@ inline Controller *Object::getController()
 /**
  * Get the dynamics for an object.
  *
- * The return value may be NULL.
+ * The return value may be nullptr.
  *
  * @return Const pointer to the dynamics
  */
@@ -560,7 +560,7 @@ inline const Dynamics *Object::getDynamics() const
 /**
  * Get the dynamics for an object.
  *
- * The return value may be NULL.
+ * The return value may be nullptr.
  *
  * @return Non-const pointer to the dynamics
  */
@@ -598,24 +598,24 @@ inline Appearance *Object::getAppearance()
 /**
  * Get the parent object for this object.
  *
- * This routine will return NULL if the object is not a child object.
+ * This routine will return nullptr if the object is not a child object.
  */
 
 inline Object *Object::getParent()
 {
-	return m_childObject ? m_attachedToObject : NULL;
+	return m_childObject ? m_attachedToObject : nullptr;
 }
 
 // ----------------------------------------------------------------------
 /**
  * Get the parent object for this object.
  *
- * This routine will return NULL if the object is not a child object.
+ * This routine will return nullptr if the object is not a child object.
  */
 
 inline const Object *Object::getParent() const
 {
-	return m_childObject ? m_attachedToObject : NULL;
+	return m_childObject ? m_attachedToObject : nullptr;
 }
 
 // ----------------------------------------------------------------------

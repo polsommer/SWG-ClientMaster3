@@ -13,8 +13,8 @@
 
 #include "Archive/AutoDeltaByteStream.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
+#include "sharedFoundation/NetworkId.h"
+#include "sharedFoundation/Tag.h"
 
 //-----------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ class AuctionQueryResponseMessage : public GameNetworkMessage
 {
 public:
 	typedef AuctionQueryResponse_AuctionData AuctionData;
-	typedef stdvector<AuctionData>::fwd AuctionDataVector;
+	typedef std::vector<AuctionData> AuctionDataVector;
 
 	AuctionQueryResponseMessage(int requestId, int typeFlag, AuctionDataVector const &auctionData);
 	explicit AuctionQueryResponseMessage(Archive::ReadIterator &source);

@@ -11,6 +11,7 @@
 #define INCLUDED_Vector_H
 
 // ======================================================================
+#include <cmath>
 
 class Vector
 {
@@ -124,7 +125,7 @@ public:
 	// const Vector      refract(const Vector &normal, real n1, real n2);
 
 	bool                 inPolygon (const Vector& v0, const Vector& v1, const Vector& v2) const;
-	bool                 inPolygon (const stdvector<Vector>::fwd &convexPolygonVertices) const;
+	bool                 inPolygon (const std::vector<Vector> &convexPolygonVertices) const;
 
 public:
 
@@ -265,9 +266,9 @@ inline real Vector::magnitudeSquared(void) const
 
 inline real Vector::approximateMagnitude(void) const
 {
-	real minc = abs(x);
-	real midc = abs(y);
-	real maxc = abs(z);
+	real minc = std::abs(x);
+	real midc = std::abs(y);
+	real maxc = std::abs(z);
 
 	// sort the vectors
 	// we do our own swapping to avoid heavy-weight includes in such a low-level class

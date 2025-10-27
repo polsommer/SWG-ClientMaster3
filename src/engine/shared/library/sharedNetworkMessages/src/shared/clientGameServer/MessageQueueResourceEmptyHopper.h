@@ -8,7 +8,7 @@
 #ifndef INCLUDED_MessageQueueResourceEmptyHopper_H
 #define INCLUDED_MessageQueueResourceEmptyHopper_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 class MemoryBlockManager;

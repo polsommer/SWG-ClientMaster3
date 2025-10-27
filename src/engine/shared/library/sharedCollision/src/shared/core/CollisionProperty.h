@@ -15,7 +15,7 @@
 #include "sharedMath/Vector.h"
 #include "sharedMath/Sphere.h"
 #include "sharedMath/Capsule.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Watcher.h"
+#include "sharedFoundation/Watcher.h"
 
 class BaseExtent;
 class CellProperty;
@@ -28,7 +28,7 @@ class SpatialDatabase;
 class SpatialSubdivisionHandle;
 class Transform;
 
-typedef stdvector<CollisionProperty*>::fwd  ColliderList;
+typedef std::vector<CollisionProperty*>  ColliderList;
 
 // ======================================================================
 

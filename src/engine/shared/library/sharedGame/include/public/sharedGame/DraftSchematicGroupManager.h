@@ -1,1 +1,1 @@
-#include "../../../src/shared/core/DraftSchematicGroupManager.h"
+#include "../../src/shared/core/DraftSchematicGroupManager.h"

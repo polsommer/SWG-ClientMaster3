@@ -8,8 +8,8 @@
 #ifndef INCLUDED_MessageQueueCombatCommand_H
 #define INCLUDED_MessageQueueCombatCommand_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
+#include "sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MemoryBlockManagerMacros.h"
 
 class MemoryBlockManager;
 //-----------------------------------------------------------------------

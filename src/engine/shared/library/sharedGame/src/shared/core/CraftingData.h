@@ -9,9 +9,10 @@
 #ifndef INCLUDED_CraftingData_H
 #define INCLUDED_CraftingData_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
-#include "boost/smart_ptr.hpp"
+#include "sharedFoundation/NetworkId.h"
 #include "StringId.h"
+
+#include <memory>
 #include <vector>
 
 class CreatureObject;
@@ -146,7 +147,7 @@ namespace Crafting
 		CraftingType_Last = CT_mission,
 	};
 
-	typedef stdvector<std::string>::fwd StringVector;
+	typedef std::vector<std::string> StringVector;
 	void getCraftingTypeNames (uint32 types, StringVector & sv);
 
 	//------------------------------------------------------------------------------
@@ -210,7 +211,7 @@ namespace Crafting
 
 	//------------------------------------------------------------------------------
 
-	typedef boost::shared_ptr<SimpleIngredient> SimpleIngredientPtr;
+	typedef std::shared_ptr<SimpleIngredient> SimpleIngredientPtr;
 	typedef std::vector<SimpleIngredientPtr> Ingredients;
 
 	//------------------------------------------------------------------------------
@@ -228,8 +229,8 @@ namespace Crafting
 
 		IngredientSlot(enum IngredientType _ingredientType,
 		               const StringId & _name,
-					   const stdvector<NetworkId>::fwd slotIngredients,
-					   const stdvector<int>::fwd slotIngredientsCount,
+					   const std::vector<NetworkId> &slotIngredients,
+					   const std::vector<int> &slotIngredientsCount,
 		               float _complexity,
 		               int _draftSlotOption,
 		               int _draftSlotIndex);

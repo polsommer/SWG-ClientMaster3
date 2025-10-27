@@ -1,1 +1,1 @@
-#include "../../../src/shared/command/CommandTable.h"
+#include "../../src/shared/command/CommandTable.h"

@@ -10,7 +10,7 @@
 
 //======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/MessageQueueDraftSlotsData.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
@@ -26,7 +26,7 @@ public:
 
 	typedef MessageQueueDraftSlotsData::Option Option;
 	typedef MessageQueueDraftSlotsData         Slot;
-	typedef stdvector<Slot>::fwd               SlotVector;
+	typedef std::vector<Slot>               SlotVector;
 
 public:
 

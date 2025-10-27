@@ -10,7 +10,7 @@
 #define _INCLUDED_TemplateGlobals_H
 
 #include <string>
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
+#include "sharedFoundation/Tag.h"
 
 //========================================================================
 

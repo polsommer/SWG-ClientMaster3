@@ -158,6 +158,13 @@ std::string const & BuildoutArea::getRequiredEventName() const
 	return requiredEventName;
 }
 
+//----------------------------------------------------------------------
+
+std::string const & BuildoutArea::getRequiredLoadLevel() const
+{
+	return requiredLoadLevel;
+}
+
 // ======================================================================
 
 bool SharedBuildoutAreaManager::isBuildoutScene(std::string const & sceneName)
@@ -223,7 +230,7 @@ void SharedBuildoutAreaManager::install()
 			int const areaCount = areaListTable.getNumRows();
 			for (int areaRow = 0; areaRow < areaCount; ++areaRow)
 			{
-				areasForScene.push_back();
+				areasForScene.emplace_back(BuildoutArea());
 				BuildoutArea &buildoutArea = areasForScene.back();
 				buildoutArea.areaIndex = i*100+areaRow;
 				buildoutArea.areaName = areaListTable.getStringValue("area", areaRow);
@@ -263,6 +270,8 @@ void SharedBuildoutAreaManager::install()
 				buildoutArea.internalBuildoutArea = areaListTable.getIntValue("internal", areaRow) != 0;
 
 				buildoutArea.requiredEventName = areaListTable.getStringValue("eventRequired", areaRow);
+
+				buildoutArea.requiredLoadLevel = areaListTable.getStringValue("requiredLoadLevel", areaRow);
 			}
 
   			s_buildoutAreas[buildoutScene] = areasForScene;
@@ -321,7 +330,7 @@ std::string SharedBuildoutAreaManager::getBuildoutNameForPosition(std::string co
 {
 	BuildoutArea const * const ba = findBuildoutAreaAtPosition(sceneName, location_w.x, location_w.z, ignoreInternal, ignoreNonActiveEvents);
 	
-	if (NULL != ba)
+	if (nullptr != ba)
 		return sceneName + cms_sceneAndAreaDelimeter + ba->areaName;
 
 	return sceneName;
@@ -346,6 +355,9 @@ Vector SharedBuildoutAreaManager::getRelativePositionInArea(std::string const & 
 					continue;
 
 				if(ignoreNonActiveEvents && !boa.requiredEventName.empty()) // Eventually this needs to query the scheduler system and see if the event is currently active.
+					continue;
+
+				if(ignoreNonActiveEvents && !boa.requiredLoadLevel.empty())
 					continue;
 				
 				if(boa.isLocationInside(location_w.x, location_w.z) && boa.areaName == sceneAndArea.second)
@@ -537,7 +549,7 @@ SharedBuildoutAreaManager::BuildoutAreaVector const * SharedBuildoutAreaManager:
 	{
 		return &it->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -546,8 +558,8 @@ BuildoutArea const * SharedBuildoutAreaManager::findBuildoutAreaAtPosition(std::
 {
 	BuildoutAreaVector const * const bav = findBuildoutAreasForScene(sceneId);
 
-	if (NULL == bav)
-		return NULL;
+	if (nullptr == bav)
+		return nullptr;
 
 	for (BuildoutAreaVector::const_iterator it = bav->begin(); it != bav->end(); ++it)
 	{
@@ -561,13 +573,16 @@ BuildoutArea const * SharedBuildoutAreaManager::findBuildoutAreaAtPosition(std::
 		if(ignoreNonActiveEvents && !buildoutArea.requiredEventName.empty())
 			continue;
 
+		if(ignoreNonActiveEvents && !buildoutArea.requiredLoadLevel.empty())
+			continue;
+
 		if (buildoutArea.isLocationInside(x, z))
 		{
 			return &buildoutArea;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 //----------------------------------------------------------------------
 
@@ -579,11 +594,14 @@ BuildoutArea const * SharedBuildoutAreaManager::findBuildoutAreaAtPosition(float
 
 		if (ignoreInternal && buildoutArea.internalBuildoutArea)
 		{
-			return NULL;
+			return nullptr;
 		}
 
 		if(ignoreNonActiveEvents && !buildoutArea.requiredEventName.empty())
-			return NULL;
+			return nullptr;
+
+		if(ignoreNonActiveEvents && !buildoutArea.requiredLoadLevel.empty())
+			return nullptr;
 
 		if (buildoutArea.isLocationInside(x, z))
 		{
@@ -591,7 +609,7 @@ BuildoutArea const * SharedBuildoutAreaManager::findBuildoutAreaAtPosition(float
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------

@@ -12,6 +12,7 @@
 #include "sharedFile/TreeFile.h"
 #include "sharedUtility/DataTable.h"
 #include "sharedNetworkMessages/ObjectMenuRequestData.h"
+#include <algorithm>
 #include <map>
 
 //======================================================================
@@ -25,10 +26,10 @@ namespace
 		bool        useRadialTarget;
 	};
 
-	typedef stdmap<int, RadialMenuInfo>::fwd RangeMap;
+	typedef std::map<int, RadialMenuInfo> RangeMap;
 	RangeMap s_ranges;
 	
-	typedef stdmap<std::string, int>::fwd NameMap;
+	typedef std::map<std::string, int> NameMap;
 	NameMap  s_names;
 
 	bool s_installed = false;

@@ -1,10 +1,10 @@
 // MessageQueueCommandTimer.h
-// Copyright 2005, Sony Online Entertainment Inc., all rights reserved. 
+// Copyright 2005, Sony Online Entertainment Inc., all rights reserved.
 
 #ifndef	_INCLUDED_MessageQueueCommandTimer_H
 #define	_INCLUDED_MessageQueueCommandTimer_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 
 class MessageQueueCommandTimer : public MessageQueue::Data
 {
@@ -15,28 +15,28 @@ public:
 		F_execute,
 		F_cooldown,
 		F_failed,
-		F_failedRetry,		
+		F_failedRetry,
 		F_cooldown2,
 		F_MAX
 	};
 
 	MessageQueueCommandTimer( uint32 sequenceId, int cooldownGroup, int cooldownGroup2, uint32 commandNameCrc );
-	
-	/** 
+
+	/**
 	 * @brief sets the current time for the given state
 	 */
 	void              setCurrentTime( Flags flag, float time );
-	
+
 	/**
 	 * @brief gets the current time for the requested state
 	 */
 	float             getCurrentTime( Flags flag ) const;
-	
+
 	/**
 	 * @brief gets the maximum time for the given state
 	 */
 	void              setMaxTime( Flags flag, float time );
-	
+
 	/**
 	 * @brief sets the maximum time for the given state
 	 */
@@ -46,14 +46,14 @@ public:
 	 * @brief sets the cooldown group for this command
 	 */
 	void              setCooldownGroup( int group );
-	
+
 	/**
 	 * @brief gets the cooldown group for this command, if it has one.
 	 * this method returns -1 if this command is not part of a cooldown group.
 	 * NOTE: the -1 value is reserved for future use; all commands are part of a cooldown group.
 	 */
 	int               getCooldownGroup() const;
-	
+
 	/**
 	 * @brief returns true if this command is part of a cooldown group.  as per
 	 * the current design, this method should always return true.
@@ -64,7 +64,7 @@ public:
 	 * @brief sets the cooldown group for this command
 	 */
 	void              setCooldownGroup2( int group );
-	
+
 	/**
 	 * @brief gets the cooldown group 2 for this command, if it has one.
 	 * this method returns -1 if this command is not part of a cooldown group 2.
@@ -101,28 +101,28 @@ public:
 	 * @brief returns the flag bit field
 	 */
 	uint32            getFlags() const;
-		
+
 	/**
 	 * @brief returns true if this packet contains time information
 	 * for the requested state.
 	 */
 	bool              hasTime( Flags flag ) const;
-	
+
 	/**
 	 * @brief sets the sequence id for this command
 	 */
 	void              setSequenceId( uint32 id );
-	
+
 	/**
 	 * @brief gets the sequence id for this command
 	 */
 	uint32            getSequenceId() const;
-	
+
 	/**
 	 * @brief sets the command name crc for this command
 	 */
 	void              setCommandNameCrc( uint32 commandNameCrc );
-	
+
 	/**
 	 * @brief gets the command name crc for this command
 	 */
@@ -132,7 +132,7 @@ public:
 	 * @brief returns the given flag as a bit value
 	 */
 	static uint32     toBitValue( Flags flag );
-	
+
 private:
 	uint32                    m_commandNameCrc;
 	uint32                    m_flags;
@@ -254,7 +254,7 @@ inline void MessageQueueCommandTimer::setFailed()
 }
 
 inline bool MessageQueueCommandTimer::getFailed() const
-{	
+{
 	return ( m_flags & toBitValue( F_failed ) ) != 0;
 }
 
@@ -264,7 +264,7 @@ inline void MessageQueueCommandTimer::setFailedRetry()
 }
 
 inline bool MessageQueueCommandTimer::getFailedRetry() const
-{	
+{
 	return ( m_flags & toBitValue( F_failedRetry ) ) != 0;
 }
 

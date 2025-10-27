@@ -63,7 +63,7 @@ namespace DebugHelpNamespace
 
    // ----------------------------------------------------------------------
 
-	static BOOL CALLBACK loadSymbolsForDllCallback(PTSTR ModuleName, DWORD64 ModuleBase, ULONG ModuleSize, PVOID UserContext);
+	//BOOL CALLBACK loadSymbolsForDllCallback(PTSTR ModuleName, DWORD64 ModuleBase, ULONG ModuleSize, PVOID UserContext);
 
    // ----------------------------------------------------------------------
 
@@ -356,7 +356,7 @@ using namespace DebugHelpNamespace;
 
 // ----------------------------------------------------------------------
 
-BOOL CALLBACK DebugHelpNamespace::loadSymbolsForDllCallback(PTSTR ModuleName, DWORD64 ModuleBase, ULONG ModuleSize, PVOID UserContext)
+BOOL CALLBACK loadSymbolsForDllCallback(PSTR ModuleName, DWORD64 ModuleBase, ULONG ModuleSize, PVOID UserContext)
 {
 	if (!library)
 		return false;
@@ -475,7 +475,7 @@ bool DebugHelp::loadSymbolsForDll(const char *name)
 		return false;
 
 	CallbackData callbackData = { name, false };
-	enumerateLoadedModules64(process, loadSymbolsForDllCallback, reinterpret_cast<void *>(&callbackData));
+	enumerateLoadedModules64(process, (PENUMLOADED_MODULES_CALLBACK64)loadSymbolsForDllCallback, reinterpret_cast<void *>(&callbackData));
 	return callbackData.loaded;
 }
 
@@ -551,14 +551,9 @@ void DebugHelp::reportCallStack(int const maxStackDepth)
 			if (callStack[i])
 			{
 				if (lookupAddress(callStack[i], lib, file, sizeof(file), line))
-				{
-					if (line >= 0)
-						REPORT_LOG(true, ("	%s(%d) : caller %d\n", file, line, i-callStackOffset));
-					else
-						REPORT_LOG(true, ("	%s : caller %d\n", file, i-callStackOffset));
-				}
+					REPORT_LOG(true, ("\t%s(%d) : caller %d\n", file, line, i-callStackOffset));
 				else
-					REPORT_LOG(true, ("	unknown(0x%08X) : caller %d\n", static_cast<int>(callStack[i]), i-callStackOffset));
+					REPORT_LOG(true, ("\tunknown(0x%08X) : caller %d\n", static_cast<int>(callStack[i]), i-callStackOffset));
 			}
 		}
 	}
@@ -568,94 +563,50 @@ void DebugHelp::reportCallStack(int const maxStackDepth)
 
 bool DebugHelp::lookupAddress(uint32 address, char *libName, char *fileName, int fileNameLength, int &line)
 {
-        if (!library)
-                return false;
+	UNREF(libName);
 
-        if (fileNameLength <= 0)
-                return false;
+	if (!library)
+		return false;
 
-        // make sure the image is loaded
-        IMAGEHLP_MODULE64 imageHelpModule;
-        Zero(imageHelpModule);
-        imageHelpModule.SizeOfStruct = sizeof(imageHelpModule);
-        if (!symGetModuleInfo64(process, address, &imageHelpModule))
-                return false;
+	// make sure the image is loaded
+	IMAGEHLP_MODULE64 imageHelpModule;
+	Zero(imageHelpModule);
+	imageHelpModule.SizeOfStruct = sizeof(imageHelpModule);
+	if (!symGetModuleInfo64(process, address, &imageHelpModule))
+		return false;
 
-        char moduleName[MAX_PATH];
-        moduleName[0] = '\0';
+	// look up the symbol
+	const int MaxNameLength = 256;
+	char buffer[sizeof(IMAGEHLP_SYMBOL64) + MaxNameLength];
+	memset(buffer, 0, sizeof(buffer));
+	IMAGEHLP_SYMBOL64 *imageHelpSymbol = reinterpret_cast<IMAGEHLP_SYMBOL64*>(buffer);
+	imageHelpSymbol->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
+	imageHelpSymbol->Address = address;
+	imageHelpSymbol->MaxNameLength = MaxNameLength;
+	{
+		DWORD64 displacement = 0;
+		if (!symGetSymFromAddr64(process, address, &displacement, imageHelpSymbol))
+		{
+			return false;
+		}
+	}
 
-        char const *resolvedModuleName = imageHelpModule.ModuleName[0] ? imageHelpModule.ModuleName : imageHelpModule.ImageName;
-        if (resolvedModuleName && *resolvedModuleName)
-        {
-                char const *lastSlash = strrchr(resolvedModuleName, '\\');
-                if (!lastSlash)
-                        lastSlash = strrchr(resolvedModuleName, '/');
-                resolvedModuleName = lastSlash ? lastSlash + 1 : resolvedModuleName;
+	// look up the source file name and line number
+	IMAGEHLP_LINE64 imageHelpLine;
+	Zero(imageHelpLine);
+	imageHelpLine.SizeOfStruct = sizeof(imageHelpLine);
+	{
+		DWORD displacement = 0;
+		if (!symGetLineFromAddr64(process, address, &displacement, &imageHelpLine))
+		{
+			return false;
+		}
+	}
 
-                strncpy(moduleName, resolvedModuleName, sizeof(moduleName) - 1);
-                moduleName[sizeof(moduleName) - 1] = '\0';
-        }
-        else
-        {
-                strncpy(moduleName, "unknown", sizeof(moduleName) - 1);
-                moduleName[sizeof(moduleName) - 1] = '\0';
-        }
-
-        if (libName && fileNameLength > 0)
-        {
-                int const libBufferLength = fileNameLength;
-                strncpy(libName, moduleName, static_cast<size_t>(libBufferLength - 1));
-                libName[libBufferLength - 1] = '\0';
-        }
-
-        // look up the symbol
-        const int MaxNameLength = 256;
-        char buffer[sizeof(IMAGEHLP_SYMBOL64) + MaxNameLength];
-        memset(buffer, 0, sizeof(buffer));
-        IMAGEHLP_SYMBOL64 *imageHelpSymbol = reinterpret_cast<IMAGEHLP_SYMBOL64*>(buffer);
-        imageHelpSymbol->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
-        imageHelpSymbol->Address = address;
-        imageHelpSymbol->MaxNameLength = MaxNameLength;
-
-        bool haveSymbol = false;
-        DWORD64 symbolDisplacement = 0;
-
-        if (symGetSymFromAddr64(process, address, &symbolDisplacement, imageHelpSymbol))
-        {
-                haveSymbol = true;
-        }
-
-        // look up the source file name and line number
-        IMAGEHLP_LINE64 imageHelpLine;
-        Zero(imageHelpLine);
-        imageHelpLine.SizeOfStruct = sizeof(imageHelpLine);
-        DWORD displacement = 0;
-        if (symGetLineFromAddr64(process, address, &displacement, &imageHelpLine))
-        {
-                strncpy(fileName, imageHelpLine.FileName, static_cast<uint>(fileNameLength - 1));
-                fileName[fileNameLength - 1] = '\0';
-                line = static_cast<int>(imageHelpLine.LineNumber);
-                return true;
-        }
-
-        // fallback to module/symbol formatting when no line information is available
-        line = -1;
-
-        if (haveSymbol)
-        {
-                int const written = snprintf(fileName, static_cast<size_t>(fileNameLength), "%s!%s+0x%I64X", moduleName, imageHelpSymbol->Name, symbolDisplacement);
-                if (written < 0 || written >= fileNameLength)
-                        fileName[fileNameLength - 1] = '\0';
-        }
-        else
-        {
-                DWORD64 const moduleDisplacement = address - imageHelpModule.BaseOfImage;
-                int const written = snprintf(fileName, static_cast<size_t>(fileNameLength), "%s+0x%I64X", moduleName, moduleDisplacement);
-                if (written < 0 || written >= fileNameLength)
-                        fileName[fileNameLength - 1] = '\0';
-        }
-
-        return true;
+	// return the results
+	strncpy(fileName, imageHelpLine.FileName, static_cast<uint>(fileNameLength));
+	line = static_cast<int>(imageHelpLine.LineNumber);
+	return true;
 }
 
 // ----------------------------------------------------------------------

@@ -1,1 +1,1 @@
-#include "../../../src/shared/object/ResourceClassObject.h"
+#include "../../src/shared/object/ResourceClassObject.h"

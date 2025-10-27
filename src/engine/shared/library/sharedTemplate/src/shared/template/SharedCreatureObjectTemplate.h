@@ -14,7 +14,7 @@
 #define _INCLUDED_SharedCreatureObjectTemplate_H
 
 #include "SharedTangibleObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -151,7 +151,7 @@ public:
 		SP_gungan = 29,
 		SP_gupin = 30,
 		SP_hutt = 31,
-		SP_ishitib = 32,
+		SP_ishiTib = 32,
 		SP_ithorian = 33,
 		SP_jawa = 34,
 		SP_kiffu = 35,
@@ -346,16 +346,15 @@ public:
 		SP_maulProbeDroid = 225,
 		SP_atst = 226,
 		SP_atat = 227,
-		SP_geonosian = 228,
-		SP_veractyle = 229,
-		SP_nautolan = 230,
-		SP_togruta = 231,
-		SP_klaatu = 232,
-		SP_chiss = 233,
-		SP_nightsister = 234,
-
-		Species_Last = SP_nightsister,
-	};
+                SP_geonosian = 228,
+                SP_veractyle = 229,
+                SP_nautolan = 230,
+                SP_togruta = 231,
+                SP_klaatu = 232,
+                SP_chiss = 233,
+                SP_nightsister = 234,
+                Species_Last = SP_nightsister,
+        };
 
 public:
 	virtual CompilerIntegerParam *getCompilerIntegerParam(const char *name, bool deepCheck = true, int index = 0);

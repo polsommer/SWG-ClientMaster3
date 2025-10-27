@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/StaticCallbackEntry.h"
+#include "sharedFoundation/StaticCallbackEntry.h"
 
 //-----------------------------------------------------------------------
 /**	@brief Engine scheduler 
@@ -91,8 +91,8 @@ private:
 
 private:
 
-	stdvector<StaticCallbackEntry *>::fwd * deferredCallbackEntryAdditions;
-	stdpriority_queue<StaticCallbackEntry *, std::vector<StaticCallbackEntry *, std::allocator<StaticCallbackEntry *> >, StaticCallbackEntry::Compare>::fwd * callbackQueue;
+	std::vector<StaticCallbackEntry *> * deferredCallbackEntryAdditions;
+	std::priority_queue<StaticCallbackEntry *, std::vector<StaticCallbackEntry *, std::allocator<StaticCallbackEntry *> >, StaticCallbackEntry::Compare> * callbackQueue;
 
 private:
 

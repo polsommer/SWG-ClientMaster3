@@ -8,8 +8,8 @@
 #ifndef INCLUDED_MessageQueueHarvesterResourceData_H
 #define INCLUDED_MessageQueueHarvesterResourceData_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/NetworkId.h"
 #include "sharedUtility/InstallationResourceData.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
@@ -28,7 +28,7 @@ class MessageQueueHarvesterResourceData : public MessageQueue::Data
 
 public:
 
-	typedef stdvector<InstallationResourceData>::fwd DataVector;
+	typedef std::vector<InstallationResourceData> DataVector;
 
 	                        MessageQueueHarvesterResourceData (const NetworkId & id, const DataVector & data);
 	virtual                ~MessageQueueHarvesterResourceData();

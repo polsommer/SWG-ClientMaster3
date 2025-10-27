@@ -69,7 +69,7 @@ namespace CachedFileManagerNamespace
 
 	Tag const TAG_CACH = TAG (C,A,C,H);
 
-	char * ms_filenames = NULL;
+	char * ms_filenames = nullptr;
 	size_t ms_filenamesLength = 0;
 	size_t ms_filenamesCurrentPos = 0;
 	unsigned long ms_totalTime;
@@ -150,7 +150,7 @@ void CachedFileManager::install(bool const allowFileCaching)
 			iff.enterForm (TAG_CACH);
 				iff.enterChunk (TAG_0000);
 
-					//-- the entire chunk is filled with null terminated strings
+					//-- the entire chunk is filled with nullptr terminated strings
 					ms_filenamesLength = iff.getChunkLengthLeft();
 					ms_filenames = iff.readRest_char();
 
@@ -168,7 +168,7 @@ void CachedFileManager::install(bool const allowFileCaching)
 void CachedFileManagerNamespace::remove ()
 {
 	delete[] ms_filenames;
-	ms_filenames = NULL;
+	ms_filenames = nullptr;
 	ms_filenamesCurrentPos = 0;
 	ms_filenamesLength = 0;
 
@@ -186,10 +186,6 @@ void CachedFileManager::preloadSomeAssets ()
 	{
 		unsigned long const startTime = Clock::timeMs ();
 
-#if PRODUCTION == 0
-		unsigned long const bytesBefore = MemoryManager::getCurrentNumberOfBytesAllocated();
-#endif
-
 		//-- preloading occurs in one second slices
 		while (ms_filenamesCurrentPos < ms_filenamesLength && Clock::timeMs () - startTime < 1000)
 		{
@@ -205,7 +201,7 @@ void CachedFileManager::preloadSomeAssets ()
 				if (possibleExtension)
 				{
 					ConstCharCrcString const extension (possibleExtension + 1);
-					ExtensionMap::iterator iter = ms_extensionMap.find (&extension);
+					ExtensionMap::iterator iter = ms_extensionMap.find ((const CrcString*)&extension);
 					if (iter == ms_extensionMap.end ())
 					{
 						CachedFileInfo * const info = new CachedFileInfo (extension.getString ());
@@ -229,8 +225,6 @@ void CachedFileManager::preloadSomeAssets ()
 #if PRODUCTION == 0
 		unsigned long const stopTime = Clock::timeMs ();
 		ms_totalTime += stopTime - startTime;
-
-		ms_totalAllocatedBytes += MemoryManager::getCurrentNumberOfBytesAllocated() - bytesBefore;
 #endif
 
 		if (donePreloading ())
@@ -255,7 +249,7 @@ void CachedFileManager::preloadSomeAssets ()
 #endif
 
 			delete[] ms_filenames;
-			ms_filenames = NULL;
+			ms_filenames = nullptr;
 			ms_filenamesCurrentPos = 0;
 			ms_filenamesLength = 0;
 		}
@@ -266,7 +260,7 @@ void CachedFileManager::preloadSomeAssets ()
 
 bool CachedFileManager::donePreloading ()
 {
-	return ms_filenames == NULL || (ms_filenamesCurrentPos >= ms_filenamesLength);
+	return ms_filenames == nullptr || (ms_filenamesCurrentPos >= ms_filenamesLength);
 }
 
 // ----------------------------------------------------------------------

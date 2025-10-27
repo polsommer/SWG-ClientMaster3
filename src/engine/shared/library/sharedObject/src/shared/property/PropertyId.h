@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/LabelHash.h"
+#include "sharedFoundation/LabelHash.h"
 typedef LabelHash::Id PropertyId;
 
 // ======================================================================

@@ -41,7 +41,7 @@ struct LoginClusterStatus_ClusterData
 	bool        m_isAdmin;
 	// Flag so we can append (Secret) in Client (for admins)
 	bool        m_isSecret;
-	
+
 };
 
 /**
@@ -96,7 +96,7 @@ namespace Archive
 		get(source,c.m_dontRecommend);
 		get(source,c.m_onlinePlayerLimit);
 		get(source,c.m_onlineFreeTrialLimit);
-		get(source,c.m_isAdmin);
+		get(source, c.m_isAdmin);
 		get(source,c.m_isSecret);
 	}
 

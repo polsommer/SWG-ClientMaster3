@@ -8,8 +8,8 @@
 #ifndef INCLUDED_MessageQueueQuestTaskCounterMessage_H
 #define INCLUDED_MessageQueueQuestTaskCounterMessage_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 class MemoryBlockManager;

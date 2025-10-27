@@ -9,7 +9,7 @@
 #define INCLUDED_MessageQueueResourceEmptyHopperArchive_H
 
 #include "Archive/ByteStream.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 
 class MessageQueueResourceEmptyHopper;
 

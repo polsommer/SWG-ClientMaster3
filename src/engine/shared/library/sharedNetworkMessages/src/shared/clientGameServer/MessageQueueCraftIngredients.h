@@ -11,7 +11,7 @@
 #ifndef INCLUDED_MessageQueueCraftIngredients_H
 #define INCLUDED_MessageQueueCraftIngredients_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedGame/CraftingData.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
@@ -38,14 +38,14 @@ public:
 			int         maxValue;
 		};
 
-		Ingredient::Ingredient(const Unicode::String & _name, IngredientType _type, int _quantity) :
+		Ingredient(const Unicode::String & _name, IngredientType _type, int _quantity) :
 		name(_name),
 		type(_type),
 		quantity(_quantity)	
 		{
 		}
 
-		Ingredient::Ingredient(const Unicode::String & _name, int _minValue, int _maxValue) :
+		Ingredient(const Unicode::String & _name, int _minValue, int _maxValue) :
 		name(_name),
 		minValue(_minValue),
 		maxValue(_maxValue)

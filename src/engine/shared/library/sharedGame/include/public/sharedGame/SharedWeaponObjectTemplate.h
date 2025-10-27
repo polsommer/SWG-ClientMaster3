@@ -1,2 +1,2 @@
-#include "../../../src/shared/objectTemplate/SharedWeaponObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedWeaponObjectTemplate.h"
 

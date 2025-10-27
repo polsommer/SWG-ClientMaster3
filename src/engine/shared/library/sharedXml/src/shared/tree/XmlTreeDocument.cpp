@@ -92,18 +92,15 @@ XmlTreeDocument* XmlTreeDocument::createDocument(const char * rootNodeName)
 	doc = xmlNewDoc(BAD_CAST "1.0");
 	DEBUG_FATAL( !doc, ("Attempted to make new xmlDoc but failed") );
 
-	xmlNode * node = xmlNewNode( NULL, BAD_CAST rootNodeName );
+	xmlNode * node = xmlNewNode( nullptr, BAD_CAST rootNodeName );
 	DEBUG_FATAL( !node, ("Attempted to make root node for new xml document, but failed"));
 	xmlDocSetRootElement(doc, node);
 
 	XmlTreeDocument *treeDoc = new XmlTreeDocument(doc);
-	
-	DEBUG_WARNING( !treeDoc, ("Attempted to make new XmlTreeDoc but failed") );
-	if (!treeDoc)
-	{
-		xmlFree(doc);
-		return 0;
-	}
+
+	xmlFree(doc);
+	return 0;
+
 	treeDoc->fetch();
 	return treeDoc;
 }
@@ -120,12 +117,11 @@ XmlTreeDocument * XmlTreeDocument::buildDocumentFromText(const std::string &inpu
 		return 0;
 	}
 	XmlTreeDocument *treeDoc = new XmlTreeDocument(doc);
-	if(!treeDoc)
-	{
-		DEBUG_FATAL(true, ("Failure building XmlTreeDocument after successful parsing of memory buffer."));
-		xmlFree(doc);
-		return 0;
-	}
+
+	DEBUG_FATAL(true, ("Failure building XmlTreeDocument after successful parsing of memory buffer."));
+	xmlFree(doc);
+	return 0;
+
 	treeDoc->fetch();
 	return treeDoc;
 }
@@ -140,8 +136,8 @@ XmlTreeDocument::XmlTreeDocument(CrcString const &name, xmlDoc *xmlDocument) :
 	m_referenceCount(0),
 	m_track( true )
 {
-	DEBUG_FATAL(m_xmlDocument == NULL, ("XmlTreeDocument(): tried to construct with a NULL xmlDocument."));
-	WARNING(m_xmlDocument == NULL, ("XmlTreeDocument(): tried to construct with a NULL xmlDocument."));
+	DEBUG_FATAL(m_xmlDocument == nullptr, ("XmlTreeDocument(): tried to construct with a nullptr xmlDocument."));
+	WARNING(m_xmlDocument == nullptr, ("XmlTreeDocument(): tried to construct with a nullptr xmlDocument."));
 }
 
 // ----------------------------------------------------------------------
@@ -152,14 +148,14 @@ m_xmlDocument(xmlDocument),
 m_referenceCount(0),
 m_track(false)		// documents without names are temporary documents for creation of formatted xml
 {
-	DEBUG_FATAL(m_xmlDocument == NULL, ("XmlTreeDocument(): tried to construct with a NULL xmlDocument."));
+	DEBUG_FATAL(m_xmlDocument == nullptr, ("XmlTreeDocument(): tried to construct with a nullptr xmlDocument."));
 }
 // ----------------------------------------------------------------------
 
 XmlTreeDocument::~XmlTreeDocument()
 {
 	xmlFreeDoc(m_xmlDocument);
-	m_xmlDocument = NULL;
+	m_xmlDocument = nullptr;
 }
 
 // ======================================================================

@@ -1,2 +1,2 @@
-#include "../../../src/shared/objectTemplate/SharedIntangibleObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedIntangibleObjectTemplate.h"
 

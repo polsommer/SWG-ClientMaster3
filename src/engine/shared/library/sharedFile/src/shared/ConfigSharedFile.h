@@ -19,10 +19,9 @@ public:
 	static bool        getEnableAsynchronousLoader();
 	static int         getAsynchronousLoaderPriority();
 	static int         getAsynchronousLoaderCallbacksPerFrame();
-        static bool        getValidateIff();
-        static int         getNumberOfTreeFilePreloads();
-        static char const * getTreeFilePreload(int index);
-        static char const * getTreeFileEncryptionPassphrase();
+	static bool        getValidateIff();
+	static int         getNumberOfTreeFilePreloads();
+	static char const * getTreeFilePreload(int index);
 };
 
 // ======================================================================

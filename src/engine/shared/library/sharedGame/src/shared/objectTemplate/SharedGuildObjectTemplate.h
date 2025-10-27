@@ -14,7 +14,7 @@
 #define _INCLUDED_SharedGuildObjectTemplate_H
 
 #include "SharedUniverseObjectTemplate.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
+#include "sharedFoundation/DynamicVariable.h"
 #include "sharedUtility/TemplateParameter.h"
 
 

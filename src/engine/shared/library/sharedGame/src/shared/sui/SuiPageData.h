@@ -10,7 +10,7 @@
 
 //======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkId.h"
 #include "sharedGame/SuiCommand.h"
 #include "sharedMath/Vector.h"
 #include <vector>
@@ -29,7 +29,7 @@ class SuiPageData
 {
 public:
 
-	typedef stdvector<SuiCommand>::fwd SuiCommandVector;
+	typedef std::vector<SuiCommand> SuiCommandVector;
 
 public:
 

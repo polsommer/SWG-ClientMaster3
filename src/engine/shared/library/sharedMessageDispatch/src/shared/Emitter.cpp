@@ -31,7 +31,7 @@ struct Emitter::ReceiverList
 Emitter::Emitter() :
 receiverList(new ReceiverList)
 {
-	assert (receiverList != NULL);
+	assert (receiverList != nullptr);
 }
 
 //---------------------------------------------------------------------
@@ -229,7 +229,7 @@ void Emitter::receiverDestroyed(const Receiver & target) const
 	for(ReceiverList::Container::iterator i = receiverList->c.begin(); i != receiverList->c.end(); ++i)
 	{
 		ReceiverList::ReceiverSet & targets = (*i).second;
-		const ReceiverList::ReceiverSet::const_iterator j = targets.find(const_cast<Receiver *>(&target)); //stl is broken
+		const ReceiverList::ReceiverSet::iterator j = targets.find(const_cast<Receiver *>(&target)); //stl is broken
 
 		if(j != targets.end())
 		{

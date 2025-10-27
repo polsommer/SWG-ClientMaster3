@@ -69,7 +69,7 @@ AiDebugString::AiDebugString(std::string const & text)
 	Unicode::String const delimiters(Unicode::narrowToWide("`"));
 	Unicode::UnicodeStringVector result;
 
-	if (Unicode::tokenize(Unicode::narrowToWide(text), result, &delimiters, NULL))
+	if (Unicode::tokenize(Unicode::narrowToWide(text), result, &delimiters, nullptr))
 	{
 		Unicode::UnicodeStringVector::const_iterator iterStringVector = result.begin();
 
@@ -543,8 +543,8 @@ void AiDebugString::addCircleAtObjectOffset(NetworkId const & target, Vector con
 	// Object-space circle relative to the target
 
 	if (radius > 0.0f)
-	{
-		m_circleList->push_back(std::make_pair(target, std::make_pair(Circle(position_o, radius), color)));
+	{	
+		m_circleList->push_back(std::make_pair(CachedNetworkId(target), std::make_pair(Circle(position_o, radius), color)));
 	}
 	else
 	{
@@ -609,4 +609,5 @@ bool AiDebugString::isTextEnabled()
 }
 
 // ======================================================================
+
 #endif // _DEBUG

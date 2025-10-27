@@ -15,6 +15,8 @@
 #include "sharedObject/ObjectTemplateList.h"
 #include "sharedUtility/DataTable.h"
 #include "sharedUtility/DataTableManager.h"
+
+#include <algorithm>
 #include <map>
 #include <vector>
 
@@ -24,7 +26,7 @@ namespace DraftSchematicGroupManagerNamespace
 {
 	typedef DraftSchematicGroupManager::StringVector      StringVector;
 	typedef DraftSchematicGroupManager::SchematicVector   SchematicVector;
-	typedef stdmap<std::string, SchematicVector>::fwd     GroupMapping;
+	typedef std::map<std::string, SchematicVector>     GroupMapping;
 
 	GroupMapping       s_groupMapping;
 	bool               s_installed = false;

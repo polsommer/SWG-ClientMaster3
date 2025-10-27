@@ -10,9 +10,9 @@
 
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FirstSharedFoundation.h"
+#include "sharedFoundation/FirstSharedFoundation.h"
 #include "sharedDebug/FirstSharedDebug.h"
-#include "sharedMemoryManager/FirstSharedMemoryManager.h"
+
 
 // ======================================================================
 

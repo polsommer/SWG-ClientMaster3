@@ -37,7 +37,7 @@ namespace
 
 	//----------------------------------------------------------------------
 
-	typedef stdvector<std::string>::fwd StringVector;
+	typedef std::vector<std::string> StringVector;
 	inline void tokenizeList (const std::string & str, StringVector & sv, int row, const std::string & columnName)
 	{
 		UNREF (row);
@@ -436,10 +436,6 @@ void SkillObject::connectLinks(DataTable &dataTable, const std::string & parentN
 			{
 				skillData.nextSkillBoxes.push_back(nextSkill);
 			}
-			else
-			{
-				WARNING (true, ("Could not find skill %s in DataTable", nextSkillName.c_str()));
-			}
 		}
 	}
 
@@ -468,7 +464,6 @@ bool SkillObject::load(DataTable & dataTable, const std::string & skillName)
 	if (skillRow == -1)
 	{
 		skillData = SkillData();		
-		WARNING (true, ("SkillObject::load Could not find skill %s in DataTable", skillName.c_str()));
 		return false;
 	}
 	

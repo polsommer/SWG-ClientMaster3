@@ -16,7 +16,6 @@
 #include "sharedFile/FileStreamerFile.h"
 #include "sharedFile/FileStreamer.h"
 #include "sharedFile/MemoryFile.h"
-#include "sharedFile/ConfigSharedFile.h"
 #include "sharedFile/ZlibFile.h"
 #include "sharedFoundation/ConfigFile.h"
 #include "sharedFoundation/Crc.h"
@@ -35,16 +34,7 @@
 // ======================================================================
 
 const Tag TAG_TREE = TAG(T,R,E,E);
-const Tag TAG_TRES = TAG(T,R,E,S);
 const Tag TAG_TOC  = TAG3(T,O,C);
-
-namespace
-{
-        inline bool isSupportedTreeToken(Tag token)
-        {
-                return token == TAG_TREE || token == TAG_TRES;
-        }
-}
 
 // ======================================================================
 
@@ -63,7 +53,7 @@ TreeFile::SearchNode::~SearchNode(void)
 
 TreeFile::SearchPath::SearchPath(int priority, const char *path)
 : SearchNode(priority),
-	m_pathName(NULL),
+	m_pathName(nullptr),
 	m_pathNameLength(0)
 {
 	NOT_NULL(path);
@@ -155,7 +145,7 @@ AbstractFile *TreeFile::SearchPath::open(const char *fileName, AbstractFile::Pri
 	makeAbsolutePath(fileName, buffer);
 	FileStreamer::File *file = FileStreamer::open(buffer);
 	if (!file)
-		return NULL;
+		return nullptr;
 	return new FileStreamerFile(priority, *file);
 }
 
@@ -219,7 +209,7 @@ AbstractFile *TreeFile::SearchAbsolute::open(const char *fileName, AbstractFile:
 
 	FileStreamer::File *file = FileStreamer::open(fileName);
 	if (!file)
-		return NULL;
+		return nullptr;
 	return new FileStreamerFile(priority, *file);
 }
 
@@ -227,10 +217,10 @@ AbstractFile *TreeFile::SearchAbsolute::open(const char *fileName, AbstractFile:
 
 bool TreeFile::SearchTree::validate(const char *fileName)
 {
-        // open the file
-        FileStreamer::File *file = FileStreamer::open(fileName);
-        if (!file)
-                return false;
+	// open the file
+	FileStreamer::File *file = FileStreamer::open(fileName);
+	if (!file)
+		return false;
 
 	// read the header
 	Header header;
@@ -244,44 +234,26 @@ bool TreeFile::SearchTree::validate(const char *fileName)
 		return false;
 
 	// validate the token
-        if (!isSupportedTreeToken(header.token))
-                return false;
+	if (header.token != TAG_TREE)
+		return false;
 
 	// validate the version number
-        if (header.version < TAG_0004 || header.version > TAG_0005)
-                return false;
+	if (header.version < TAG_0004 || header.version > TAG_0004)
+		return false;
 
-        return true;
-}
-
-// ----------------------------------------------------------------------
-
-int TreeFile::SearchTree::readPayload(int offset, void *buffer, int length, AbstractFile::PriorityType priority) const
-{
-        const int bytesRead = m_treeFile->read(offset, buffer, length, priority);
-
-        if (m_isEncrypted && bytesRead > 0)
-        {
-                DEBUG_FATAL(offset < static_cast<int>(sizeof(Header)), ("TreeFile header bytes should never be decrypted."));
-                const uint32 relativeOffset = static_cast<uint32>(offset - static_cast<int>(sizeof(Header)));
-                TreeFileEncryption::transformBuffer(buffer, bytesRead, m_encryptionKey, relativeOffset);
-        }
-
-        return bytesRead;
+	return true;
 }
 
 // ----------------------------------------------------------------------
 
 TreeFile::SearchTree::SearchTree(int priority, const char *fileName)
 : SearchNode(priority),
-        m_treeFileName(NULL),
-        m_treeFile(NULL),
-        m_version(0),
-        m_numberOfFiles(0),
-        m_fileNames(NULL),
-        m_tableOfContents(NULL),
-        m_isEncrypted(false),
-        m_encryptionKey()
+	m_treeFileName(nullptr),
+	m_treeFile(nullptr),
+	m_version(0),
+	m_numberOfFiles(0),
+	m_fileNames(nullptr),
+	m_tableOfContents(nullptr)
 {
 	NOT_NULL(fileName);
 
@@ -292,21 +264,12 @@ TreeFile::SearchTree::SearchTree(int priority, const char *fileName)
 	DEBUG_FATAL(!m_treeFile, ("failed to open TreeFile %s", m_treeFileName));
 
 	// read the header (the first 32 bytes of the tree file) 
-        Header header;
-        m_treeFile->read(0, &header, sizeof(header), AbstractFile::PriorityData);
-        DEBUG_FATAL(!isSupportedTreeToken(header.token), ("file does not look like a tree file"));
+	Header header;
+	m_treeFile->read(0, &header, sizeof(header), AbstractFile::PriorityData);
+	DEBUG_FATAL(header.token != TAG_TREE, ("file does not look like a tree file"));
 
-        m_isEncrypted = (header.token == TAG_TRES);
-
-        if (m_isEncrypted)
-        {
-                char const * const passphrase = ConfigSharedFile::getTreeFileEncryptionPassphrase();
-                FATAL(!TreeFileEncryption::isPassphraseValid(passphrase), ("Encrypted tree file '%s' encountered but no passphrase configured.", m_treeFileName));
-                m_encryptionKey = TreeFileEncryption::deriveKey(passphrase);
-        }
-
-        // set to the number of files that has been compressed within the tree file
-        m_numberOfFiles = static_cast<int>(header.numberOfFiles);
+	// set to the number of files that has been compressed within the tree file
+	m_numberOfFiles = static_cast<int>(header.numberOfFiles);
 
 	int readPosition = header.tocOffset;
 	m_version = header.version;
@@ -328,7 +291,7 @@ TreeFile::SearchTree::SearchTree(int priority, const char *fileName)
 					byte *entryBuffer = new byte[static_cast<uint32>(header.sizeOfTOC)];
 				
 					// read the compressed table of contents data into buffer
-                                        const int bytesRead = readPayload(readPosition, entryBuffer, header.sizeOfTOC, AbstractFile::PriorityData);
+					const int bytesRead = m_treeFile->read(readPosition, entryBuffer, header.sizeOfTOC, AbstractFile::PriorityData);					
 					DEBUG_FATAL(bytesRead != static_cast<int>(header.sizeOfTOC), ("failed to read tree file TOC entries"));
 					readPosition += bytesRead;
 
@@ -340,7 +303,7 @@ TreeFile::SearchTree::SearchTree(int priority, const char *fileName)
 				else
 				{
 					// read the uncompressed table of contents data
-                                        const int bytesRead = readPayload(header.tocOffset, m_tableOfContents, tableOfContentsSize, AbstractFile::PriorityData);
+					const int bytesRead = m_treeFile->read(header.tocOffset, m_tableOfContents, tableOfContentsSize, AbstractFile::PriorityData);
 					DEBUG_FATAL(bytesRead != tableOfContentsSize, ("failed to read tree file tableOfContents entries"));
 					readPosition += bytesRead;
 				}
@@ -351,7 +314,7 @@ TreeFile::SearchTree::SearchTree(int priority, const char *fileName)
 					byte *nameBuffer  = new byte[static_cast<uint32>(header.sizeOfNameBlock)];
 
 					// read the compressed table of contents data into buffer
-                                        const int bytesRead = readPayload(readPosition, nameBuffer, header.sizeOfNameBlock, AbstractFile::PriorityData);
+					const int bytesRead = m_treeFile->read(readPosition, nameBuffer, header.sizeOfNameBlock, AbstractFile::PriorityData);					
 					UNREF(bytesRead);
 					DEBUG_FATAL(bytesRead != static_cast<int>(header.sizeOfNameBlock), ("failed to read tree file name block"));
 
@@ -363,7 +326,7 @@ TreeFile::SearchTree::SearchTree(int priority, const char *fileName)
 				else
 				{
 					// read the uncompressed name block data 
-                                        const int bytesRead = readPayload(readPosition, m_fileNames, header.uncompSizeOfNameBlock, AbstractFile::PriorityData);
+					const int bytesRead = m_treeFile->read(readPosition, m_fileNames, header.uncompSizeOfNameBlock, AbstractFile::PriorityData);
 					UNREF(bytesRead);
 					DEBUG_FATAL(bytesRead != static_cast<int>(header.uncompSizeOfNameBlock), ("failed to read tree file name block"));
 				}
@@ -472,7 +435,7 @@ void TreeFile::SearchTree::debugPrint(void)
 bool TreeFile::SearchTree::exists(const char *fileName, bool &deleted) const
 {
 	NOT_NULL(fileName);
-	return localExists(fileName, NULL, deleted);
+	return localExists(fileName, nullptr, deleted);
 }
 
 // ----------------------------------------------------------------------
@@ -522,33 +485,19 @@ AbstractFile *TreeFile::SearchTree::open(const char *fileName, AbstractFile::Pri
 	{
 		const TableOfContentsEntry &entry = m_tableOfContents[tableOfContentsIndex];
 
-                if (!TreeFile::SearchTree::isCompressed(entry.compressor))
-                {
-                        if (!m_isEncrypted)
-                                return new FileStreamerFile(priority, *m_treeFile, entry.offset, entry.length);
+		if (!TreeFile::SearchTree::isCompressed(entry.compressor))
+			return new FileStreamerFile(priority, *m_treeFile, entry.offset, entry.length);
 
-                        byte * const buffer = new byte[entry.length];
-                        const int bytesRead = readPayload(entry.offset, buffer, entry.length, priority);
-                        if (bytesRead != entry.length)
-                        {
-                                DEBUG_WARNING(true, ("TreeFile::SearchTree::open - failed to read decrypted payload for %s", fileName));
-                                delete [] buffer;
-                                return NULL;
-                        }
+		byte * compressedBuffer = new byte[entry.compressedLength];
 
-                        return new MemoryFile(buffer, entry.length);
-                }
+		const int bytesRead = m_treeFile->read(entry.offset, compressedBuffer, entry.compressedLength, priority);
+		DEBUG_FATAL(bytesRead != entry.compressedLength, ("error reading compressed data into buffer"));
+		UNREF(bytesRead);
 
-                byte * compressedBuffer = new byte[entry.compressedLength];
+		return new ZlibFile(entry.length, compressedBuffer, entry.compressedLength, true);
+	}
 
-                const int bytesRead = readPayload(entry.offset, compressedBuffer, entry.compressedLength, priority);
-                DEBUG_FATAL(bytesRead != entry.compressedLength, ("error reading compressed data into buffer"));
-                UNREF(bytesRead);
-
-                return new ZlibFile(entry.length, compressedBuffer, entry.compressedLength, true);
-        }
-
-        return NULL;
+	return nullptr;
 }
 
 // ======================================================================
@@ -586,14 +535,14 @@ bool TreeFile::SearchTOC::validate(const char *fileName)
 
 TreeFile::SearchTOC::SearchTOC(int priority, const char *fileName)
 : SearchNode(priority),
-	m_TOCFileName(NULL),
-	m_TOCFile(NULL),
-	m_treeFiles(NULL),
+	m_TOCFileName(nullptr),
+	m_TOCFile(nullptr),
+	m_treeFiles(nullptr),
 	m_numberOfFiles(0),
-	m_treeFileNames(NULL),
-	m_treeFileNamePointers(NULL),
-	m_tableOfContents(NULL),
-	m_fileNames(NULL)
+	m_treeFileNames(nullptr),
+	m_treeFileNamePointers(nullptr),
+	m_tableOfContents(nullptr),
+	m_fileNames(nullptr)
 {
 	NOT_NULL(fileName);
 
@@ -638,7 +587,7 @@ TreeFile::SearchTOC::SearchTOC(int priority, const char *fileName)
 
 					// add on all paths in config file
 					const char * result;
-					for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", "TOCTreePath", index, NULL)) != NULL; ++index)
+					for (int index = 0; (result = ConfigFile::getKeyString("SharedFile", "TOCTreePath", index, nullptr)) != nullptr; ++index)
 						treePaths.push_back(result);
 
 					// read in the tree file names and open the files
@@ -649,7 +598,7 @@ TreeFile::SearchTOC::SearchTOC(int priority, const char *fileName)
 					for (int treeFileNameIndex = 0, treeFileNameReadPosition = 0; treeFileNameIndex < static_cast<int>(header.numberOfTreeFiles); treeFileNameIndex++)
 					{
 						m_treeFileNamePointers[treeFileNameIndex] = (m_treeFileNames + treeFileNameReadPosition);
-						m_treeFiles[treeFileNameIndex] = NULL;						
+						m_treeFiles[treeFileNameIndex] = nullptr;						
 
 						// try to open the tree file in each of the relative paths 
 						for (std::vector<const char *>::const_iterator pathIter = treePaths.begin(); pathIter != treePaths.end(); ++pathIter)
@@ -707,7 +656,7 @@ TreeFile::SearchTOC::SearchTOC(int priority, const char *fileName)
 					{
 						currentFileNameLength = m_tableOfContents[i].fileNameOffset;
 						m_tableOfContents[i].fileNameOffset = currentFileNameOffset;
-						// + 1 for the null termination
+						// + 1 for the nullptr termination
 						currentFileNameOffset += (currentFileNameLength + 1);
 					}
 				}
@@ -843,7 +792,7 @@ bool TreeFile::SearchTOC::exists(const char *fileName, bool &deleted) const
 {
 	NOT_NULL(fileName);
 	deleted = false;
-	return localExists(fileName, NULL);
+	return localExists(fileName, nullptr);
 }
 
 // ----------------------------------------------------------------------
@@ -913,7 +862,7 @@ AbstractFile *TreeFile::SearchTOC::open(const char *fileName, AbstractFile::Prio
 		return new ZlibFile(entry.length, compressedBuffer, entry.compressedLength, true);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ======================================================================
@@ -1106,7 +1055,7 @@ bool TreeFile::SearchCache::exists(char const * const fileName, bool & deleted) 
 	deleted = false;
 
 	TemporaryCrcString const crcString(fileName, true);
-	return m_cachedFileMap->find(&crcString) != m_cachedFileMap->end();
+	return m_cachedFileMap->find((const CrcString*)&crcString) != m_cachedFileMap->end();
 }
 
 // ----------------------------------------------------------------------
@@ -1116,7 +1065,7 @@ int TreeFile::SearchCache::getFileSize(char const * const fileName, bool & delet
 	deleted = false;
 
 	TemporaryCrcString const crcString(fileName, true);
-	CachedFileMap::iterator iter = m_cachedFileMap->find(&crcString);
+	CachedFileMap::iterator iter = m_cachedFileMap->find((const CrcString*)&crcString);
 	if (iter != m_cachedFileMap->end())
 		return iter->second->getUncompressedLength();
 
@@ -1152,7 +1101,7 @@ AbstractFile * TreeFile::SearchCache::open(char const * const fileName, Abstract
 	deleted = false;
 
 	TemporaryCrcString const crcString(fileName, true);
-	CachedFileMap::iterator iter = m_cachedFileMap->find(&crcString);
+	CachedFileMap::iterator iter = m_cachedFileMap->find((const CrcString*)&crcString);
 	if (iter != m_cachedFileMap->end())
 		return iter->second->createAbstractFile();
 

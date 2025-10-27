@@ -5,14 +5,13 @@
 //
 // ======================================================================
 
-#include <climits>
-
 #include "sharedDatabaseInterface/FirstSharedDatabaseInterface.h"
 #include "sharedDatabaseInterface/DbBindableDouble.h"
 
 #include "sharedDatabaseInterface/DbServer.h"
 
 #include <string>
+#include <climits>
 
 // ======================================================================
 

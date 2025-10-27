@@ -1,1 +1,1 @@
-#include "../../../src/shared/lot/LotType.h"
+#include "../../src/shared/lot/LotType.h"

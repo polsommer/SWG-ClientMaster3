@@ -41,7 +41,7 @@
 //
 // ======================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Watcher.h"
+#include "sharedFoundation/Watcher.h"
 #include "sharedMath/Capsule.h"
 #include "sharedMath/SphereTree.h"
 
@@ -208,7 +208,7 @@ void PortallizedSphereTree<ObjectType, Accessor>::onObjectAddedInternal(ObjectTy
 	else
 	{
 		// object not in the world cell
-		PobContentsInfoMap::iterator i = m_pobContentsInfoMap.lower_bound(pob);
+		typename PobContentsInfoMap::iterator i = m_pobContentsInfoMap.lower_bound(pob);
 		if (i == m_pobContentsInfoMap.end() || (*i).first != pob)
 		{
 			// This pob did not have a PobContentsInfo in the map, so create one,
@@ -403,7 +403,7 @@ void PortallizedSphereTree<ObjectType, Accessor>::findInRange(Object const *pob,
 		m_worldCellContentsTree.findInRange(center_p, radius, results);
 	else
 	{
-		PobContentsInfoMap::const_iterator i = m_pobContentsInfoMap.find(pob);
+		typename PobContentsInfoMap::const_iterator i = m_pobContentsInfoMap.find(pob);
 		if (i != m_pobContentsInfoMap.end())
 			(*i).second->contents.findInRange(center_p, radius, results);
 	}
@@ -418,7 +418,7 @@ void PortallizedSphereTree<ObjectType, Accessor>::findInRange(Object const *pob,
 		m_worldCellContentsTree.findInRange(center_p, radius, filter, results);
 	else
 	{
-		PobContentsInfoMap::const_iterator i = m_pobContentsInfoMap.find(pob);
+		typename PobContentsInfoMap::const_iterator i = m_pobContentsInfoMap.find(pob);
 		if (i != m_pobContentsInfoMap.end())
 			(*i).second->contents.findInRange(center_p, radius, filter, results);
 	}

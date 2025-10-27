@@ -57,13 +57,13 @@ inline Filename::Filename(void)
 
 inline Filename::Filename(const char *drive, const char *path, const char *name, const char *extension)
 {
-	if (drive != NULL)
+	if (drive != nullptr)
 		setDrive(drive);
-	if (path != NULL)
+	if (path != nullptr)
 		setPath(path);
-	if (name != NULL)
+	if (name != nullptr)
 		setName(name);
-	if (extension != NULL)
+	if (extension != nullptr)
 		setExtension(extension);
 }	// Filename::Filename
 
@@ -74,11 +74,11 @@ inline Filename::operator const char *(void) const
 
 inline void Filename::clear(void)
 {
-	m_path = "";
-	m_name = "";
-	m_extension = "";
-	m_fullFilename = "";
-	m_drive = "";
+	m_path.clear();
+	m_name.clear();
+	m_extension.clear();
+	m_fullFilename.clear();
+	m_drive.clear();
 }	// Filename::clear
 
 inline const std::string & Filename::getPath(void) const
@@ -115,7 +115,7 @@ inline void Filename::makeFullPath(void)
 
 //========================================================================
 
-const Filename NEXT_HIGHER_PATH(NULL, "..", NULL, NULL);
+const Filename NEXT_HIGHER_PATH(nullptr, "..", nullptr, nullptr);
 
 
 #endif	// _INCLUDED_Filename_H

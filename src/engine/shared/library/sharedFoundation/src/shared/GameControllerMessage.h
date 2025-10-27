@@ -37,6 +37,6 @@ namespace GameControllerMessageFlags
 	                               DEST_SERVER;
 }
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/GameControllerMessage.def"
+#include "sharedFoundation/GameControllerMessage.def"
 
 #endif

@@ -5,7 +5,7 @@
 #ifndef _INCLUDED_VoiceChatChannelInfo_H
 #define _INCLUDED_VoiceChatChannelInfo_H
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 
 #include <string>

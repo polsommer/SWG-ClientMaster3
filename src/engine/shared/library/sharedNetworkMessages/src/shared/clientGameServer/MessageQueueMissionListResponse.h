@@ -7,7 +7,7 @@
 
 //-----------------------------------------------------------------------
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/MessageQueueMissionListResponseData.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 #include <vector>
@@ -23,7 +23,7 @@ class MessageQueueMissionListResponse : public MessageQueue::Data
 public:
 
 	typedef MessageQueueMissionListResponseData DataElement;
-	typedef stdvector<DataElement>::fwd         DataVector;
+	typedef std::vector<DataElement>         DataVector;
 
 public:
 	MessageQueueMissionListResponse();

@@ -12,14 +12,18 @@
 
 #include "sharedMath/Vector.h"
 
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 
 // ======================================================================
 
 class PositionVertexIndexer
 {
 public:
-	typedef stdvector<Vector>::fwd VectorVector;
+	typedef std::vector<Vector> VectorVector;
 
 	PositionVertexIndexer();
 	~PositionVertexIndexer();
@@ -42,7 +46,7 @@ private:
 
 private:
 
-	typedef std::hash_multimap<uint32 /*crc*/, int /*index*/> VertexIndexMap;
+	typedef std::unordered_multimap<uint32 /*crc*/, int /*index*/> VertexIndexMap;
 
 	VectorVector * m_vertices;
 	VertexIndexMap * m_indexMap;

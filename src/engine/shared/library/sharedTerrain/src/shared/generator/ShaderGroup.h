@@ -22,7 +22,7 @@
 
 //===================================================================
 
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/ArrayList.h"
+#include "sharedFoundation/ArrayList.h"
 #include "sharedMath/PackedRgb.h"
 
 class Iff;

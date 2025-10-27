@@ -1,1 +1,1 @@
-#include "../../../src/shared/SynchronizedWeatherGenerator.h"
+#include "../../src/shared/SynchronizedWeatherGenerator.h"

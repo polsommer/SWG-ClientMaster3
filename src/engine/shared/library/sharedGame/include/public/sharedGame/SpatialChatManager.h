@@ -1,1 +1,1 @@
-#include "../../../src/shared/core/SpatialChatManager.h"
+#include "../../src/shared/core/SpatialChatManager.h"

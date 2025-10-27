@@ -1,2 +1,2 @@
-#include "../../../src/shared/objectTemplate/SharedCreatureObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedCreatureObjectTemplate.h"
 

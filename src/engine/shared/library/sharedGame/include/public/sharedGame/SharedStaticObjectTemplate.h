@@ -1,2 +1,2 @@
-#include "../../../src/shared/objectTemplate/SharedStaticObjectTemplate.h"
+#include "../../src/shared/objectTemplate/SharedStaticObjectTemplate.h"
 

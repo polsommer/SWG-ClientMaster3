@@ -2,7 +2,7 @@
 //
 // Buff.cpp
 //
-// Copyright 2000-02, Sony Online Entertainment Inc., all rights reserved. 
+// Copyright 2000-02, Sony Online Entertainment Inc., all rights reserved.
 // Author: Adam Hunter
 // ======================================================================
 
@@ -48,11 +48,11 @@ m_duration(duration),
 m_caster(caster),
 m_stackCount(stackCount)
 {
-	m_nameCrc = Crc::calculate(buffName.c_str());	
+	m_nameCrc = Crc::calculate(buffName.c_str());
 }
 
 // ======================================================================
-	
+
 Buff::Buff(uint32 buffNameCrc, Buff::PackedBuff buffValues) :
 m_name(""),
 m_nameCrc(buffNameCrc),
@@ -61,7 +61,7 @@ m_value(buffValues.value),
 m_duration(buffValues.duration),
 m_caster(buffValues.caster),
 m_stackCount(buffValues.stackCount)
-{	
+{
 }
 
 // ======================================================================
@@ -74,7 +74,7 @@ m_value(value),
 m_duration(duration),
 m_caster(caster),
 m_stackCount(stackCount)
-{		
+{
 }
 
 // ======================================================================
@@ -87,7 +87,7 @@ Buff::~Buff()
 
 Buff &Buff::operator=(Buff const &rhs)
 {
-	if (this != (&rhs)) 
+	if (this != (&rhs))
 	{
 		m_name = rhs.m_name;
 		m_nameCrc = rhs.m_nameCrc;
@@ -113,9 +113,9 @@ Buff::PackedBuff Buff::getPackedBuffValue()
 	return result;
 }
 
-void Buff::set(uint32 buffNameCrc, Buff::PackedBuff buffValues)
+void Buff::set(uint32 buffNameCrc, const Buff::PackedBuff &buffValues)
 {
-	m_name = "";
+	m_name.clear();
 	m_nameCrc = buffNameCrc;
 	m_timestamp = buffValues.endtime;
 	m_value = buffValues.value;

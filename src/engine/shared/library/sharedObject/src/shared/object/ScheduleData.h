@@ -12,7 +12,7 @@
 // ======================================================================
 
 #include "sharedObject/AlterScheduler.h"
-#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
+#include "sharedFoundation/MemoryBlockManagerMacros.h"
 #include <map>
 
 // ======================================================================
