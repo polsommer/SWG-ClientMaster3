@@ -14,6 +14,9 @@
 #include "sharedFoundation/FirstSharedFoundation.h"
 #include "sharedDebug/FirstSharedDebug.h"
 
+#ifdef _MSC_VER
+#include "sharedFoundation/HashMap.h"
+#endif
 
 #include <string>
 
