@@ -14,7 +14,11 @@
 #include "sharedNetworkMessages/NetworkMessageFactory.h"
 #include <algorithm>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 #include "sharedFoundation/HashMap.h"
+=======
+#include <unordered_map>
+>>>>>>> Stashed changes
 =======
 #include <unordered_map>
 >>>>>>> Stashed changes
