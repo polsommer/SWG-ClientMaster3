@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 #include "unicodeArchive/UnicodeArchive.h"
 
 //-----------------------------------------------------------------------
@@ -24,7 +24,7 @@ public:
 	static const char * const MessageType;
 
 	typedef std::pair<std::string, Unicode::String> AttributePair;
-	typedef std::vector<AttributePair> AttributeVector;
+	typedef stdvector<AttributePair>::fwd AttributeVector;
 
 	AttributeListMessage(NetworkId const & id, AttributeVector const & data, int const revision);
 	AttributeListMessage(std::string const & staticItemName, AttributeVector const & data, int const revision);

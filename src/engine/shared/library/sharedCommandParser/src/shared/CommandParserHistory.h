@@ -14,7 +14,7 @@ class CommandParserHistory
 {
 public:
 
-	typedef std::deque<Unicode::String>   HistoryList_t;
+	typedef stddeque<Unicode::String>::fwd   HistoryList_t;
 
 	                         CommandParserHistory ();
 	                        ~CommandParserHistory ();

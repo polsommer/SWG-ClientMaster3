@@ -9,7 +9,7 @@
 #define INCLUDED_MessageQueueCombatSpamArchive_H
 
 #include "Archive/ByteStream.h"
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 
 class MessageQueueCombatSpam;
 

@@ -12,8 +12,8 @@
 
 #include "Archive/AutoDeltaMap.h"
 #include <stdio.h>
-#include "sharedFoundation/NetworkId.h"
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 #include "Archive/AutoDeltaPackedMap.h"
 
 // ======================================================================
@@ -26,7 +26,7 @@ namespace Archive
 	 * all respects except that packDeltas() will send the entire map
 	 * on the network.
 	 */
-	template<>
+
 	void AutoDeltaPackedMap<NetworkId, int>::pack(ByteStream & target, const std::string & buffer)
 	{
 		char temp[200];
@@ -58,7 +58,6 @@ namespace Archive
 		}
 	}
 
-	template<>
 	void AutoDeltaPackedMap<NetworkId, int>::unpack(ReadIterator & source, std::string & buffer)
 	{
 		char temp[200];

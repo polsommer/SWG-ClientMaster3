@@ -93,6 +93,7 @@ MessageQueue::Data* MessageQueueDraftSchematics::unpack(Archive::ReadIterator & 
 	Archive::get(source, stationId);
 	
 	MessageQueueDraftSchematics* const msg = new MessageQueueDraftSchematics(toolId, stationId);
+	NOT_NULL(msg);
 	
 	int count, category;
 	uint32 serverCrc, sharedCrc;

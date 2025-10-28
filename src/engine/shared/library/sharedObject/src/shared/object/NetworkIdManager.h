@@ -5,7 +5,7 @@
 #ifndef	_INCLUDED_NetworkIdManager_H
 #define _INCLUDED_NetworkIdManager_H
 
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 
 class Object;
 
@@ -16,7 +16,7 @@ class NetworkIdManager
 public:
 	~NetworkIdManager();
 
-	typedef std::unordered_map<NetworkId, Object *, NetworkId::Hash> NetworkIdObjectHashMap;
+	typedef stdhash_map<NetworkId, Object *, NetworkId::Hash>::fwd NetworkIdObjectHashMap;
 
 	static void                      addObject      (Object & newObject);
 	static Object *                  getObjectById  (const NetworkId & source);

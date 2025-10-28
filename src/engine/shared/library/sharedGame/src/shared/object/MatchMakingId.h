@@ -40,7 +40,7 @@ public:
 		B_anonymous = 127
 	};
 
-	typedef std::vector<int> IntVector;
+	typedef stdvector<int>::fwd IntVector;
 
 	MatchMakingId();
 

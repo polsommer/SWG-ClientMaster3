@@ -1,1 +1,1 @@
-#include "../../src/shared/lot/StructureFootprint.h"
+#include "../../../src/shared/lot/StructureFootprint.h"

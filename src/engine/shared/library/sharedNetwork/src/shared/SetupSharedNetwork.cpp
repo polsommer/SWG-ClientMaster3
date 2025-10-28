@@ -43,7 +43,7 @@ void SetupSharedNetwork::getDefaultClientSetupData(SetupData &data)
 	//-- It is extremely important to have this value setup correctly for the client and server.
 	//   The client should not be able to muck with this since it influences things like
 	//   movement validation.
-	data.m_clockSyncDelay = 45000;
+	data.m_clockSyncDelay = 25000;
 }
 
 // ----------------------------------------------------------------------

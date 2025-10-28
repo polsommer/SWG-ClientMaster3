@@ -111,7 +111,7 @@ namespace AssetCustomizationManagerNamespace
 	void                   getIntRangeFromIntRangeId(int intRangeId, IntRange &intRange);
 	void                   getRangeTypeInfoFromRangeId(int rangeId, bool &isPalette, int &idForRealType);
 	VariableUsage const   *getVariableUsageFromId(int variableUsageId);
-
+	
 	UsageIndexEntry const *lookupVariableUsageIndexEntry(int assetId);
 	LinkIndexEntry const  *lookupAssetLinkIndexEntry(int assetId);
 	int                    lookupAssetId(CrcString const &assetName);
@@ -123,19 +123,19 @@ namespace AssetCustomizationManagerNamespace
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-	Tag const   TAG_ACST = TAG(A, C, S, T);
-	Tag const   TAG_CIDX = TAG(C, I, D, X);
-	Tag const   TAG_DEFV = TAG(D, E, F, V);
-	Tag const   TAG_IRNG = TAG(I, R, N, G);
-	Tag const   TAG_LIDX = TAG(L, I, D, X);
-	Tag const   TAG_LLST = TAG(L, L, S, T);
-	Tag const   TAG_NAME = TAG(N, A, M, E);
-	Tag const   TAG_PNOF = TAG(P, N, O, F);
-	Tag const   TAG_RTYP = TAG(R, T, Y, P);
-	Tag const   TAG_UCMP = TAG(U, C, M, P);
-	Tag const   TAG_UIDX = TAG(U, I, D, X);
-	Tag const   TAG_ULST = TAG(U, L, S, T);
-	Tag const   TAG_VNOF = TAG(V, N, O, F);
+	Tag const   TAG_ACST = TAG(A,C,S,T);
+	Tag const   TAG_CIDX = TAG(C,I,D,X);
+	Tag const   TAG_DEFV = TAG(D,E,F,V);
+	Tag const   TAG_IRNG = TAG(I,R,N,G);
+	Tag const   TAG_LIDX = TAG(L,I,D,X);
+	Tag const   TAG_LLST = TAG(L,L,S,T);
+	Tag const   TAG_NAME = TAG(N,A,M,E);
+	Tag const   TAG_PNOF = TAG(P,N,O,F);
+	Tag const   TAG_RTYP = TAG(R,T,Y,P);
+	Tag const   TAG_UCMP = TAG(U,C,M,P);
+	Tag const   TAG_UIDX = TAG(U,I,D,X);
+	Tag const   TAG_ULST = TAG(U,L,S,T);
+	Tag const   TAG_VNOF = TAG(V,N,O,F);
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -191,52 +191,52 @@ void AssetCustomizationManagerNamespace::remove()
 	DEBUG_FATAL(!s_installed, ("AssetCustomizationManager not installed."));
 	s_installed = false;
 
-	delete[] s_nameDataBlock;
-	s_nameDataBlock = nullptr;
+	delete [] s_nameDataBlock;
+	s_nameDataBlock     = NULL;
 	s_nameDataBlockSize = 0;
 
-	delete[] s_paletteIdNameOffsetMap;
-	s_paletteIdNameOffsetMap = nullptr;
-	s_maxValidPaletteId = 0;
+	delete [] s_paletteIdNameOffsetMap;
+	s_paletteIdNameOffsetMap = NULL;
+	s_maxValidPaletteId      = 0;
 
-	delete[] s_variableIdNameOffsetMap;
-	s_variableIdNameOffsetMap = nullptr;
-	s_maxValidVariableId = 0;
+	delete [] s_variableIdNameOffsetMap;
+	s_variableIdNameOffsetMap = NULL;
+	s_maxValidVariableId      = 0;
 
-	delete[] s_defaultValueMap;
-	s_defaultValueMap = nullptr;
+	delete [] s_defaultValueMap;
+	s_defaultValueMap   = NULL;
 	s_maxValidDefaultId = 0;
 
-	delete[] s_intRangeMap;
-	s_intRangeMap = nullptr;
+	delete [] s_intRangeMap;
+	s_intRangeMap        = NULL;
 	s_maxValidIntRangeId = 0;
 
-	delete[] s_rangeTypeMap;
-	s_rangeTypeMap = nullptr;
+	delete [] s_rangeTypeMap;
+	s_rangeTypeMap    = NULL;
 	s_maxValidRangeId = 0;
 
-	delete[] s_variableUsageMap;
-	s_variableUsageMap = nullptr;
+	delete [] s_variableUsageMap;
+	s_variableUsageMap        = NULL;
 	s_maxValidVariableUsageId = 0;
 
-	delete[] s_variableUsageList;
-	s_variableUsageList = 0;
+	delete [] s_variableUsageList;
+	s_variableUsageList           = 0;
 	s_variableUsageListEntryCount = 0;
 
-	delete[] s_usageIndex;
-	s_usageIndex = nullptr;
+	delete [] s_usageIndex;
+	s_usageIndex           = NULL;
 	s_usageIndexEntryCount = 0;
 
-	delete[] s_linkList;
-	s_linkList = nullptr;
+	delete [] s_linkList;
+	s_linkList           = NULL;
 	s_linkListEntryCount = 0;
 
-	delete[] s_linkIndex;
-	s_linkIndex = nullptr;
+	delete [] s_linkIndex;
+	s_linkIndex           = NULL;
 	s_linkIndexEntryCount = 0;
 
-	delete[] s_crcLookupTable;
-	s_crcLookupTable = nullptr;
+	delete [] s_crcLookupTable;
+	s_crcLookupTable      = NULL;
 	s_crcLookupEntryCount = 0;
 }
 
@@ -245,21 +245,21 @@ void AssetCustomizationManagerNamespace::remove()
 void AssetCustomizationManagerNamespace::load(Iff &iff)
 {
 	iff.enterForm(TAG_ACST);
+	
+		Tag const version = iff.getCurrentName();
+		switch (version)
+		{
+			case TAG_0000:
+				load_0000(iff);
+				break;
 
-	Tag const version = iff.getCurrentName();
-	switch (version)
-	{
-	case TAG_0000:
-		load_0000(iff);
-		break;
-
-	default:
-	{
-		char buffer[5];
-		ConvertTagToString(version, buffer);
-		FATAL(true, ("unsupported AssetCustomizationManager file version [%s].", buffer));
-	}
-	}
+			default:
+				{
+					char buffer[5];
+					ConvertTagToString(version, buffer);
+					FATAL(true, ("unsupported AssetCustomizationManager file version [%s].", buffer));
+				}
+		}
 
 	iff.exitForm(TAG_ACST);
 }
@@ -270,113 +270,113 @@ void AssetCustomizationManagerNamespace::load_0000(Iff &iff)
 {
 	iff.enterForm(TAG_0000);
 
-	//-- Read name data as one big block.
-	iff.enterChunk(TAG_NAME);
+		//-- Read name data as one big block.
+		iff.enterChunk(TAG_NAME);
 
-	s_nameDataBlockSize = iff.getChunkLengthLeft();
-	s_nameDataBlock = new char[static_cast<size_t>(s_nameDataBlockSize)];
-	iff.read_char(s_nameDataBlockSize, s_nameDataBlock);
+			s_nameDataBlockSize = iff.getChunkLengthLeft();
+			s_nameDataBlock     = new char[static_cast<size_t>(s_nameDataBlockSize)];
+			iff.read_char(s_nameDataBlockSize, s_nameDataBlock);
 
-	iff.exitChunk(TAG_NAME);
+		iff.exitChunk(TAG_NAME);
 
-	//-- Read palette id to palette name offset block.  Palette IDs start at 1.
-	iff.enterChunk(TAG_PNOF);
+		//-- Read palette id to palette name offset block.  Palette IDs start at 1.
+		iff.enterChunk(TAG_PNOF);
+			
+			s_maxValidPaletteId      = iff.getChunkLengthLeft(sizeof(uint16));
+			s_paletteIdNameOffsetMap = new uint16[static_cast<size_t>(s_maxValidPaletteId)];
+			iff.read_uint16(s_maxValidPaletteId, s_paletteIdNameOffsetMap);
 
-	s_maxValidPaletteId = iff.getChunkLengthLeft(sizeof(uint16));
-	s_paletteIdNameOffsetMap = new uint16[static_cast<size_t>(s_maxValidPaletteId)];
-	iff.read_uint16(s_maxValidPaletteId, s_paletteIdNameOffsetMap);
+		iff.exitChunk(TAG_PNOF);
 
-	iff.exitChunk(TAG_PNOF);
+		//-- Read variable id to variable name offset block.  Variable IDs start at 1.
+		iff.enterChunk(TAG_VNOF);
+			
+			s_maxValidVariableId      = iff.getChunkLengthLeft(sizeof(uint16));
+			s_variableIdNameOffsetMap = new uint16[static_cast<size_t>(s_maxValidVariableId)];
+			iff.read_uint16(s_maxValidVariableId, s_variableIdNameOffsetMap);
 
-	//-- Read variable id to variable name offset block.  Variable IDs start at 1.
-	iff.enterChunk(TAG_VNOF);
+		iff.exitChunk(TAG_VNOF);
 
-	s_maxValidVariableId = iff.getChunkLengthLeft(sizeof(uint16));
-	s_variableIdNameOffsetMap = new uint16[static_cast<size_t>(s_maxValidVariableId)];
-	iff.read_uint16(s_maxValidVariableId, s_variableIdNameOffsetMap);
+		//-- Read default value id.
+		iff.enterChunk(TAG_DEFV);
 
-	iff.exitChunk(TAG_VNOF);
+			s_maxValidDefaultId  = iff.getChunkLengthLeft(sizeof(int32));
+			s_defaultValueMap    = new int32[static_cast<size_t>(s_maxValidDefaultId)];
+			iff.read_int32(s_maxValidDefaultId, s_defaultValueMap);
 
-	//-- Read default value id.
-	iff.enterChunk(TAG_DEFV);
+		iff.exitChunk(TAG_DEFV);
 
-	s_maxValidDefaultId = iff.getChunkLengthLeft(sizeof(int32));
-	s_defaultValueMap = new int32[static_cast<size_t>(s_maxValidDefaultId)];
-	iff.read_int32(s_maxValidDefaultId, s_defaultValueMap);
+		//-- Read the integer range table.
+		iff.enterChunk(TAG_IRNG);	
+			
+			s_maxValidIntRangeId = iff.getChunkLengthLeft(sizeof(IntRange));
+			s_intRangeMap        = new IntRange[static_cast<size_t>(s_maxValidIntRangeId)];
+			iff.read_int32(2 * s_maxValidIntRangeId, reinterpret_cast<int32*>(s_intRangeMap)); //lint !e740 // unusual pointer cast. // Yes; its fine and is worth the bug savings over handling directly as array of int32.
 
-	iff.exitChunk(TAG_DEFV);
+		iff.exitChunk(TAG_IRNG);
 
-	//-- Read the integer range table.
-	iff.enterChunk(TAG_IRNG);
+		//-- Read the range type table.
+		iff.enterChunk(TAG_RTYP);
 
-	s_maxValidIntRangeId = iff.getChunkLengthLeft(sizeof(IntRange));
-	s_intRangeMap = new IntRange[static_cast<size_t>(s_maxValidIntRangeId)];
-	iff.read_int32(2 * s_maxValidIntRangeId, reinterpret_cast<int32*>(s_intRangeMap)); //lint !e740 // unusual pointer cast. // Yes; its fine and is worth the bug savings over handling directly as array of int32.
+			s_maxValidRangeId = iff.getChunkLengthLeft(sizeof(uint16));
+			s_rangeTypeMap    = new uint16[static_cast<size_t>(s_maxValidRangeId)];
+			iff.read_uint16(s_maxValidRangeId, s_rangeTypeMap);
 
-	iff.exitChunk(TAG_IRNG);
+		iff.exitChunk(TAG_RTYP);
 
-	//-- Read the range type table.
-	iff.enterChunk(TAG_RTYP);
+		//-- Read the variable usage composition table.
+		iff.enterChunk(TAG_UCMP);
 
-	s_maxValidRangeId = iff.getChunkLengthLeft(sizeof(uint16));
-	s_rangeTypeMap = new uint16[static_cast<size_t>(s_maxValidRangeId)];
-	iff.read_uint16(s_maxValidRangeId, s_rangeTypeMap);
+			s_maxValidVariableUsageId = iff.getChunkLengthLeft(sizeof(VariableUsage));
+			s_variableUsageMap        = new VariableUsage[static_cast<size_t>(s_maxValidVariableUsageId)];
+			iff.read_uint16(3 * s_maxValidVariableUsageId, reinterpret_cast<uint16*>(s_variableUsageMap));
 
-	iff.exitChunk(TAG_RTYP);
+		iff.exitChunk(TAG_UCMP);
 
-	//-- Read the variable usage composition table.
-	iff.enterChunk(TAG_UCMP);
+		//-- Read variable usage list.
+		iff.enterChunk(TAG_ULST);
+		
+			s_variableUsageListEntryCount = iff.getChunkLengthLeft(sizeof(uint16));
+			s_variableUsageList           = new uint16[static_cast<size_t>(s_variableUsageListEntryCount)];
+			iff.read_uint16(s_variableUsageListEntryCount, s_variableUsageList);
 
-	s_maxValidVariableUsageId = iff.getChunkLengthLeft(sizeof(VariableUsage));
-	s_variableUsageMap = new VariableUsage[static_cast<size_t>(s_maxValidVariableUsageId)];
-	iff.read_uint16(3 * s_maxValidVariableUsageId, reinterpret_cast<uint16*>(s_variableUsageMap));
+		iff.exitChunk(TAG_ULST);
 
-	iff.exitChunk(TAG_UCMP);
+		//-- Read variable usage index.
+		iff.enterChunk(TAG_UIDX);
 
-	//-- Read variable usage list.
-	iff.enterChunk(TAG_ULST);
+			s_usageIndexEntryCount = iff.getChunkLengthLeft(sizeof(UsageIndexEntry));
+			s_usageIndex           = new UsageIndexEntry[static_cast<size_t>(s_usageIndexEntryCount)];
+			iff.read_uint8(isizeof(UsageIndexEntry) * s_usageIndexEntryCount, reinterpret_cast<uint8*>(s_usageIndex));
 
-	s_variableUsageListEntryCount = iff.getChunkLengthLeft(sizeof(uint16));
-	s_variableUsageList = new uint16[static_cast<size_t>(s_variableUsageListEntryCount)];
-	iff.read_uint16(s_variableUsageListEntryCount, s_variableUsageList);
+		iff.exitChunk(TAG_UIDX);
 
-	iff.exitChunk(TAG_ULST);
+		//-- Read asset linkage list.
+		iff.enterChunk(TAG_LLST);
+		
+			s_linkListEntryCount = iff.getChunkLengthLeft(sizeof(uint16));
+			s_linkList           = new uint16[static_cast<size_t>(s_linkListEntryCount)];
+			iff.read_uint16(s_linkListEntryCount, s_linkList);
 
-	//-- Read variable usage index.
-	iff.enterChunk(TAG_UIDX);
+		iff.exitChunk(TAG_LLST);
 
-	s_usageIndexEntryCount = iff.getChunkLengthLeft(sizeof(UsageIndexEntry));
-	s_usageIndex = new UsageIndexEntry[static_cast<size_t>(s_usageIndexEntryCount)];
-	iff.read_uint8(isizeof(UsageIndexEntry) * s_usageIndexEntryCount, reinterpret_cast<uint8*>(s_usageIndex));
+		//-- Read asset linkage index.
+		iff.enterChunk(TAG_LIDX);
 
-	iff.exitChunk(TAG_UIDX);
+			s_linkIndexEntryCount = iff.getChunkLengthLeft(sizeof(LinkIndexEntry));
+			s_linkIndex           = new LinkIndexEntry[static_cast<size_t>(s_linkIndexEntryCount)];
+			iff.read_uint8(isizeof(LinkIndexEntry) * s_linkIndexEntryCount, reinterpret_cast<uint8*>(s_linkIndex));
 
-	//-- Read asset linkage list.
-	iff.enterChunk(TAG_LLST);
+		iff.exitChunk(TAG_LIDX);
 
-	s_linkListEntryCount = iff.getChunkLengthLeft(sizeof(uint16));
-	s_linkList = new uint16[static_cast<size_t>(s_linkListEntryCount)];
-	iff.read_uint16(s_linkListEntryCount, s_linkList);
+		//-- Read crc name -> asset id lookup table.
+		iff.enterChunk(TAG_CIDX);
 
-	iff.exitChunk(TAG_LLST);
+			s_crcLookupEntryCount = iff.getChunkLengthLeft(sizeof(CrcLookupEntry));
+			s_crcLookupTable      = new CrcLookupEntry[static_cast<size_t>(s_crcLookupEntryCount)];
+			iff.read_uint8(isizeof(CrcLookupEntry) * s_crcLookupEntryCount, reinterpret_cast<uint8*>(s_crcLookupTable));
 
-	//-- Read asset linkage index.
-	iff.enterChunk(TAG_LIDX);
-
-	s_linkIndexEntryCount = iff.getChunkLengthLeft(sizeof(LinkIndexEntry));
-	s_linkIndex = new LinkIndexEntry[static_cast<size_t>(s_linkIndexEntryCount)];
-	iff.read_uint8(isizeof(LinkIndexEntry) * s_linkIndexEntryCount, reinterpret_cast<uint8*>(s_linkIndex));
-
-	iff.exitChunk(TAG_LIDX);
-
-	//-- Read crc name -> asset id lookup table.
-	iff.enterChunk(TAG_CIDX);
-
-	s_crcLookupEntryCount = iff.getChunkLengthLeft(sizeof(CrcLookupEntry));
-	s_crcLookupTable = new CrcLookupEntry[static_cast<size_t>(s_crcLookupEntryCount)];
-	iff.read_uint8(isizeof(CrcLookupEntry) * s_crcLookupEntryCount, reinterpret_cast<uint8*>(s_crcLookupTable));
-
-	iff.exitChunk(TAG_CIDX);
+		iff.exitChunk(TAG_CIDX);
 
 	iff.exitForm(TAG_0000);
 }
@@ -444,7 +444,7 @@ void AssetCustomizationManagerNamespace::getRangeTypeInfoFromRangeId(int rangeId
 	//-- Get range type from range id.  Range ids start at 1 and need to be shifted down one
 	//   index to lookup int range type info.
 	uint16 const rangeType = s_rangeTypeMap[rangeId - 1];
-	isPalette = ((rangeType & 0x8000) != 0);
+	isPalette     = ((rangeType & 0x8000) != 0);
 	idForRealType = (rangeType & 0x7fff);
 }
 
@@ -485,10 +485,10 @@ AssetCustomizationManagerNamespace::LinkIndexEntry const *AssetCustomizationMana
 
 int AssetCustomizationManagerNamespace::lookupAssetId(CrcString const &assetName)
 {
-	uint32 const key = assetName.getCrc();
+	uint32 const key            = assetName.getCrc();
 	CrcLookupEntry const *entry = static_cast<CrcLookupEntry*>(bsearch(&key, s_crcLookupTable, static_cast<size_t>(s_crcLookupEntryCount), sizeof(CrcLookupEntry), compare_uint32));
 
-	return (entry != nullptr) ? entry->assetId : 0;
+	return (entry != NULL) ? entry->assetId : 0;
 }
 
 // ----------------------------------------------------------------------
@@ -579,17 +579,17 @@ void AssetCustomizationManagerNamespace::addVariablesForAssetAndLinks(int assetI
 			int const defaultValue = getDefaultValueFromDefaultId(variableUsage->defaultId);
 
 			//-- Get variable type.
-			bool isPalette = false;
+			bool isPalette     = false;
 			int  idForRealType = 0;
 			getRangeTypeInfoFromRangeId(variableUsage->rangeId, isPalette, idForRealType);
 
 			//-- Create variable based on type.
-			CustomizationVariable *variable = nullptr;
+			CustomizationVariable *variable = NULL;
 			if (isPalette)
 			{
 				//-- Get palette.
 				char const *const        paletteName = getPaletteNameFromPaletteId(idForRealType);
-				PaletteArgb const *const palette = PaletteArgbList::fetch(TemporaryCrcString(paletteName, true));
+				PaletteArgb const *const palette     = PaletteArgbList::fetch(TemporaryCrcString(paletteName, true));
 				if (!palette)
 				{
 					DEBUG_WARNING(true, ("failed to load palette [%s], skipping variable [%s]", paletteName, variablePathName));
@@ -605,16 +605,18 @@ void AssetCustomizationManagerNamespace::addVariablesForAssetAndLinks(int assetI
 			{
 				IntRange  intRange;
 				getIntRangeFromIntRangeId(idForRealType, intRange);
-
+				
 				variable = new BasicRangedIntCustomizationVariable(intRange.minRangeInclusive, defaultValue, intRange.maxRangeExclusive);
 			}
 
 			//-- Add the variable to the CustomizationData.
+			NOT_NULL(variable);
 			customizationData.addVariableTakeOwnership(variablePathName2, variable);
 
 			++addedVariableCount;
 		}
 	}
+	
 
 	//-- Recursively call on assets that this asset is dependent upon.  These assets
 	//   could be providing additional variables.

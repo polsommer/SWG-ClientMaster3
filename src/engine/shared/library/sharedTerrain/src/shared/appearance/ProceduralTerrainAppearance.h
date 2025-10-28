@@ -334,7 +334,7 @@ protected:
 
 protected:
 
-	typedef std::map<const Object*, ClearCollidableFloraEntry> ClearCollidableFloraMap;
+	typedef stdmap<const Object*, ClearCollidableFloraEntry>::fwd ClearCollidableFloraMap;
 
 protected:
 
@@ -386,7 +386,7 @@ protected:
 
 	const ProceduralTerrainAppearanceTemplate* proceduralTerrainAppearanceTemplate;
 
-	typedef std::vector<TerrainGenerator::Layer*> RunTimeRuleList;
+	typedef stdvector<TerrainGenerator::Layer*>::fwd RunTimeRuleList;
 	RunTimeRuleList*      m_runTimeRuleList;
 
 	int                   m_chunksGeneratedThisFrame;
@@ -413,7 +413,7 @@ private:
 
 	bool                 m_server;
 
-	typedef std::map<uint32, Object*> FloraMap;
+	typedef stdmap<uint32, Object*>::fwd FloraMap;
 	FloraMap* const      m_floraMap;
 	FloraMap* const      m_cachedFloraMap;
 

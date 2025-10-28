@@ -45,7 +45,7 @@ void DataTableManager::remove()
 {
 	FATAL(!m_installed, ("DataTableManager::remove: not installed."));
 	m_cachedTable = 0;
-	m_cachedTableName.clear();
+	m_cachedTableName = "";
 
 	std::map<std::string, DataTable *>::iterator i;
 	for (i=m_tables.begin(); i != m_tables.end(); ++i)
@@ -103,7 +103,7 @@ void DataTableManager::close(const std::string& table)
 	if (m_cachedTable == i->second)
 	{
 		DEBUG_WARNING(m_cachedTableName != table, ("Cached name got out of sync"));
-		m_cachedTableName.clear();
+		m_cachedTableName = "";
 		m_cachedTable = 0;
 	}
 
@@ -129,7 +129,7 @@ DataTable * DataTableManager::getTable(const std::string& table, bool openIfNotF
 			if (!dt)
 			{
 				DEBUG_WARNING(true, ("Could not find table [%s]", table.c_str()));
-				return nullptr;
+				return NULL;
 			}
 			else
 			{
@@ -140,7 +140,7 @@ DataTable * DataTableManager::getTable(const std::string& table, bool openIfNotF
 		}
 		else
 		{
-			return nullptr;
+			return NULL;
 		}
 	}
 
@@ -158,7 +158,7 @@ DataTable*  DataTableManager::reload(const std::string & table)
 
 	DataTable * const dataTable = open(table);
 
-	if (dataTable != nullptr)
+	if (dataTable != NULL)
 	{
 		std::multimap<std::string, DataTableReloadCallback>::const_iterator i = m_reloadCallbacks.lower_bound(table);
 		for (; i != m_reloadCallbacks.end() && (*i).first == table; ++i)
@@ -175,7 +175,7 @@ DataTable*  DataTableManager::reloadIfOpen(const std::string & table)
 	if(isOpen(table))
 		return reload(table);
 	else
-		return nullptr;
+		return NULL;
 }
 
 // ----------------------------------------------------------------------

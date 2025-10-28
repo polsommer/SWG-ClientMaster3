@@ -402,38 +402,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-                        <File
-                                RelativePath="..\..\src\win32\ContentCreationAssistantDialog.cpp"
-                                >
-                                <FileConfiguration
-                                        Name="Optimized|Win32"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                                Optimization="2"
-                                                AdditionalIncludeDirectories=""
-                                                PreprocessorDefinitions=""
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Release|Win32"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                                AdditionalIncludeDirectories=""
-                                                PreprocessorDefinitions=""
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Debug|Win32"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                                AdditionalIncludeDirectories=""
-                                                PreprocessorDefinitions=""
-                                        />
-                                </FileConfiguration>
-                        </File>
 			<File
 				RelativePath="..\..\src\win32\DialogAddSkeleton.cpp"
 				>
@@ -1073,12 +1041,6 @@
 				RelativePath="..\..\src\win32\CoolDialogBar.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\..\src\win32\ContentCreationAssistantDialog.h"
-                                />
-                        <File
-                                RelativePath="..\..\src\win32\ContentCreationPreset.h"
-                                />
 			<File
 				RelativePath="..\..\src\win32\DialogAddSkeleton.h"
 				>

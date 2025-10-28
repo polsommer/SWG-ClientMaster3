@@ -9,13 +9,12 @@
 #ifndef INCLUDED_DataTable_H
 #define INCLUDED_DataTable_H
 
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "DataTableCell.h"
 #include "DataTableColumnType.h"
 
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 class Iff;
 
@@ -84,7 +83,7 @@ private:
 	void buildColumnIndexMap();
 
 	typedef std::vector<const DataTableColumnType *> DataTableColumnTypeVector;
-	typedef std::unordered_map<std::string /*column name*/, int /*column index*/> ColumnIndexMap;
+	typedef stdhash_map<std::string /*column name*/, int /*column index*/>::fwd ColumnIndexMap;
 
 	int                           m_numRows;
 	int                           m_numCols;

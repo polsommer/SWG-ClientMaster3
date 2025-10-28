@@ -12,7 +12,7 @@
 // ======================================================================
 
 class MemoryBlockManager;
-#include "sharedFoundation/CrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/CrcString.h"
 
 // ======================================================================
 

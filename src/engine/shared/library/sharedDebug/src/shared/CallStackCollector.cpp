@@ -128,7 +128,7 @@ CrcString const & CallStackCollectorNamespace::Node::getName() const
 void CallStackCollectorNamespace::Node::addCallStack(uint32 * const callStack)
 {
 	//-- Compute crc of memory
-	uint32 const crc = Crc::calculate(callStack, (sizeof(uint32) * CALLSTACK_DEPTH));
+	uint32 const crc = Crc::calculate(callStack, sizeof(uint32) * CALLSTACK_DEPTH);
 
 	//-- Find callstack in list
 	CallStackEntryMap::iterator iter = m_callStackEntryMap.find(crc);
@@ -141,7 +141,7 @@ void CallStackCollectorNamespace::Node::addCallStack(uint32 * const callStack)
 	{
 		//-- Create new callstack
 		uint32 * const newCallStack = new uint32[CALLSTACK_DEPTH];
-		memcpy(newCallStack, callStack, sizeof(*newCallStack));
+		memcpy(newCallStack, callStack, sizeof(uint32) * CALLSTACK_DEPTH);
 
 		CallStackEntry callStackEntry;
 		callStackEntry.m_callStack = newCallStack;
@@ -178,7 +178,12 @@ void CallStackCollectorNamespace::Node::debugReport() const
 		for (size_t j = 2; j < CALLSTACK_DEPTH; ++j)
 		{
 			if (DebugHelp::lookupAddress(callStackEntry->m_callStack[j], libName, fileName, sizeof(fileName), line))
-				REPORT_LOG(true, ("  %s(%d) : caller %d\n", fileName, line, j - 1));
+			{
+				if (line >= 0)
+					REPORT_LOG(true, ("  %s(%d) : caller %d\n", fileName, line, j - 1));
+				else
+					REPORT_LOG(true, ("  %s : caller %d\n", fileName, j - 1));
+			}
 			else
 				REPORT_LOG(true, ("  unknown(0x%08X) : caller %d\n", static_cast<int>(callStackEntry->m_callStack[j]), j - 1));
 		}
@@ -208,7 +213,7 @@ void CallStackCollector::sample(char const * const name)
 	//-- Get the desired node
 	Node * node = 0;
 	ConstCharCrcString const crcName(name);
-	NodeMap::iterator iter = ms_nodeMap.find((const CrcString*)&crcName);
+	NodeMap::iterator iter = ms_nodeMap.find(&crcName);
 	if (iter != ms_nodeMap.end())
 		node = iter->second;
 	else

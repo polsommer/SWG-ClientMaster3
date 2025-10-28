@@ -61,7 +61,7 @@ void XmlTreeDocumentListNamespace::remove()
 		NamedDocumentMap::iterator const endIt = s_documents.end();
 		for (NamedDocumentMap::iterator it = s_documents.begin(); it != endIt; ++it)
 		{
-			DEBUG_REPORT_LOG(true, ("-- xml tree document name [%s], reference count [%d].\n", it->first ? it->first->getString() : "<nullptr name>", it->second ? it->second->getReferenceCount() : -1));
+			DEBUG_REPORT_LOG(true, ("-- xml tree document name [%s], reference count [%d].\n", it->first ? it->first->getString() : "<null name>", it->second ? it->second->getReferenceCount() : -1));
 		}
 	}
 }
@@ -95,7 +95,7 @@ XmlTreeDocument const *XmlTreeDocumentList::fetch(CrcString const &filename)
 	//-- Handle existing entry.
 	if (haveEntry)
 	{
-		FATAL(!lowerBound->second, ("XmlTreeDocumentList::fetch() found an entry for filename [%s] but the mapped document was nullptr.", filename.getString()));
+		FATAL(!lowerBound->second, ("XmlTreeDocumentList::fetch() found an entry for filename [%s] but the mapped document was NULL.", filename.getString()));
 
 		// Increment reference count and return.
 		lowerBound->second->fetch();
@@ -116,8 +116,17 @@ XmlTreeDocument const *XmlTreeDocumentList::fetch(CrcString const &filename)
 	delete file;
 
 	//-- Create an XML DOM tree out of it.
+#ifdef _DEBUG
+	unsigned long const preDomBytesAllocated = MemoryManager::getCurrentNumberOfBytesAllocated();
+#endif
+
 	xmlDocPtr const xmlDocument = xmlParseMemory(reinterpret_cast<char const *>(fileContents), fileSize);
-	FATAL(!xmlDocument, ("xmlParseMemory() returned nullptr when parsing contents of file [%s].", cPathName));
+	FATAL(!xmlDocument, ("xmlParseMemory() returned NULL when parsing contents of file [%s].", cPathName));
+
+#ifdef _DEBUG
+	unsigned long const postDomBytesAllocated = MemoryManager::getCurrentNumberOfBytesAllocated();
+	DEBUG_REPORT_LOG(s_logXmlDomTreeSize, ("XmlTreeDocumentList: XML tree file [%s]: XML DOM tree appears to have consumed [%d] bytes.\n", cPathName, static_cast<int>(postDomBytesAllocated - preDomBytesAllocated)));
+#endif
 
 	// Release initial file contents buffer.
 	delete [] fileContents;
@@ -139,7 +148,7 @@ XmlTreeDocument const *XmlTreeDocumentList::fetch(CrcString const &filename)
 void XmlTreeDocumentList::stopTracking(XmlTreeDocument const *document)
 {
 	FATAL(!s_installed, ("XmlTreeDocumentList not installed."));
-	FATAL(!document, ("XmlTreeDocumentList::stopTracking(): nullptr document passed in."));
+	FATAL(!document, ("XmlTreeDocumentList::stopTracking(): null document passed in."));
 
 	//-- Find the map entry for the xml tree document.
 	NamedDocumentMap::iterator const findIt = s_documents.find(&(document->getName()));

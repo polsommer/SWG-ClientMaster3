@@ -55,7 +55,20 @@ public:
 
 	static void  install(const InstallData &installData);
 
-	static void  generateNextSmallerMipmap(const Image &sourceImage, Image &destImage);
+		static void  generateNextSmallerMipmap(const Image &sourceImage, Image &destImage);
+
+#if 0
+	static void  convertFormatSameSize(const Image &sourceImage, Image &destImage);
+
+	// these functions require same pixel format.  they do not stretch or compress pixels.
+	static void  copyIgnoreAlpha(const Image &sourceImage, int sourceX, int sourceY, int width, int height, Image &destImage, int destX, int destY);
+	static void  copyRespectAlpha(const Image &sourceImage, int sourceX, int sourceY, int width, int height, Image &destImage, int destX, int destY);
+
+	// these two always respect alpha
+	static void  blend(float sourceBlendFactor, const Image &sourceImage, int sourceX, int sourceY, int width, int height, Image &destImage, int destX, int destY);
+	static void  blendTwo(float firstSourceBlendFactor, float resultToDestBlendFactor, const Image &sourceImage1, const Image &sourceImage2, int sourceX, int sourceY, int width, int height, Image &destImage, int destX, int destY);
+#endif
+
 private:
 
 	static void  remove();

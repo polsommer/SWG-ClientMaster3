@@ -9,10 +9,8 @@
 #ifndef _INCLUDED_TemplateData_H
 #define _INCLUDED_TemplateData_H
 
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "TemplateGlobals.h"
-
-#include <climits>
 
 class File;
 class TemplateDefinitionFile;
@@ -91,7 +89,7 @@ public:
 public:
 
 	explicit TemplateData(int version, const TemplateDefinitionFile &parent);
-	explicit TemplateData(const TemplateData *parent, const std::string &name);
+	explicit TemplateData(const TemplateData *parent, const std::string name);
 	~TemplateData();
 
 	const std::string getName(void) const;
@@ -174,7 +172,7 @@ private:
 	TemplateData & operator =(const TemplateData &);
 
 	// access functions
-	void getTemplateNames(std::set<std::string> &names) const;
+	void getTemplateNames(stdset<std::string>::fwd &names) const;
 	const TemplateDefinitionFile * getFileParent(void) const;
 
 	// template definition parsing functions
@@ -238,11 +236,11 @@ inline bool TemplateData::isWritingForCompiler(void) const
 
 inline const TemplateDefinitionFile * TemplateData::getFileParent(void) const
 {
-	if (m_fileParent != nullptr)
+	if (m_fileParent != NULL)
 		return m_fileParent;
-	if (m_templateParent != nullptr)
+	if (m_templateParent != NULL)
 		return m_templateParent->getFileParent();
-	return nullptr;
+	return NULL;
 }	// TemplateData::getFileParent
 
 

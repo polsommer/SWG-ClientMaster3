@@ -6,7 +6,6 @@
 
 #include "DialogFind.h"
 #include "MainFrm.h"
-#include "ContentCreationAssistantDialog.h"
 #include "ViewerDoc.h"
 #include "clientGraphics/Graphics.h"
 #include "clientGraphics/TextureList.h"
@@ -42,17 +41,16 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_WRITE_CUSTOMIZATION_DATA, OnUpdateButtonWriteCustomizationData)
 	ON_COMMAND(ID_BUTTON_OPENCLOSEALL, OnButtonOpencloseall)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_OPENCLOSEALL, OnUpdateButtonOpencloseall)
-        ON_COMMAND(ID_BUTTON_DEBUGDUMPALL, OnButtonDebugdumpall)
-        ON_UPDATE_COMMAND_UI(ID_BUTTON_DEBUGDUMPALL, OnUpdateButtonDebugdumpall)
-        ON_COMMAND(ID_BUTTON_BUILDASYNCLOADERDATA, OnButtonBuildasyncloaderdata)
-        ON_UPDATE_COMMAND_UI(ID_BUTTON_BUILDASYNCLOADERDATA, OnUpdateButtonBuildasyncloaderdata)
-        ON_COMMAND(ID_BUTTON_FIND_LMGS, OnButtonFindLmgs)
-        ON_UPDATE_COMMAND_UI(ID_BUTTON_FIND_LMGS, OnUpdateButtonFindLmgs)
-        ON_COMMAND(ID_BUTTON_FIX_EXPORTED_SAT_FILES, OnButtonFixExportedSatFiles)
-        ON_UPDATE_COMMAND_UI(ID_BUTTON_FIX_EXPORTED_SAT_FILES, OnUpdateButtonFixExportedSatFiles)
-        ON_COMMAND(ID_VIEW_CLEAROUTPUT, OnViewClearoutput)
-        ON_COMMAND(ID_TOOLS_CONTENT_ASSISTANT, OnToolsContentAssistant)
-        ON_UPDATE_COMMAND_UI(ID_VIEW_HARDPOINT_TREE, OnUpdateViewHardpointTree)
+	ON_COMMAND(ID_BUTTON_DEBUGDUMPALL, OnButtonDebugdumpall)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_DEBUGDUMPALL, OnUpdateButtonDebugdumpall)
+	ON_COMMAND(ID_BUTTON_BUILDASYNCLOADERDATA, OnButtonBuildasyncloaderdata)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_BUILDASYNCLOADERDATA, OnUpdateButtonBuildasyncloaderdata)
+	ON_COMMAND(ID_BUTTON_FIND_LMGS, OnButtonFindLmgs)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_FIND_LMGS, OnUpdateButtonFindLmgs)
+	ON_COMMAND(ID_BUTTON_FIX_EXPORTED_SAT_FILES, OnButtonFixExportedSatFiles)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_FIX_EXPORTED_SAT_FILES, OnUpdateButtonFixExportedSatFiles)
+	ON_COMMAND(ID_VIEW_CLEAROUTPUT, OnViewClearoutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_HARDPOINT_TREE, OnUpdateViewHardpointTree)
 	ON_COMMAND(ID_VIEW_HARDPOINT_TREE, OnViewHardpointTree)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ANIMATION_TREE, OnUpdateViewAnimationTree)
 	ON_COMMAND(ID_VIEW_ANIMATION_TREE, OnViewAnimationTree)
@@ -603,25 +601,16 @@ void CMainFrame::OnUpdateButtonFixExportedSatFiles(CCmdUI* pCmdUI)
 
 void CMainFrame::OnViewClearoutput()
 {
-        clearMessage ();
+	clearMessage ();
 }
 
 // ----------------------------------------------------------------------
 
-void CMainFrame::OnToolsContentAssistant()
+void CMainFrame::OnViewHardpointTree() 
 {
-        CViewerDoc *const viewerDoc = getViewerDoc();
-        ContentCreationAssistantDialog dialog(viewerDoc, this);
-        dialog.DoModal();
-}
-
-// ----------------------------------------------------------------------
-
-void CMainFrame::OnViewHardpointTree()
-{
-        if (hardpointDialogBar.IsVisible())
-        {
-                ShowControlBar(&hardpointDialogBar, FALSE, FALSE);
+	if (hardpointDialogBar.IsVisible())
+	{
+		ShowControlBar(&hardpointDialogBar, FALSE, FALSE);
 	}
 	else
 	{

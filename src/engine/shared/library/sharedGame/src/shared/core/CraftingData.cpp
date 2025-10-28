@@ -39,8 +39,8 @@ draftSlotIndex(-1)
 
 Crafting::IngredientSlot::IngredientSlot(enum IngredientType _ingredientType,
 			   const StringId & _name,
-			   const std::vector<NetworkId> &slotIngredients,
-			   const std::vector<int> &slotIngredientsCount,
+			   const std::vector<NetworkId> slotIngredients,
+			   const std::vector<int> slotIngredientsCount,
 			   float _complexity,
 			   int _draftSlotOption,
 			   int _draftSlotIndex) :
@@ -209,7 +209,7 @@ const std::string & Crafting::getResourceAttributeName (int attr)
 
 const StringId & Crafting::getResourceAttributeNameStringId (int attr)
 {
-	typedef std::map<int, StringId> ResourceAttributeNameStringIds;
+	typedef stdmap<int, StringId>::fwd ResourceAttributeNameStringIds;
 	static ResourceAttributeNameStringIds sids;
 
 	const ResourceAttributeNameStringIds::iterator it = sids.find (attr);

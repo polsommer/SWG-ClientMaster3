@@ -1,2 +1,2 @@
-#include "../../src/shared/objectTemplate/SharedShipObjectTemplate.h"
+#include "../../../src/shared/objectTemplate/SharedShipObjectTemplate.h"
 

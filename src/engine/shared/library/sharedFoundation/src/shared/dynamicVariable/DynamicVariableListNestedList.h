@@ -9,8 +9,7 @@
 #define INCLUDED_DynamicVariableListNestedList_H
 
 #include "Archive/AutoDeltaMap.h"
-#include "sharedFoundation/DynamicVariable.h"
-#include <iterator>
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include <string>
 
 class DynamicVariableList;
@@ -44,23 +43,14 @@ public:
 	* as it traverses the nested list will return "location" and "build_time".
 	*/
 
-        class const_iterator
-        {
-        public:
-                typedef MapType::const_iterator BaseIterator;
-                typedef std::forward_iterator_tag iterator_category;
-                typedef typename BaseIterator::value_type value_type;
-                typedef typename BaseIterator::difference_type difference_type;
-                typedef value_type const * pointer;
-                typedef value_type const & reference;
+	class const_iterator
+	{
+	public:
+		const_iterator (const DynamicVariableListNestedList &context, const MapType::const_iterator &position, bool atEnd);
 
-                const_iterator (const DynamicVariableListNestedList &context, const MapType::const_iterator &position, bool atEnd);
-
-                reference                           operator*        () const;
-                pointer                              operator->       () const;
-                const std::string                    getName          () const;
-                const std::string                    getNameWithPath  () const;
-                DynamicVariableListNestedList        getNestedList    () const;
+		const std::string                    getName          () const;
+		const std::string                    getNameWithPath  () const;
+		DynamicVariableListNestedList        getNestedList    () const;
 		DynamicVariable::DynamicVariableType getType          () const;
 		int                                  getPackedPosition() const;
 		const_iterator &                     operator++       ();
@@ -68,22 +58,22 @@ public:
 		bool                                 operator!=       (const const_iterator &rhs) const;
 
 		bool getValue (int & value) const;
-		bool getValue (std::vector<int> & value) const;
+		bool getValue (stdvector<int>::fwd & value) const;
 		bool getValue (float & value) const;
-		bool getValue (std::vector<float> & value) const;
+		bool getValue (stdvector<float>::fwd & value) const;
 		bool getValue (Unicode::String & value) const;
 		bool getValue (std::string & value) const;
-		bool getValue (std::vector<Unicode::String> & value) const;
+		bool getValue (stdvector<Unicode::String>::fwd & value) const;
 		bool getValue (NetworkId & value) const;
-		bool getValue (std::vector<NetworkId> & value) const;
+		bool getValue (stdvector<NetworkId>::fwd & value) const;
 		bool getValue (DynamicVariableLocationData & value) const;
-		bool getValue (std::vector<DynamicVariableLocationData> & value) const;
+		bool getValue (stdvector<DynamicVariableLocationData>::fwd & value) const;
 		bool getValue (StringId &value) const;
-		bool getValue (std::vector<StringId> &value) const;
+		bool getValue (stdvector<StringId>::fwd &value) const;
 		bool getValue (Transform &value) const;
-		bool getValue (std::vector<Transform> &value) const;
+		bool getValue (stdvector<Transform>::fwd &value) const;
 		bool getValue (Vector &value) const;
-		bool getValue (std::vector<Vector> &value) const;
+		bool getValue (stdvector<Vector>::fwd &value) const;
 
 	private:
 		const DynamicVariableListNestedList &   m_context;
@@ -113,22 +103,22 @@ public:
 	const_iterator      getItemByPosition (int position) const;
 	
 	bool getItem (const std::string &name,int & value) const;
-	bool getItem (const std::string &name,std::vector<int> & value) const;
+	bool getItem (const std::string &name,stdvector<int>::fwd & value) const;
 	bool getItem (const std::string &name,float & value) const;
-	bool getItem (const std::string &name,std::vector<float> & value) const;
+	bool getItem (const std::string &name,stdvector<float>::fwd & value) const;
 	bool getItem (const std::string &name,Unicode::String & value) const;
 	bool getItem (const std::string &name,std::string & value) const;
-	bool getItem (const std::string &name,std::vector<Unicode::String> & value) const;
+	bool getItem (const std::string &name,stdvector<Unicode::String>::fwd & value) const;
 	bool getItem (const std::string &name,NetworkId & value) const;
-	bool getItem (const std::string &name,std::vector<NetworkId> & value) const;
+	bool getItem (const std::string &name,stdvector<NetworkId>::fwd & value) const;
 	bool getItem (const std::string &name,DynamicVariableLocationData & value) const;
-	bool getItem (const std::string &name,std::vector<DynamicVariableLocationData> & value) const;
+	bool getItem (const std::string &name,stdvector<DynamicVariableLocationData>::fwd & value) const;
 	bool getItem (const std::string &name,StringId &value) const;
-	bool getItem (const std::string &name,std::vector<StringId> &value) const;
+	bool getItem (const std::string &name,stdvector<StringId>::fwd &value) const;
 	bool getItem (const std::string &name,Transform &value) const;
-	bool getItem (const std::string &name,std::vector<Transform> &value) const;
+	bool getItem (const std::string &name,stdvector<Transform>::fwd &value) const;
 	bool getItem (const std::string &name,Vector &value) const;
-	bool getItem (const std::string &name,std::vector<Vector> &value) const;
+	bool getItem (const std::string &name,stdvector<Vector>::fwd &value) const;
 	
 private:
 	const DynamicVariableList & m_list;

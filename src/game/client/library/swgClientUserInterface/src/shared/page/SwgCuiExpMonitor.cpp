@@ -28,7 +28,7 @@
 #include "UIString.h"
 #include "UIText.h"
 
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 #include <map>
 #include <vector>
 

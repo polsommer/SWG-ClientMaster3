@@ -19,8 +19,8 @@ class Iff;
 class DebugShapeRenderer;
 class Vector;
 
-typedef std::vector<int> IndexList;
-typedef std::vector<PathNode *> PathNodeList;
+typedef stdvector<int>::fwd IndexList;
+typedef stdvector<PathNode *>::fwd PathNodeList;
 
 // ======================================================================
 

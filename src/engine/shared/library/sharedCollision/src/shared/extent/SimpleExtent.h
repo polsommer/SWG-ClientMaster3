@@ -15,7 +15,7 @@
 
 #include "sharedCollision/BaseExtent.h"
 #include "sharedMath/MultiShape.h"
-#include "sharedFoundation/MemoryBlockManagerMacros.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
 
 class Iff;
 class DebugShapeRenderer;

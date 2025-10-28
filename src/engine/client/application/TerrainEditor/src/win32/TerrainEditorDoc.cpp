@@ -15,7 +15,6 @@
 #include "DialogFloraParameters.h"
 #include "DialogMapParameters.h"
 #include "FindFrame.h"
-#include "GuidedCreationFrame.h"
 #include "FormAffectorColorConstant.h"
 #include "FormAffectorColorRampFractal.h"
 #include "FormAffectorColorRampHeight.h"
@@ -43,14 +42,11 @@
 #include "FormFilterSlope.h"
 #include "FormLayer.h"
 #include "LayerFrame.h"
-#include "SmartTerrainAnalyzer.h"
 #include "LayerView.h"
 #include "MainFrame.h"
 #include "MapFrame.h"
 #include "MapView.h"
 #include "PropertyFrame.h"
-#include "Resource.h"
-#include "View3dFrame.h"
 #include "ProgressDialog.h"
 #include "sharedFile/Iff.h"
 #include "sharedFile/TreeFile.h"
@@ -72,7 +68,6 @@
 #include "sharedTerrain/SamplerProceduralTerrainAppearanceTemplate.h"
 #include "sharedTerrain/TerrainGeneratorLoader.h"
 #include "sharedTerrain/TerrainGeneratorType.def"
-#include "sharedFractal/MultiFractal.h"
 #include "sharedUtility/BakedTerrain.h"
 #include "sharedUtility/PackedIntegerMap.h"
 #include "sharedUtility/PackedFixedPointMap.h"
@@ -176,17 +171,16 @@ BEGIN_MESSAGE_MAP(TerrainEditorDoc, CDocument)
 	ON_COMMAND(ID_NEW_FILTER_SHADER, OnNewFilterShader)
 	ON_COMMAND(ID_NEW_FILTER_SLOPE, OnNewFilterSlope)
 	ON_COMMAND(ID_OPTIONS_FLORAPARAMETERS, OnOptionsFloraparameters)
-        ON_COMMAND(ID_OPTIONS_MAPPARAMETERS, OnOptionsMapparameters)
-        ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_COLLIDABLE_CONSTANT, OnUpdateNewAffector)
-        ON_UPDATE_COMMAND_UI(ID_NEW_FILTER_DIRECTION, OnUpdateNewFilter)
-        ON_COMMAND(ID_VIEW_MAP_PREFERENCES, OnViewMapPreferences)
-        ON_COMMAND(ID_NEW_AFFECTOR_ENVIRONMENT, OnNewAffectorEnvironment)
-        ON_COMMAND(ID_DEBUG_ADDALLRULES, OnDebugAddallrules)
-        ON_COMMAND(ID_TOOLS_BAKETERRAIN, OnToolsBaketerrain)
-        ON_COMMAND(ID_TOOLS_BAKEFLORA, OnToolsBakeflora)
-        ON_COMMAND(ID_TOOLS_BAKERIVERSROADS, OnToolsBakeriversroads)
-        ON_COMMAND(ID_TOOLS_TERRAININTELLIGENCE, OnToolsTerrainintelligence)
-        ON_COMMAND(ID_DEBUG_VIEWBAKEDTERRAIN, OnDebugViewbakedterrain)
+	ON_COMMAND(ID_OPTIONS_MAPPARAMETERS, OnOptionsMapparameters)
+	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_COLLIDABLE_CONSTANT, OnUpdateNewAffector)
+	ON_UPDATE_COMMAND_UI(ID_NEW_FILTER_DIRECTION, OnUpdateNewFilter)
+	ON_COMMAND(ID_VIEW_MAP_PREFERENCES, OnViewMapPreferences)
+	ON_COMMAND(ID_NEW_AFFECTOR_ENVIRONMENT, OnNewAffectorEnvironment)
+	ON_COMMAND(ID_DEBUG_ADDALLRULES, OnDebugAddallrules)
+	ON_COMMAND(ID_TOOLS_BAKETERRAIN, OnToolsBaketerrain)
+	ON_COMMAND(ID_TOOLS_BAKEFLORA, OnToolsBakeflora)
+	ON_COMMAND(ID_TOOLS_BAKERIVERSROADS, OnToolsBakeriversroads)
+	ON_COMMAND(ID_DEBUG_VIEWBAKEDTERRAIN, OnDebugViewbakedterrain)
 	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_DYNAMICFAR_CONSTANT, OnUpdateNewAffector)
 	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_DYNAMICNEAR_CONSTANT, OnUpdateNewAffector)
 	ON_UPDATE_COMMAND_UI(ID_NEW_AFFECTOR_FLORA_NONCOLLIDABLE_CONSTANT, OnUpdateNewAffector)
@@ -263,11 +257,10 @@ TerrainEditorDoc::TerrainEditorDoc() :
 	helpFrame (0),
 	profileFrame (0),
 	warningFrame (0),
-        findFrame (0),
-        environmentFrame (0),
-        guidedCreationFrame (0),
-        consoleMessage (),
-        selectedItem (0),
+	findFrame (0),
+	environmentFrame (0),
+	consoleMessage (),
+	selectedItem (0),
 	blackHeight (CONST_REAL (0)),
 	whiteHeight (CONST_REAL (255)),
 	lastTotalChunkGenerationTime (0),
@@ -276,10 +269,7 @@ TerrainEditorDoc::TerrainEditorDoc() :
 	lastMaximumChunkGenerationTime (0),
 	m_bakedTerrain(0),
 	m_staticCollidableFloraMap(0),
-        m_staticCollidableFloraHeightMap(0),
-        m_guidanceOverlayEnabled(true),
-        m_heatmapPreviewEnabled(false),
-        m_guidelineLayerEnabled(true)
+	m_staticCollidableFloraHeightMap(0)
 {
 	//-- create terrain generator
 	terrainGenerator = new TerrainGenerator ();
@@ -292,11 +282,11 @@ TerrainEditorDoc::TerrainEditorDoc() :
 
 TerrainEditorDoc::~TerrainEditorDoc()
 {
-        if (terrainGenerator)
-        {
-                delete terrainGenerator;
-                terrainGenerator = 0;
-        }
+	if (terrainGenerator)
+	{
+		delete terrainGenerator;
+		terrainGenerator = 0;
+	}
 
 	if (m_bakedTerrain)
 	{
@@ -332,138 +322,32 @@ TerrainEditorDoc::~TerrainEditorDoc()
 	view3dFrame = 0;
 	helpFrame = 0;
 	profileFrame = 0;
-        warningFrame = 0;
-        findFrame = 0;
-        environmentFrame = 0;
-        guidedCreationFrame = 0;
-        selectedItem = 0;
-}
-
-//-------------------------------------------------------------------
-
-void TerrainEditorDoc::populateDefaultTerrainContent()
-{
-        TerrainGenerator *const generator = getTerrainGenerator ();
-
-        if (!generator)
-                return;
-
-        const real mapWidth = getMapWidthInMeters ();
-        const float baseHeightMeters = 4.0f;
-        const float hillScale = std::max (12.0f, static_cast<float>(mapWidth * CONST_REAL (0.02)));
-
-        FractalGroup &fractalGroup = generator->getFractalGroup ();
-        int fractalFamilyId = 1;
-
-        if (fractalGroup.getNumberOfFamilies () > 0)
-                fractalFamilyId = fractalGroup.getFamilyId (0);
-
-        if (!fractalGroup.hasFamily (fractalFamilyId))
-                fractalGroup.addFamily (fractalFamilyId, "Auto Hills");
-
-        if (MultiFractal *const multiFractal = fractalGroup.getFamilyMultiFractal (fractalFamilyId))
-        {
-                multiFractal->setSeed (static_cast<uint32>(Random::random ()));
-
-                const float normalizedScale = (mapWidth > CONST_REAL (0.0))
-                        ? 1.0f / std::max (static_cast<float>(mapWidth * CONST_REAL (0.75)), 1.0f)
-                        : MultiFractal::ms_defaultScaleX;
-
-                multiFractal->setScale (normalizedScale, normalizedScale);
-                multiFractal->setNumberOfOctaves (5);
-                multiFractal->setFrequency (1.4f);
-                multiFractal->setAmplitude (1.0f);
-                multiFractal->setGain (true, 0.55f);
-                multiFractal->setBias (true, 0.1f);
-        }
-
-        TerrainGenerator::Layer *const baseLayer = new TerrainGenerator::Layer ();
-        baseLayer->setName ("Auto Base Terrain");
-
-        AffectorHeightConstant *const baseHeight = new AffectorHeightConstant ();
-        baseHeight->setOperation (TGO_replace);
-        baseHeight->setHeight (baseHeightMeters);
-        baseLayer->addAffector (baseHeight);
-
-        AffectorHeightFractal *const hills = new AffectorHeightFractal ();
-        hills->setFamilyId (fractalFamilyId);
-        hills->setScaleY (hillScale);
-        hills->setOperation (TGO_add);
-        baseLayer->addAffector (hills);
-
-        AffectorColorConstant *const baseColor = new AffectorColorConstant ();
-        baseColor->setOperation (TGO_replace);
-        baseColor->setColor (PackedRgb (133, 118, 96));
-        baseLayer->addAffector (baseColor);
-
-        generator->addLayer (baseLayer);
-
-        TerrainGenerator::Layer *const valleyLayer = new TerrainGenerator::Layer ();
-        valleyLayer->setName ("Auto Valleys");
-
-        FilterHeight *const valleyFilter = new FilterHeight ();
-        valleyFilter->setLowHeight (-1000.0f);
-        valleyFilter->setHighHeight (baseHeightMeters + hillScale * 0.35f);
-        valleyLayer->addFilter (valleyFilter);
-
-        AffectorColorConstant *const valleyColor = new AffectorColorConstant ();
-        valleyColor->setOperation (TGO_replace);
-        valleyColor->setColor (PackedRgb (82, 110, 84));
-        valleyLayer->addAffector (valleyColor);
-
-        generator->addLayer (valleyLayer);
-
-        TerrainGenerator::Layer *const peakLayer = new TerrainGenerator::Layer ();
-        peakLayer->setName ("Auto Peaks");
-
-        FilterHeight *const peakFilter = new FilterHeight ();
-        peakFilter->setLowHeight (baseHeightMeters + hillScale * 0.55f);
-        peakFilter->setHighHeight (baseHeightMeters + hillScale * 2.0f);
-        peakLayer->addFilter (peakFilter);
-
-        AffectorColorConstant *const peakColor = new AffectorColorConstant ();
-        peakColor->setOperation (TGO_replace);
-        peakColor->setColor (PackedRgb (210, 208, 200));
-        peakLayer->addAffector (peakColor);
-
-        AffectorHeightFractal *const peakDetail = new AffectorHeightFractal ();
-        peakDetail->setFamilyId (fractalFamilyId);
-        peakDetail->setScaleY (hillScale * 0.2f);
-        peakDetail->setOperation (TGO_add);
-        peakLayer->addAffector (peakDetail);
-
-        generator->addLayer (peakLayer);
-
-        generator->resetProfileData ();
-
-        addConsoleMessage (CString (_T("Automatic terrain content initialized.")));
-        SetModifiedFlag (TRUE);
+	warningFrame = 0;
+	findFrame = 0;
+	environmentFrame = 0;
+	selectedItem = 0;
 }
 
 //-------------------------------------------------------------------
 
 BOOL TerrainEditorDoc::OnNewDocument()
 {
-        if (!CDocument::OnNewDocument())
-                return FALSE;
+	if (!CDocument::OnNewDocument())
+		return FALSE;
 
 	mapWidthInMeters           = CONST_REAL (4096);
 	chunkWidthInMeters         = CONST_REAL (8);
 	numberOfTilesPerChunk      = 4;
 	defaultShaderSize          = CONST_REAL (2);
 
-        //-- recreate generator
-        NOT_NULL (terrainGenerator);
-        terrainGenerator->reset ();
-        populateDefaultTerrainContent ();
+	//-- recreate generator
+	NOT_NULL (terrainGenerator);
+	terrainGenerator->reset ();
 
-        //-- open default views
-        safe_cast<TerrainEditorApp*> (AfxGetApp ())->onOpenDefaultViews (this);
+	//-- open default views
+	safe_cast<TerrainEditorApp*> (AfxGetApp ())->onOpenDefaultViews (this);
 
-        if (View3dFrame *const frame = getView3dFrame ())
-                frame->SendMessage (WM_COMMAND, ID_REFRESH);
-
-        return TRUE;
+	return TRUE;
 }
 
 //-------------------------------------------------------------------
@@ -1862,67 +1746,14 @@ void TerrainEditorDoc::OnDebugAddallrules()
 
 void TerrainEditorDoc::OnToolsBaketerrain()
 {
-        mapFrame->bakeTerrain();
-}
-
-//-------------------------------------------------------------------
-
-void TerrainEditorDoc::OnToolsTerrainintelligence()
-{
-        if (TerrainEditorApp *const app = GetApp())
-                app->showConsole();
-
-        if (ConsoleFrame *const frame = getConsoleFrame())
-                frame->ActivateFrame();
-
-        const CString audit = SmartTerrainAnalyzer::runAudit(*this);
-
-        CString decorated;
-        decorated += _T("\r\n");
-        decorated += audit;
-        decorated += _T("\r\n");
-
-        addConsoleMessage(decorated);
-}
-
-//-------------------------------------------------------------------
-
-void TerrainEditorDoc::setGuidanceOverlayEnabled(bool enabled)
-{
-        if (m_guidanceOverlayEnabled == enabled)
-                return;
-
-        m_guidanceOverlayEnabled = enabled;
-        UpdateAllViews(0);
-}
-
-//-------------------------------------------------------------------
-
-void TerrainEditorDoc::setHeatmapPreviewEnabled(bool enabled)
-{
-        if (m_heatmapPreviewEnabled == enabled)
-                return;
-
-        m_heatmapPreviewEnabled = enabled;
-        UpdateAllViews(0);
-}
-
-//-------------------------------------------------------------------
-
-void TerrainEditorDoc::setGuidelineLayerEnabled(bool enabled)
-{
-        if (m_guidelineLayerEnabled == enabled)
-                return;
-
-        m_guidelineLayerEnabled = enabled;
-        UpdateAllViews(0);
+	mapFrame->bakeTerrain();
 }
 
 //-------------------------------------------------------------------
 
 void TerrainEditorDoc::OnToolsBakeriversroads()
 {
-        mapFrame->updateRiversAndRoads();
+	mapFrame->updateRiversAndRoads();
 }
 
 //-------------------------------------------------------------------

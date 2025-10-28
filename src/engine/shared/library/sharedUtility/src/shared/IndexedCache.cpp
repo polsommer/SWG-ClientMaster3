@@ -12,8 +12,6 @@
 #include "Archive/ByteStream.h"
 #include "fileInterface/StdioFile.h"
 
-#include <algorithm>
-
 
 IndexedCache::IndexedCache(const std::string &i_filename, int i_length, int i_version)
 : filename(i_filename), length(i_length), version(i_version)

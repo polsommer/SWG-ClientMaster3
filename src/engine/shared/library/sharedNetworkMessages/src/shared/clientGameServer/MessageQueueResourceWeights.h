@@ -11,8 +11,8 @@
 #ifndef INCLUDED_MessageQueueResourceWeights_H
 #define INCLUDED_MessageQueueResourceWeights_H
 
-#include "sharedFoundation/MessageQueue.h"
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 #include <vector>
@@ -30,8 +30,8 @@ public:
 	explicit MessageQueueResourceWeights (const std::pair<uint32, uint32> & combinedCrc);
 	virtual ~MessageQueueResourceWeights ();
 
-	typedef std::vector<std::pair<int, int> > WeightVector;
-	typedef std::vector<std::pair<int, WeightVector> > AttribWeightVector;
+	typedef stdvector<std::pair<int, int> >::fwd WeightVector;
+	typedef stdvector<std::pair<int, WeightVector> >::fwd AttribWeightVector;
 
 	void                          addAssemblyWeight     (int attrib, int slot, int resource, int weight);
 	void                          addResourceMaxWeight  (int attrib, int slot, int resource, int weight);
@@ -50,7 +50,7 @@ private:
 	AttribWeightVector            m_assemblyWeights;
 	AttribWeightVector            m_resourceMaxWeights;
 	std::pair<uint32, uint32>     m_crc;
-	std::set<int>              m_attribs;
+	stdset<int>::fwd              m_attribs;
 };
 
 //----------------------------------------------------------------------

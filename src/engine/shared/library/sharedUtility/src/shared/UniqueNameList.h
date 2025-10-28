@@ -13,7 +13,7 @@
 
 class CrcLowerString;
 
-namespace std
+namespace boost
 {
 	template <typename T>
 	class shared_ptr;
@@ -28,7 +28,7 @@ namespace std
  * (1) unique name to a stable integer index, and (2) integer index
  * mapped back to unique name.  Names are lower case, case insensitive.
  *
- * This class makes use of shared_ptr to minimize the number of
+ * This class makes use of boost::shared_ptr to minimize the number of
  * memory allocations associated with using a CrcLowerString.  It also
  * makes use of sorted vectors for storage.
  */
@@ -37,7 +37,7 @@ class UniqueNameList
 {
 public:
 
-	typedef std::shared_ptr<CrcLowerString>  SharedCrcLowerString;
+	typedef boost::shared_ptr<CrcLowerString>  SharedCrcLowerString;
 
 public:
 
@@ -56,7 +56,7 @@ private:
 
 	struct NameInfo;
 
-	typedef std::vector<std::shared_ptr<NameInfo> >  NameInfoVector;
+	typedef stdvector<boost::shared_ptr<NameInfo> >::fwd  NameInfoVector;
 
 private:
 

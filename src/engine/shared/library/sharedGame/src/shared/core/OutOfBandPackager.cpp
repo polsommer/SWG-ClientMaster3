@@ -119,6 +119,7 @@ OutOfBandPackager::OutOfBandBaseVector OutOfBandPackager::unpack(const Unicode::
 	Archive::ByteStream bs(buf, buflen);
 	Archive::ReadIterator ri(bs);
 
+	std::string templateName;
 	unsigned char typeId = 0;
 	int position = 0;
 	int numUnpacked = 0;

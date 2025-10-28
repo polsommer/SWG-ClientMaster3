@@ -83,6 +83,7 @@ MessageQueue::Data* MessageQueueDraftSlotsQueryResponse::unpack(Archive::ReadIte
 	Archive::get(source, canManufacture);
 	
 	MessageQueueDraftSlotsQueryResponse * const msg = new MessageQueueDraftSlotsQueryResponse (crc);
+	NOT_NULL(msg);
 	msg->setComplexity(complexity);
 	msg->setVolume(volume);
 	msg->setCanManufacture(canManufacture);

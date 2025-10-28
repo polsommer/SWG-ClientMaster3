@@ -19,8 +19,8 @@ class CompressedQuaternion
 {
 public:
 
-	typedef std::vector<Quaternion>            QuaternionVector;
-	typedef std::vector<CompressedQuaternion>  CompressedQuaternionVector;
+	typedef stdvector<Quaternion>::fwd            QuaternionVector;
+	typedef stdvector<CompressedQuaternion>::fwd  CompressedQuaternionVector;
 
 public:
 

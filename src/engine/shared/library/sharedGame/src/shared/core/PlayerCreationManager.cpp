@@ -121,6 +121,7 @@ namespace PlayerCreationManagerNamespace
 
 		for (; iff.enterForm (Tags::PTMP, true); ++ptmp_count)
 		{
+#if 1
 			std::string playerTemplateStr;
 			if (iff.enterChunk (TAG_NAME, true))
 			{
@@ -147,6 +148,7 @@ namespace PlayerCreationManagerNamespace
 			}
 			
 			eq.insert (std::make_pair (playerTemplateStr, v));
+#endif
 			iff.exitForm (true);
 		}
 
@@ -528,9 +530,9 @@ void PlayerCreationManager::buildRacialMinsMaxes()
 
 	const DataTable * dt = DataTableManager::getTable(
 		"datatables/creation/attribute_limits.iff", true);
-	WARNING_STRICT_FATAL(dt == nullptr, ("Unable to read the "
+	WARNING_STRICT_FATAL(dt == NULL, ("Unable to read the "
 		"attribute_limits datatable"));
-	if (dt == nullptr)
+	if (dt == NULL)
 		return;
 
 	int numAttribs = dt->getNumColumns() - 1;
@@ -600,7 +602,7 @@ bool PlayerCreationManager::getRacialTotal(const std::string & sharedTemplateNam
 
 //----------------------------------------------------------------------
 
-bool PlayerCreationManager::test (std::string & result, const std::vector<std::string> & templateNames)
+bool PlayerCreationManager::test (std::string & result, const stdvector<std::string>::fwd & templateNames)
 {
 	DEBUG_FATAL (!s_installed, ("not installed.\n"));
 	UNREF (result);

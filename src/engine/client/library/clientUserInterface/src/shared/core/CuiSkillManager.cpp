@@ -41,7 +41,7 @@
 
 #include "UnicodeUtils.h"
 
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 
 // ======================================================================
 

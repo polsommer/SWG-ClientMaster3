@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "sharedDatabaseInterface/DbBindableInt64.h"
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 
 // ======================================================================
 

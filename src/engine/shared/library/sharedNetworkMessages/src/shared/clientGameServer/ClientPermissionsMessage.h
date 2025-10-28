@@ -10,7 +10,7 @@
 
 // ======================================================================
 
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 
 //-----------------------------------------------------------------------
@@ -79,7 +79,7 @@ inline bool ClientPermissionsMessage::getCanSkipTutorial() const
 
 inline bool ClientPermissionsMessage::getIsAdmin() const
 {
-    return m_isAdmin.get();
+	return m_isAdmin.get();
 }
 
 // ======================================================================

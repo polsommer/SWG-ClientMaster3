@@ -41,7 +41,7 @@ private:
 		bool operator <(const Flag &rhs) const;
 	};
 
-	typedef std::vector<Flag> FlagVector;
+	typedef stdvector<Flag>::fwd FlagVector;
 
 private:
 

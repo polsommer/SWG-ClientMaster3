@@ -1,1 +1,1 @@
-#include "../../src/shared/core/ConfigSharedGame.h"
+#include "../../../src/shared/core/ConfigSharedGame.h"

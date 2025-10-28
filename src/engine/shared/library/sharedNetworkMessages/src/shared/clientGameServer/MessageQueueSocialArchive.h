@@ -8,7 +8,7 @@
 #ifndef INCLUDED_MessageQueueSocialArchive_H
 #define INCLUDED_MessageQueueSocialArchive_H
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 
 class MessageQueueSocial;
 

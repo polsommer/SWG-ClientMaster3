@@ -16,7 +16,7 @@ class PackedArgb;
 class PaletteArgbList;
 class MemoryBlockManager;
 
-#include "sharedFoundation/PersistentCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
 
 // ======================================================================
 /**
@@ -58,7 +58,7 @@ public:
 public:
 
 	explicit PaletteArgb(int entryCount);
-	explicit PaletteArgb(std::vector<PackedArgb> const & packedArgbVector);
+	explicit PaletteArgb(stdvector<PackedArgb>::fwd const & packedArgbVector);
 
 	const CrcString      &getName() const;
 	
@@ -77,7 +77,7 @@ public:
 
 private:
 
-	typedef std::vector<PackedArgb>  PackedArgbVector;
+	typedef stdvector<PackedArgb>::fwd  PackedArgbVector;
 
 private:
 

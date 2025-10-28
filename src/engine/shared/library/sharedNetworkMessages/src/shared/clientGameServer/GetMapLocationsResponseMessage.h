@@ -13,8 +13,8 @@
 
 #include "Archive/AutoDeltaByteStream.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "sharedFoundation/NetworkId.h"
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "sharedNetworkMessages/MapLocation.h"
 #include "sharedNetworkMessages/MapLocationArchive.h"
 
@@ -26,7 +26,7 @@ public:
 
 	static const char * const MessageType;
 
-	typedef std::vector<MapLocation> MapLocationVector;
+	typedef stdvector<MapLocation>::fwd MapLocationVector;
 
 	GetMapLocationsResponseMessage          (const std::string &planetName, const MapLocationVector & locStatic, const MapLocationVector & locDynamic, const MapLocationVector & locPersist, int versionStatic, int versionDynamic, int versionPersist);
 	explicit GetMapLocationsResponseMessage (Archive::ReadIterator &source);

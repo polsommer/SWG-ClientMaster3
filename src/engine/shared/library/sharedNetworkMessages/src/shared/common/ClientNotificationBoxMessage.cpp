@@ -11,13 +11,13 @@
 
 const char * const ClientNotificationBoxMessage::MessageType = "ClientNotificationBoxMessage";
 
-ClientNotificationBoxMessage::ClientNotificationBoxMessage(
+ClientNotificationBoxMessage::ClientNotificationBoxMessage( 
 	int sequenceId,
-	NetworkId player,
-	Unicode::String const &contents,
-	bool useNotificationIcon,
-	int iconStyle,
-	float timeout,
+	NetworkId player, 
+	Unicode::String const &contents, 
+	bool useNotificationIcon, 
+	int iconStyle, 
+	float timeout, 
 	int channel,
 	std::string const & sound) :
 GameNetworkMessage("ClientNotificationBoxMessage"),
@@ -40,7 +40,7 @@ m_sound(sound)
 	AutoByteStream::addVariable(m_sound);
 }
 
-
+	
 ClientNotificationBoxMessage::ClientNotificationBoxMessage(Archive::ReadIterator &source) :
 GameNetworkMessage("ClientNotificationBoxMessage"),
 m_sequenceId(0),
@@ -60,6 +60,6 @@ m_sound()
 	AutoByteStream::addVariable(m_timeout);
 	AutoByteStream::addVariable(m_channel);
 	AutoByteStream::addVariable(m_sound);
-
+	
 	unpack(source);
 }

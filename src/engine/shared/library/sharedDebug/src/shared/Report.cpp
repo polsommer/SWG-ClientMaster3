@@ -169,14 +169,14 @@ void Report::puts(const char *buffer)
 	}
 
 	// fatal strings should be made very obvious, so pop up a message box
-	//if ((flags & RF_dialog) && Os::isMainThread())
-	//{
-	//	const char *title = "Report";
-	//	if (flags & RF_fatal)
-	//		title = "Fatal Report";
+	if ((flags & RF_dialog) && Os::isMainThread())
+	{
+		const char *title = "Report";
+		if (flags & RF_fatal)
+			title = "Fatal Report";
 
-	//	MessageBox(nullptr, buffer, title, MB_OK | MB_ICONEXCLAMATION);
-	//}
+		MessageBox(NULL, buffer, title, MB_OK | MB_ICONEXCLAMATION);
+	}
 }
 
 // ----------------------------------------------------------------------
@@ -198,7 +198,7 @@ void Report::vprintf(const char *format, va_list va)
 {
 	char buffer[8 * 1024];
 
-	// make sure the buffer is always nullptr terminated
+	// make sure the buffer is always NULL terminated
 	buffer[sizeof(buffer)-1] = '\0';
 
 	// format the string

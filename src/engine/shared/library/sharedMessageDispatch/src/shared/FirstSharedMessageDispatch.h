@@ -10,13 +10,13 @@
 
 // ======================================================================
 
-#include "sharedFoundation/FirstSharedFoundation.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FirstSharedFoundation.h"
 #include "sharedMessageDispatch/Emitter.h"
 #include "sharedMessageDispatch/MessageManager.h"
 #include "sharedMessageDispatch/Message.h"
 #include "sharedMessageDispatch/Receiver.h"
 #include <set>
-#include <unordered_map>
+#include <hash_map>
 
 // ======================================================================
 

@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerArmorTemplate_H
 
 #include "sharedTemplateDefinition/TpfTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -54,6 +54,7 @@ public:
 
 	enum DamageType
 	{
+		DT_none = 0x00000000,
 		DT_kinetic = 0x00000001,
 		DT_energy = 0x00000002,
 		DT_blast = 0x00000004,
@@ -149,7 +150,7 @@ private:
 	CompilerIntegerParam m_rating;		// armor rating
 	CompilerIntegerParam m_integrity;		// integrity
 	CompilerIntegerParam m_effectiveness;		// default effectiveness (0 = only use special protection)
-	std::vector<StructParamOT *> m_specialProtection;		// damage-type specific protection
+	stdvector<StructParamOT *>::fwd m_specialProtection;		// damage-type specific protection
 	bool m_specialProtectionLoaded;
 	bool m_specialProtectionAppend;
 	CompilerIntegerParam m_vulnerability;		// damaga types that this armor doesn't protect against

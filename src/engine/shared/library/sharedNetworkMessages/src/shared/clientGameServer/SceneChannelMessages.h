@@ -12,7 +12,7 @@ namespace Archive
 	class ByteStream;
 }
 
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "sharedMath/Transform.h"
 #include "sharedMathArchive/TransformArchive.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"

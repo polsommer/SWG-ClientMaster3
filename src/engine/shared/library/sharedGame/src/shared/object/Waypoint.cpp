@@ -19,13 +19,13 @@
 #include "sharedMessageDispatch/Transceiver.h"
 #include "unicodeArchive/UnicodeArchive.h"
 #include "UnicodeUtils.h"
-#include <unordered_map>
+#include <hash_map>
 
 // ======================================================================
 
 namespace WaypointNamespace
 {
-	typedef std::unordered_map<NetworkId, WaypointData *> WaypointMapById;
+	typedef std::hash_map<NetworkId, WaypointData *> WaypointMapById;
 	WaypointMapById s_waypointMapById;
 	bool s_installed;
 
@@ -106,7 +106,7 @@ namespace Archive
 		if (networkId.isValid())
 		{
 			WaypointData *data = 0;
-			std::unordered_map<NetworkId, WaypointData *>::iterator f = s_waypointMapById.find(networkId);
+			std::hash_map<NetworkId, WaypointData *>::iterator f = s_waypointMapById.find(networkId);
 			if (f == s_waypointMapById.end())
 				data = new WaypointData(networkId);
 			else
@@ -160,7 +160,7 @@ WaypointDataBase::WaypointDataBase() :
 void WaypointDataBase::setName(Unicode::String const &name)
 {
 	//This magical number (250) is chosen because the waypoint datatable has VARCHAR2(512) in this column,
-	//and we're assuming 2 bytes per char (which is not quite true actually) plus an extra one for nullptr plus
+	//and we're assuming 2 bytes per char (which is not quite true actually) plus an extra one for null plus
 	//a few extra for good measure and because nobody needs 251-character waypoint names.
 	if (name.length() > 250)
 	{
@@ -331,7 +331,7 @@ std::string const &Waypoint::getColorNameById(uint8 id) // static
 Waypoint const Waypoint::getWaypointById(NetworkId const &id) // static
 {
 	Waypoint result;
-	std::unordered_map<NetworkId, WaypointData *>::iterator f = s_waypointMapById.find(id);
+	std::hash_map<NetworkId, WaypointData *>::iterator f = s_waypointMapById.find(id);
 	if (f != s_waypointMapById.end())
 		result.releaseData(f->second);
 	return result;

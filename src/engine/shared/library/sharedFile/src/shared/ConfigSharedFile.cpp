@@ -30,6 +30,7 @@ namespace ConfigSharedFileNamespace
 	int            ms_asynchronousLoaderCallbacksPerFrame;
 	bool		   ms_validateIff;
 	StringPtrArray ms_preloads; // ConfigFile owns the pointer
+	char const *   ms_treeFileEncryptionPassphrase;
 }
 
 using namespace ConfigSharedFileNamespace;
@@ -42,6 +43,7 @@ void ConfigSharedFile::install()
 	KEY_INT(asynchronousLoaderPriority, 0);
 	KEY_INT(asynchronousLoaderCallbacksPerFrame, 0);
 	KEY_BOOL(validateIff, false);
+	ms_treeFileEncryptionPassphrase = ConfigFile::getKeyString("SharedFile", "treeFileEncryptionPassphrase", "");
 
 	int index = 0;
 	char const * result = 0;
@@ -95,6 +97,13 @@ char const * ConfigSharedFile::getTreeFilePreload(int const index)
 {
 	VALIDATE_RANGE_INCLUSIVE_EXCLUSIVE(0, index, getNumberOfTreeFilePreloads());
 	return ms_preloads[static_cast<size_t>(index)];
+}
+
+// ----------------------------------------------------------------------
+
+char const * ConfigSharedFile::getTreeFileEncryptionPassphrase()
+{
+	return ms_treeFileEncryptionPassphrase;
 }
 
 // ======================================================================

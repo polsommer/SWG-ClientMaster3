@@ -63,6 +63,7 @@ int property, value, itemCount;
 	UNREF(source);
 
 	MessageQueueCraftCustomization * msg = new MessageQueueCraftCustomization();
+	NOT_NULL(msg);
 	
 	Archive::get(source, name);
 	msg->setName(name);

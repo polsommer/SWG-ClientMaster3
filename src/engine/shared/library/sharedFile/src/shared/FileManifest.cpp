@@ -73,8 +73,8 @@ void FileManifest::install()
 	s_accessThreshold = ConfigFile::getKeyInt("SharedFile", "fileManifestAccessThreshold", -1, s_accessThreshold);
 
 	// if we are developing, and want to update the manifest, read in the tab file as well
-	const char * manifestFile = ConfigFile::getKeyString("SharedFile", "updateFileManifest", 0, nullptr);
-	if (manifestFile != nullptr)
+	const char * manifestFile = ConfigFile::getKeyString("SharedFile", "updateFileManifest", 0, NULL);
+	if (manifestFile != NULL)
 	{
 		s_updateManifest = true;
 
@@ -183,8 +183,8 @@ void FileManifest::remove()
 
 #if PRODUCTION == 0
 	// dump out the new manifest if requested
-	const char * manifestFile = ConfigFile::getKeyString("SharedFile", "updateFileManifest", 0, nullptr);
-	if (manifestFile != nullptr)
+	const char * manifestFile = ConfigFile::getKeyString("SharedFile", "updateFileManifest", 0, NULL);
+	if (manifestFile != NULL)
 	{
 		StdioFile outputFile(manifestFile,"w");
 		DEBUG_FATAL(!outputFile.isOpen(), ("FileManifest::remove(): Could not open %s for writing.", manifestFile));
@@ -201,7 +201,7 @@ void FileManifest::remove()
 		{
 			if (!i->second)
 			{
-				DEBUG_WARNING(true, ("FileManifest::remove(): Found a nullptr pointer in the fileManifest map!\n"));
+				DEBUG_WARNING(true, ("FileManifest::remove(): Found a null pointer in the fileManifest map!\n"));
 				continue;
 			}
 
@@ -278,8 +278,9 @@ void FileManifest::addNewManifestEntry(const char *fileName, int fileSize)
 		if (fileSize)
 			((insertReturn.first)->second)->size = fileSize;
 
+		// delete the new entry we created
+		delete entry;
 	}
-	delete entry;
 #else
 	return;
 #endif
@@ -296,9 +297,11 @@ void FileManifest::addStoredManifestEntry(const char *fileName, const char * sce
 	entry->size     = fileSize;
 	entry->accesses = 0;
 
-	s_manifest.insert(std::pair<const uint32, FileManifestEntry*>(crc, entry));
+	std::pair<ManifestMap::iterator, bool> insertReturn = s_manifest.insert(std::pair<const uint32, FileManifestEntry*>(crc, entry));
 
-	delete entry;
+	// if the insert failed, delete the entry we created
+	if (!insertReturn.second)
+		delete entry;
 }
 
 // -----------------------------------------------------------------------
@@ -339,7 +342,7 @@ void FileManifest::setSceneId(const char *newScene)
 	if (s_currentSceneId.compare(newScene) == 0)
 		return;
 
-	if (newScene[0] == '\0')
+	if (strlen(newScene) == 0)
 		s_currentSceneId = "unknown";
 	else
 		s_currentSceneId = newScene;

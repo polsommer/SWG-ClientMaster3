@@ -9,8 +9,8 @@
 
 #include "Archive/AutoDeltaByteStream.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "sharedFoundation/Tag.h"
-#include "sharedFoundation/MemoryBlockManagerMacros.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
 
 class MemoryBlockManager;
 

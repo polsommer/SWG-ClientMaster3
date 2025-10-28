@@ -11,7 +11,7 @@
 //======================================================================
 
 #include "sharedGame/ShipChassisSlotType.h"
-#include "sharedFoundation/PersistentCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
 
 class ShipChassisSlot;
 
@@ -21,10 +21,10 @@ class ShipChassis
 {
 public:
 
-	typedef std::vector<ShipChassisSlot> SlotVector;
-	typedef std::set<ShipChassisSlot> SlotSet;
-	typedef std::vector<int> IntVector;
-	typedef std::vector<std::string> StringVector;
+	typedef stdvector<ShipChassisSlot>::fwd SlotVector;
+	typedef stdset<ShipChassisSlot>::fwd SlotSet;
+	typedef stdvector<int>::fwd IntVector;
+	typedef stdvector<std::string>::fwd StringVector;
 
 	static void install ();
 	static void remove  ();
@@ -34,7 +34,7 @@ public:
 
 	static void setUseWritableChassis(bool onlyUseThisForTools);
 
-	typedef std::vector<PersistentCrcString *> PersistentCrcStringVector;
+	typedef stdvector<PersistentCrcString *>::fwd PersistentCrcStringVector;
 
 	static PersistentCrcStringVector const &   getShipChassisCrcVector         ();
 

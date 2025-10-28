@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerIntangibleObjectTemplate_H
 
 #include "ServerObjectTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -66,7 +66,7 @@ public:
 	struct Ingredient
 	{
 		enum IngredientType ingredientType;
-		std::vector<SimpleIngredient> ingredients;
+		stdvector<SimpleIngredient>::fwd ingredients;
 		float                  complexity;
 		std::string            skillCommand;
 	};
@@ -163,7 +163,7 @@ protected:
 
 private:
 	CompilerIntegerParam m_ingredientType;		// type of ingredient required
-	std::vector<StructParamOT *> m_ingredients;		// ingredients to be used/being used
+	stdvector<StructParamOT *>::fwd m_ingredients;		// ingredients to be used/being used
 	bool m_ingredientsLoaded;
 	bool m_ingredientsAppend;
 	FloatParam m_complexity;		// adjustment to complexity by using this ingredient

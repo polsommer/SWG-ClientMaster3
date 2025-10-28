@@ -10,10 +10,10 @@
 
 //======================================================================
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 #include "sharedMath/Vector.h"
 
-#include "sharedFoundation/GameControllerMessage.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/GameControllerMessage.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 //----------------------------------------------------------------------

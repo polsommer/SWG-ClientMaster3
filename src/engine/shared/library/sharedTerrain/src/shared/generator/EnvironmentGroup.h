@@ -12,7 +12,7 @@
 
 //===================================================================
 
-#include "sharedFoundation/ArrayList.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/ArrayList.h"
 #include "sharedMath/PackedRgb.h"
 
 class ColorRamp256;

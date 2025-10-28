@@ -23,7 +23,7 @@ class StringId;
 class ResourceClassObject
 {
 public:
-	typedef std::map<std::string, std::pair<int, int> > ResourceAttributeRangesType;
+	typedef stdmap<std::string, std::pair<int, int> >::fwd ResourceAttributeRangesType;
 
 public:
 	ResourceClassObject();
@@ -32,7 +32,7 @@ public:
 	static void install();
 	static void remove();
 	static bool isClassExcludedFromCommodities(std::string const & className);
-	static std::set<std::string> const & getClassesExcludedFromCommodities();
+	static stdset<std::string>::fwd const & getClassesExcludedFromCommodities();
 
 public:
 	// getter functions
@@ -49,8 +49,8 @@ public:
 	void                    getCrateTemplate     (std::string &buffer) const;
 	int                     getMinTypes          () const;
 	int                     getMaxTypes          () const;
-	void                    getChildren          (std::vector<const ResourceClassObject *> & children, bool recurse) const;
-	void                    getLeafChildren      (std::vector<const ResourceClassObject *> & children) const;
+	void                    getChildren          (stdvector<const ResourceClassObject *>::fwd & children, bool recurse) const;
+	void                    getLeafChildren      (stdvector<const ResourceClassObject *>::fwd & children) const;
 	int                     getMinPools          () const;
 	int                     getMaxPools          () const;
 	bool                    isRecycled           () const;
@@ -82,7 +82,7 @@ protected:
 	ResourceAttributeRangesType * m_resourceAttributeRanges;
 	
 protected:
-	typedef std::vector<ResourceClassObject*> ClassList;
+	typedef stdvector<ResourceClassObject*>::fwd ClassList;
 	ClassList * m_children;
 	
 private:
@@ -118,7 +118,7 @@ inline const StringId & ResourceClassObject::getFriendlyName () const
 
 inline bool ResourceClassObject::isRoot() const
 {
-	return (m_parentClass == nullptr);
+	return (m_parentClass == NULL);
 }
 
 // ----------------------------------------------------------------------

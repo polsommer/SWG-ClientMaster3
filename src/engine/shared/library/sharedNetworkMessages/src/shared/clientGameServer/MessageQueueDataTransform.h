@@ -10,7 +10,7 @@
 
 // ======================================================================
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 #include "sharedMath/Transform.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 

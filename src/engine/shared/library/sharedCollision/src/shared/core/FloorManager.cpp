@@ -19,9 +19,9 @@
 namespace FloorManagerNamespace
 {	
 
-ObjectFactory  ms_pathGraphFactory = nullptr;
-ObjectWriter   ms_pathGraphWriter = nullptr;
-ObjectRenderer ms_pathGraphRenderer = nullptr;
+ObjectFactory  ms_pathGraphFactory = NULL;
+ObjectWriter   ms_pathGraphWriter = NULL;
+ObjectRenderer ms_pathGraphRenderer = NULL;
 
 };
 
@@ -71,8 +71,8 @@ Floor * FloorManager::createFloor ( const char * floorMeshFilename, Object const
 
 	if(!pMesh)
 	{
-		DEBUG_WARNING(true, ("Could not find floor mesh %s", floorMeshFilename));
-		return nullptr;
+		WARNING(true, ("Could not find floor mesh %s", floorMeshFilename));
+		return NULL;
 	}
 
 	// ----------

@@ -67,14 +67,7 @@ public:
 	static int   getNetworkHandlerDispatchThrottleTimeMilliseconds();
 	static int   getNetworkHandlerDispatchQueueSize();
 	static int   getMaxTCPRetries();
-	static int   getMaxConnectionsPerIP();
 	static bool  getLogSendingTooMuchData();
-	static bool  getUseAdaptiveDispatch();
-	static float getAdaptiveDispatchSmoothingFactor();
-	static float getAdaptiveDispatchHighWatermarkMultiplier();
-	static float getAdaptiveDispatchLowWatermarkMultiplier();
-	static int   getAdaptiveDispatchMinTimeMilliseconds();
-	static int   getAdaptiveDispatchMaxTimeMilliseconds();
 };
 
 //-----------------------------------------------------------------------

@@ -1,1 +1,1 @@
-#include "../../src/shared/dynamics/SeesawDynamics.h"
+#include "../../../src/shared/dynamics/SeesawDynamics.h"

@@ -6,7 +6,7 @@
 
 //-----------------------------------------------------------------------
 
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 #include "sharedMath/Vector2d.h"
 #include "Unicode.h"
 

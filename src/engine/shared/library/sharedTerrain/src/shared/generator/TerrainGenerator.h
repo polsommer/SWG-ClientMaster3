@@ -18,8 +18,8 @@
 
 //===================================================================
 
-#include "sharedFoundation/ArrayList.h"
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/ArrayList.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "sharedMath/Rectangle2d.h"
 #include "sharedMath/Vector.h"
 #include "sharedRandom/RandomGenerator.h"

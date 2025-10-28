@@ -4,7 +4,7 @@
 #include "UIBaseObject.h"
 
 #include <map>
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 #include <list>
 
 class DefaultObjectPropertiesManager

@@ -14,8 +14,6 @@
 #include "DialogMapAnimation.h"
 #include "SkeletalAnimationKey.h"
 
-#include <vector>
-
 class Appearance;
 class CStringArray;
 class CViewerApp;
@@ -29,10 +27,6 @@ class SkeletalAppearanceInstanceData;
 class SkeletalAppearanceTemplate;
 class Texture;
 class TextureRenderer;
-
-// ======================================================================
-
-struct ViewerContentPreset;
 
 // ======================================================================
 
@@ -121,14 +115,8 @@ public:
 
 	void                            rebuildAppearance();
 
-        void                            writeObjectTemplateCustomizationData(bool allowOverwrite);
-        void                            debugDump ();
-
-        bool                            applyContentPreset(const ViewerContentPreset &preset, CString &statusMessage);
-        void                            queuePresetAnimations(const std::vector<CString> &animations, bool appendToQueue);
-        bool                            previewPresetShader(const CString &shaderTemplateName, CString &statusMessage);
-        bool                            previewSkeletonTemplate(const char *filename);
-        bool                            previewMeshGenerator(const char *filename);
+	void                            writeObjectTemplateCustomizationData(bool allowOverwrite);
+	void                            debugDump ();
 
 private:
 

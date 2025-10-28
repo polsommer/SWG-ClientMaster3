@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "sharedFoundation/MemoryBlockManagerMacros.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
 
 class MemoryBlockManager;
 
@@ -48,7 +48,7 @@ private:
 
 private:
 
-	static std::vector<StaticCallbackEntry *> & getStaticCallbackFreeList();
+	static stdvector<StaticCallbackEntry *>::fwd & getStaticCallbackFreeList();
 
 private:
 

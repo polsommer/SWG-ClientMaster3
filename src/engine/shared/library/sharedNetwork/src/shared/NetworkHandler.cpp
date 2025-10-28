@@ -24,57 +24,15 @@
 
 #include "TcpClient.h"
 
-#include <algorithm>
 #include <deque>
 #include <map>
 #include <set>
 #include <vector>
-#include <limits>
-#include <cstddef>
-
-//-----------------------------------------------------------------------
-
-namespace
-{
-	template <typename T>
-	inline T clampValue(T value, T lower, T upper)
-	{
-		if (value < lower)
-			return lower;
-		if (value > upper)
-			return upper;
-		return value;
-	}
-}
 
 //-----------------------------------------------------------------------
 
 namespace NetworkHandlerNamespace
 {
-	class AdaptiveDispatchController
-	{
-	public:
-		AdaptiveDispatchController();
-
-		unsigned int computeTimeBudget(unsigned int baseBudget, unsigned int baseQueueThreshold, std::size_t currentQueueSize);
-		unsigned int computeQueueThreshold(unsigned int baseQueueThreshold, std::size_t currentQueueSize);
-		void recordCycle(std::size_t currentQueueSize, std::size_t processedMessages, unsigned int elapsedMilliseconds);
-
-	private:
-		void ensureConfig();
-		float calculateLoadRatio(unsigned int baseQueueThreshold, std::size_t currentQueueSize) const;
-
-	private:
-		float m_queueDepthEma;
-		float m_processedEma;
-		float m_timeEma;
-		float m_smoothingFactor;
-		float m_highWatermarkMultiplier;
-		float m_lowWatermarkMultiplier;
-		unsigned int m_minTimeMs;
-		unsigned int m_maxTimeMs;
-	};
-
 	bool   ms_logThrottle = false;
 
 #if PRODUCTION == 0
@@ -84,157 +42,6 @@ namespace NetworkHandlerNamespace
 }
 
 using namespace NetworkHandlerNamespace;
-
-//-----------------------------------------------------------------------
-
-namespace NetworkHandlerNamespace
-{
-
-AdaptiveDispatchController::AdaptiveDispatchController()
-: m_queueDepthEma(0.0f),
-	m_processedEma(0.0f),
-	m_timeEma(0.0f),
-	m_smoothingFactor(0.2f),
-	m_highWatermarkMultiplier(1.5f),
-	m_lowWatermarkMultiplier(0.5f),
-	m_minTimeMs(25),
-	m_maxTimeMs(250)
-{
-}
-
-//-----------------------------------------------------------------------
-
-void AdaptiveDispatchController::ensureConfig()
-{
-	m_smoothingFactor = clampValue(ConfigSharedNetwork::getAdaptiveDispatchSmoothingFactor(), 0.01f, 1.0f);
-	m_highWatermarkMultiplier = ConfigSharedNetwork::getAdaptiveDispatchHighWatermarkMultiplier();
-	m_lowWatermarkMultiplier = ConfigSharedNetwork::getAdaptiveDispatchLowWatermarkMultiplier();
-	if (m_highWatermarkMultiplier <= m_lowWatermarkMultiplier)
-		m_highWatermarkMultiplier = m_lowWatermarkMultiplier + 0.1f;
-	m_minTimeMs = static_cast<unsigned int>(std::max(1, ConfigSharedNetwork::getAdaptiveDispatchMinTimeMilliseconds()));
-	m_maxTimeMs = static_cast<unsigned int>(std::max(static_cast<int>(m_minTimeMs), ConfigSharedNetwork::getAdaptiveDispatchMaxTimeMilliseconds()));
-}
-
-//-----------------------------------------------------------------------
-
-float AdaptiveDispatchController::calculateLoadRatio(unsigned int baseQueueThreshold, std::size_t currentQueueSize) const
-{
-	float const baseline = static_cast<float>(baseQueueThreshold > 0 ? baseQueueThreshold : 1u);
-	float ratio = static_cast<float>(currentQueueSize) / baseline;
-	if (m_queueDepthEma > 0.0f)
-		ratio = std::max(ratio, m_queueDepthEma / baseline);
-	return ratio;
-}
-
-//-----------------------------------------------------------------------
-
-unsigned int AdaptiveDispatchController::computeTimeBudget(unsigned int baseBudget, unsigned int baseQueueThreshold, std::size_t currentQueueSize)
-{
-	ensureConfig();
-
-	unsigned int const safeBase = baseBudget ? baseBudget : m_minTimeMs;
-	unsigned int const baseline = clampValue(safeBase, m_minTimeMs, std::max(m_minTimeMs, m_maxTimeMs));
-
-	float loadRatio = calculateLoadRatio(baseQueueThreshold, currentQueueSize);
-	float const highWatermark = std::max(m_highWatermarkMultiplier, m_lowWatermarkMultiplier + 0.1f);
-
-	float normalized = 0.0f;
-	if (loadRatio <= m_lowWatermarkMultiplier)
-		normalized = 0.0f;
-	else if (loadRatio >= highWatermark)
-		normalized = 1.0f;
-	else
-		normalized = (loadRatio - m_lowWatermarkMultiplier) / (highWatermark - m_lowWatermarkMultiplier);
-
-	normalized = clampValue(normalized, 0.0f, 1.0f);
-
-	if (m_processedEma > 0.0f && baseQueueThreshold > 0)
-	{
-		float const processedRatio = m_processedEma / static_cast<float>(baseQueueThreshold);
-		if (processedRatio < 0.75f)
-		{
-			float const adjustment = clampValue((0.75f - processedRatio) / 0.75f, 0.0f, 1.0f);
-			normalized = clampValue(normalized + adjustment * 0.5f, 0.0f, 1.0f);
-		}
-	}
-
-	if (m_timeEma > 0.0f && m_timeEma < static_cast<float>(baseline))
-	{
-		float const idleRatio = 1.0f - clampValue(m_timeEma / static_cast<float>(baseline), 0.0f, 1.0f);
-		normalized = clampValue(normalized * (1.0f - (idleRatio * 0.5f)), 0.0f, 1.0f);
-	}
-
-	unsigned int minBudget = static_cast<unsigned int>(static_cast<float>(baseline) * 0.75f);
-	minBudget = clampValue(minBudget, m_minTimeMs, baseline);
-
-	unsigned int maxBudget = std::max(baseline, m_maxTimeMs);
-	if (maxBudget < minBudget)
-		maxBudget = minBudget;
-
-	unsigned int const result = static_cast<unsigned int>(static_cast<float>(minBudget) + static_cast<float>(maxBudget - minBudget) * normalized);
-	return clampValue(result, m_minTimeMs, maxBudget);
-}
-
-//-----------------------------------------------------------------------
-
-unsigned int AdaptiveDispatchController::computeQueueThreshold(unsigned int baseQueueThreshold, std::size_t currentQueueSize)
-{
-	ensureConfig();
-
-	if (baseQueueThreshold == 0)
-		return currentQueueSize > 0 ? static_cast<unsigned int>(currentQueueSize) : 1u;
-
-	float loadRatio = calculateLoadRatio(baseQueueThreshold, currentQueueSize);
-	float const highWatermark = std::max(m_highWatermarkMultiplier, m_lowWatermarkMultiplier + 0.1f);
-
-	float normalized = 0.0f;
-	if (loadRatio <= m_lowWatermarkMultiplier)
-		normalized = 0.0f;
-	else if (loadRatio >= highWatermark)
-		normalized = 1.0f;
-	else
-		normalized = (loadRatio - m_lowWatermarkMultiplier) / (highWatermark - m_lowWatermarkMultiplier);
-
-	normalized = clampValue(normalized, 0.0f, 1.0f);
-
-	float const minFactor = clampValue(m_lowWatermarkMultiplier, 0.1f, 1.0f);
-	float const factor = 1.0f - normalized * (1.0f - minFactor);
-
-	unsigned int threshold = static_cast<unsigned int>(static_cast<float>(baseQueueThreshold) * factor);
-	if (threshold == 0)
-		threshold = 1;
-	return threshold;
-}
-
-//-----------------------------------------------------------------------
-
-void AdaptiveDispatchController::recordCycle(std::size_t currentQueueSize, std::size_t processedMessages, unsigned int elapsedMilliseconds)
-{
-	ensureConfig();
-
-	float const smoothing = clampValue(m_smoothingFactor, 0.01f, 1.0f);
-
-	float const queueSample = static_cast<float>(currentQueueSize);
-	float const processedSample = static_cast<float>(processedMessages);
-	float const timeSample = static_cast<float>(elapsedMilliseconds);
-
-	if (m_queueDepthEma <= 0.0f)
-		m_queueDepthEma = queueSample;
-	else
-		m_queueDepthEma = (smoothing * queueSample) + ((1.0f - smoothing) * m_queueDepthEma);
-
-	if (m_processedEma <= 0.0f)
-		m_processedEma = processedSample;
-	else
-		m_processedEma = (smoothing * processedSample) + ((1.0f - smoothing) * m_processedEma);
-
-	if (m_timeEma <= 0.0f)
-		m_timeEma = timeSample;
-	else
-		m_timeEma = (smoothing * timeSample) + ((1.0f - smoothing) * m_timeEma);
-}
-
-} // namespace NetworkHandlerNamespace
 
 //-----------------------------------------------------------------------
 
@@ -264,7 +71,6 @@ bool s_updating = false;
 bool s_logBackloggedPackets = true;
 bool s_removing = false;
 static std::vector<Connection *>     deferredDisconnects;
-AdaptiveDispatchController s_adaptiveDispatchController;
 uint64 s_currentFrame = 0;
 
 //-----------------------------------------------------------------------
@@ -335,25 +141,9 @@ void NetworkHandler::dispatch()
 	{
 		size_t const startQueueSize = services.inputQueue.size();
 		unsigned long const startTime = Clock::timeMs();
-		bool throttle = ConfigSharedNetwork::getNetworkHandlerDispatchThrottle();
-		unsigned int const baseProcessTimeMilliseconds = static_cast<unsigned int>(ConfigSharedNetwork::getNetworkHandlerDispatchThrottleTimeMilliseconds());
-		unsigned int const baseQueueSize = static_cast<unsigned int>(ConfigSharedNetwork::getNetworkHandlerDispatchQueueSize());
-		bool const adaptiveDispatchEnabled = ConfigSharedNetwork::getUseAdaptiveDispatch();
-
-		unsigned int processTimeMilliseconds = baseProcessTimeMilliseconds;
-		unsigned int queueSize = baseQueueSize;
-
-		if (!throttle)
-			processTimeMilliseconds = std::numeric_limits<unsigned int>::max();
-
-		if (adaptiveDispatchEnabled)
-		{
-			throttle = true;
-			processTimeMilliseconds = s_adaptiveDispatchController.computeTimeBudget(baseProcessTimeMilliseconds, baseQueueSize, services.inputQueue.size());
-			queueSize = s_adaptiveDispatchController.computeQueueThreshold(baseQueueSize, services.inputQueue.size());
-		}
-
-		size_t messagesProcessed = 0;
+		bool const throttle =  ConfigSharedNetwork::getNetworkHandlerDispatchThrottle();
+		unsigned int const processTimeMilliseconds = static_cast<unsigned int>(ConfigSharedNetwork::getNetworkHandlerDispatchThrottleTimeMilliseconds());
+		unsigned int const queueSize = static_cast<unsigned int>(ConfigSharedNetwork::getNetworkHandlerDispatchQueueSize());
 
 		while (!services.inputQueue.empty() && (services.inputQueue.size() > queueSize || (!throttle || (throttle && ((Clock::timeMs() - startTime) < processTimeMilliseconds)))))
 		{
@@ -382,14 +172,6 @@ void NetworkHandler::dispatch()
 			}
 
 			services.inputQueue.pop_front();
-			++messagesProcessed;
-		}
-
-		unsigned long const elapsedTimeMs = Clock::timeMs() - startTime;
-		if (adaptiveDispatchEnabled)
-		{
-			unsigned int const elapsedForRecord = elapsedTimeMs > static_cast<unsigned long>(std::numeric_limits<unsigned int>::max()) ? std::numeric_limits<unsigned int>::max() : static_cast<unsigned int>(elapsedTimeMs);
-			s_adaptiveDispatchController.recordCycle(services.inputQueue.size(), messagesProcessed, elapsedForRecord);
 		}
 
 		REPORT_LOG(ms_logThrottle && throttle && !services.inputQueue.empty(), ("NetworkHandler::dispatch: services.inputQueue has %d/%d messages remaining\n", services.inputQueue.size(), startQueueSize));
@@ -473,7 +255,7 @@ void NetworkHandler::onReceive(Connection * c, const unsigned char * d, int s)
 {
 	if(c)
 	{
-		services.inputQueue.emplace_back(IncomingData());
+		services.inputQueue.push_back();
 		services.inputQueue.back().connection = c;
 		services.inputQueue.back().byteStream.put(d, s);
 
@@ -535,6 +317,7 @@ void NetworkHandler::onTerminate(void * m, UdpConnectionMT * u)
 {
 	if(m)
 	{
+//		NetworkHandler * s = reinterpret_cast<NetworkHandler *>(m);
 		if(u)
 		{
 			u->AddRef();
@@ -768,6 +551,7 @@ void NetworkHandler::clearBytesThisFrame()
 		if(reportMessages)
 		{
 			std::map<std::string, std::pair<int, int> >::iterator i;
+			static std::pair<int, int> zeros = std::make_pair(0, 0);
 			static char msgBuf[256];
 			for(i = s_messageCount.begin(); i != s_messageCount.end(); ++i)
 			{

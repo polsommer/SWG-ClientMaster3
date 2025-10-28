@@ -18,7 +18,7 @@ class RadialMenuManager
 {
 public:
 
-	typedef std::vector<ObjectMenuRequestData> DataVector;
+	typedef stdvector<ObjectMenuRequestData>::fwd DataVector;
 
 	static int         getMenuTypeByName     (const std::string & name);
 	static bool        getRangeForMenuType   (int menuType, float &range);

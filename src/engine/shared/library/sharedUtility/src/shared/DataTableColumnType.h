@@ -56,7 +56,7 @@ private:
 	DataType m_type;
 	DataType m_basicType;
 	std::string m_defaultValue;
-	typedef std::map<std::string, int> StringIntMap;
+	typedef stdmap<std::string, int>::fwd StringIntMap;
 	StringIntMap * m_enumMap;
 	DataTableCell * m_defaultCell;
 };

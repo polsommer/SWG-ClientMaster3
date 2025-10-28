@@ -24,18 +24,18 @@ class RemoteDebug::Channel
 		void addChild(Channel *child);
 		const std::string& name();
 	private:
-		typedef std::list<Channel *> NodeList;
+		typedef stdlist<Channel *>::fwd NodeList;
 		///its children
 		NodeList* m_children;
 		///the fully qualified name of the channel
 		std::string* m_name;
-		///its parent (which is nullptr for top-level nodes
+		///its parent (which is NULL for top-level nodes
 		Channel *m_parent;
 };
 
 /** This class stores data about a variable channel, both on the server (where the variable actually
   * resides), and the client (which just displays it).  The client simply creates Variable's with 
-  * nullptr'd out memLoc's, since it doesn't have direct access to the memory.
+  * NULL'd out memLoc's, since it doesn't have direct access to the memory.
   */
 class RemoteDebug::Variable
 {

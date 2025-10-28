@@ -15,7 +15,7 @@
 #include "Unicode.h"
 #include "StringId.h"
 #include "unicodeArchive/UnicodeArchive.h"
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 
 //----------------------------------------------------------------------
 

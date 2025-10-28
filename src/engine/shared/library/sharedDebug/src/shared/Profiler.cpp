@@ -215,16 +215,14 @@ VisibleExpandableEntry * VisibleExpandableEntry::findOrAddExpandableChild(char c
 bool VisibleExpandableEntry::pruneInvisibleChildren()
 {
 	for (Children::iterator i = m_children.begin(); i != m_children.end(); )
-	{
 		if ((*i)->m_visible == false)
 		{
-			i = m_children.erase(i);
+			delete *i;
+			m_children.erase(i);
 		}
 		else
-		{
 			++i;
-		}
-	}
+
 	bool const result = ms_destroyedSelected;
 	ms_destroyedSelected = false;
 	return result;
@@ -238,7 +236,7 @@ void Profiler::install()
 
 	ms_profilerEntriesCurrent = &ms_profilerEntries1;
 	ms_profilerEntriesLast    = &ms_profilerEntries2;
-	ms_rootVisibleExpandableEntry = new VisibleExpandableEntry(nullptr);
+	ms_rootVisibleExpandableEntry = new VisibleExpandableEntry(NULL);
 	ms_rootVisibleExpandableEntry->setExpanded(true);
 	ms_selectedVisibleExpandableEntry = ms_rootVisibleExpandableEntry;
 }
@@ -248,13 +246,13 @@ void Profiler::install()
 void Profiler::remove()
 {
 	delete ms_rootVisibleExpandableEntry;
-	ms_rootVisibleExpandableEntry = nullptr;
-	ms_beforeSelectedVisibleExpandableEntry = nullptr;
-	ms_selectedVisibleExpandableEntry = nullptr;
-	ms_afterSelectedVisibleExpandableEntry = nullptr;
-	ms_previousVisibleExpandableEntry = nullptr;
-	ms_profilerEntriesCurrent = nullptr;
-	ms_profilerEntriesLast = nullptr;
+	ms_rootVisibleExpandableEntry = NULL;
+	ms_beforeSelectedVisibleExpandableEntry = NULL;
+	ms_selectedVisibleExpandableEntry = NULL;
+	ms_afterSelectedVisibleExpandableEntry = NULL;
+	ms_previousVisibleExpandableEntry = NULL;
+	ms_profilerEntriesCurrent = NULL;
+	ms_profilerEntriesLast = NULL;
 }
 
 // ----------------------------------------------------------------------
@@ -374,11 +372,11 @@ bool ProfilerNamespace::formatEntry(int indent, ProfilerTimer::Type totalTime, i
 void ProfilerNamespace::processEntry(char const *rootName, int indent, ProfilerEntry const & entry, VisibleExpandableEntry * visibleExpandableEntry)
 {
 	if (rootName == entry.name)
-		rootName = nullptr;
+		rootName = NULL;
 
 	if (!rootName)
 	{
-		if (!formatEntry(indent, entry.totalTime, entry.totalCalls, visibleExpandableEntry != nullptr, visibleExpandableEntry && visibleExpandableEntry->isExpanded(), visibleExpandableEntry == ms_selectedVisibleExpandableEntry, entry.name))
+		if (!formatEntry(indent, entry.totalTime, entry.totalCalls, visibleExpandableEntry != NULL, visibleExpandableEntry && visibleExpandableEntry->isExpanded(), visibleExpandableEntry == ms_selectedVisibleExpandableEntry, entry.name))
 			return;
 	}
 
@@ -410,7 +408,7 @@ void ProfilerNamespace::processEntry(char const *rootName, int indent, ProfilerE
 
 					if (child.children.empty())
 					{
-						processEntry(rootName, indent, child, nullptr);
+						processEntry(rootName, indent, child, NULL);
 					}
 					else
 					{
@@ -483,9 +481,9 @@ void ProfilerNamespace::generateReport()
 		ms_rootVisibleExpandableEntry->markAllChildrenInvisible();
 		ms_rootVisibleExpandableEntry->findOrAddExpandableChild(rootEntry.name);
 		
-		ms_previousVisibleExpandableEntry = nullptr;
-		ms_beforeSelectedVisibleExpandableEntry = nullptr;
-		ms_afterSelectedVisibleExpandableEntry = nullptr;
+		ms_previousVisibleExpandableEntry = NULL;
+		ms_beforeSelectedVisibleExpandableEntry = NULL;
+		ms_afterSelectedVisibleExpandableEntry = NULL;
 		processEntry(ms_rootProfilerName, 0, rootEntry, ms_rootVisibleExpandableEntry);
 
 		if (ms_rootVisibleExpandableEntry->pruneInvisibleChildren())
@@ -494,7 +492,7 @@ void ProfilerNamespace::generateReport()
 		if (ms_setRoot)
 		{
 			if (ms_rootProfilerName)
-				ms_rootProfilerName = nullptr;
+				ms_rootProfilerName = NULL;
 			else
 				ms_rootProfilerName = ms_selectedVisibleExpandableEntry->getName();
 			ms_setRoot = false;
@@ -720,7 +718,7 @@ void ProfilerNamespace::enterWithTime(char const *name, ProfilerTimer::Type time
 
 	// search for another call to this block from the parent
 	int entryIndex = -1;
-	ProfilerEntry *entry = nullptr;
+	ProfilerEntry *entry = NULL;
 	if (!ms_profilerEntryStack.empty())
 	{
 		ProfilerEntry &parent = (*ms_profilerEntriesCurrent)[ms_profilerEntryStack.back()];

@@ -11,7 +11,7 @@
 //======================================================================
 
 #include "sharedGame/ShipChassisSlotType.h"
-#include "sharedFoundation/PersistentCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
 
 class ShipComponentDescriptor;
 
@@ -20,7 +20,7 @@ class ShipComponentDescriptor;
 class ShipChassisSlot
 {
 public:
-	typedef std::vector<CrcString *> CompatibilityVector;
+	typedef stdvector<CrcString *>::fwd CompatibilityVector;
 
 	ShipChassisSlot (ShipChassisSlotType::Type slotType, std::string const & compatibilities, int hitWeight, bool targetable);
 	ShipChassisSlot ();

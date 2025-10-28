@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerUberObjectTemplate_H
 
 #include "sharedTemplateDefinition/TpfTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -146,16 +146,16 @@ private:
 	CompilerIntegerParam m_intRandomRange4;
 	CompilerIntegerParam m_intDiceRoll1;
 	CompilerIntegerParam m_intDiceRoll2;
-	std::vector<CompilerIntegerParam *> m_intListSimple;
+	stdvector<CompilerIntegerParam *>::fwd m_intListSimple;
 	bool m_intListSimpleLoaded;
 	bool m_intListSimpleAppend;
-	std::vector<CompilerIntegerParam *> m_intListWeightedList;
+	stdvector<CompilerIntegerParam *>::fwd m_intListWeightedList;
 	bool m_intListWeightedListLoaded;
 	bool m_intListWeightedListAppend;
-	std::vector<CompilerIntegerParam *> m_intListRandomRange;
+	stdvector<CompilerIntegerParam *>::fwd m_intListRandomRange;
 	bool m_intListRandomRangeLoaded;
 	bool m_intListRandomRangeAppend;
-	std::vector<CompilerIntegerParam *> m_intListDiceRoll;
+	stdvector<CompilerIntegerParam *>::fwd m_intListDiceRoll;
 	bool m_intListDiceRollLoaded;
 	bool m_intListDiceRollAppend;
 	// Float
@@ -170,65 +170,65 @@ private:
 	FloatParam m_floatRandomRange2;
 	FloatParam m_floatRandomRange3;
 	FloatParam m_floatRandomRange4;
-	std::vector<FloatParam *> m_floatListSimple;
+	stdvector<FloatParam *>::fwd m_floatListSimple;
 	bool m_floatListSimpleLoaded;
 	bool m_floatListSimpleAppend;
-	std::vector<FloatParam *> m_floatListWeightedList;
+	stdvector<FloatParam *>::fwd m_floatListWeightedList;
 	bool m_floatListWeightedListLoaded;
 	bool m_floatListWeightedListAppend;
-	std::vector<FloatParam *> m_floatListRandomRange;
+	stdvector<FloatParam *>::fwd m_floatListRandomRange;
 	bool m_floatListRandomRangeLoaded;
 	bool m_floatListRandomRangeAppend;
 	// Enum
 	CompilerIntegerParam m_enumIndexedByEnumSingle[3];
 	CompilerIntegerParam m_enumIndexedByEnumWeightedList[3];
-	std::vector<CompilerIntegerParam *> m_enumListIndexed;
+	stdvector<CompilerIntegerParam *>::fwd m_enumListIndexed;
 	bool m_enumListIndexedLoaded;
 	bool m_enumListIndexedAppend;
-	std::vector<CompilerIntegerParam *> m_enumListWeightedList;
+	stdvector<CompilerIntegerParam *>::fwd m_enumListWeightedList;
 	bool m_enumListWeightedListLoaded;
 	bool m_enumListWeightedListAppend;
 	// StringId
 	StringIdParam m_stringIdDerived;
 	StringIdParam m_stringIdSimple;
 	StringIdParam m_stringIdWeightedList;
-	std::vector<StringIdParam *> m_stringIdListSimple;
+	stdvector<StringIdParam *>::fwd m_stringIdListSimple;
 	bool m_stringIdListSimpleLoaded;
 	bool m_stringIdListSimpleAppend;
-	std::vector<StringIdParam *> m_stringIdListWeightedList;
+	stdvector<StringIdParam *>::fwd m_stringIdListWeightedList;
 	bool m_stringIdListWeightedListLoaded;
 	bool m_stringIdListWeightedListAppend;
 	// String
 	StringParam m_stringDerived;
 	StringParam m_stringSimple;
 	StringParam m_stringWeightedList;
-	std::vector<StringParam *> m_stringListSimple;
+	stdvector<StringParam *>::fwd m_stringListSimple;
 	bool m_stringListSimpleLoaded;
 	bool m_stringListSimpleAppend;
-	std::vector<StringParam *> m_stringListWeightedList;
+	stdvector<StringParam *>::fwd m_stringListWeightedList;
 	bool m_stringListWeightedListLoaded;
 	bool m_stringListWeightedListAppend;
 	// TRIGGER VOLUME
 	TriggerVolumeParam m_triggerVolumeDerived;
 	TriggerVolumeParam m_triggerVolumeSimple;
 	TriggerVolumeParam m_triggerVolumeWeightedList;
-	std::vector<TriggerVolumeParam *> m_triggerVolumeList;
+	stdvector<TriggerVolumeParam *>::fwd m_triggerVolumeList;
 	bool m_triggerVolumeListLoaded;
 	bool m_triggerVolumeListAppend;
-	std::vector<TriggerVolumeParam *> m_triggerVolumesListWeightedList;
+	stdvector<TriggerVolumeParam *>::fwd m_triggerVolumesListWeightedList;
 	bool m_triggerVolumesListWeightedListLoaded;
 	bool m_triggerVolumesListWeightedListAppend;
 	// BOOL
 	BoolParam m_boolDerived;
 	BoolParam m_boolSimple;
 	BoolParam m_boolWeightedList;
-	std::vector<BoolParam *> m_boolListDerived;
+	stdvector<BoolParam *>::fwd m_boolListDerived;
 	bool m_boolListDerivedLoaded;
 	bool m_boolListDerivedAppend;
-	std::vector<BoolParam *> m_boolListSimple;
+	stdvector<BoolParam *>::fwd m_boolListSimple;
 	bool m_boolListSimpleLoaded;
 	bool m_boolListSimpleAppend;
-	std::vector<BoolParam *> m_boolListWeightedList;
+	stdvector<BoolParam *>::fwd m_boolListWeightedList;
 	bool m_boolListWeightedListLoaded;
 	bool m_boolListWeightedListAppend;
 	///******
@@ -246,14 +246,14 @@ private:
 	// vector vectorSimpleDeltaNegativePercent
 	// vector vectorWeightedList
 	// vector vectorRandomRange
-	std::vector<VectorParam *> m_vectorListSimple;
+	stdvector<VectorParam *>::fwd m_vectorListSimple;
 	bool m_vectorListSimpleLoaded;
 	bool m_vectorListSimpleAppend;
 	// Filename
 	StringParam m_filenameAtDerived;
 	StringParam m_filenameSimple;
 	StringParam m_filenameWeightedList;
-	std::vector<StringParam *> m_filenameListSimple;
+	stdvector<StringParam *>::fwd m_filenameListSimple;
 	bool m_filenameListSimpleLoaded;
 	bool m_filenameListSimpleAppend;
 	// Objvar
@@ -264,13 +264,13 @@ private:
 	StringParam m_templateDerived;
 	StringParam m_templateSimple;
 	StringParam m_templateWeightedList;
-	std::vector<StringParam *> m_templateListSimple;
+	stdvector<StringParam *>::fwd m_templateListSimple;
 	bool m_templateListSimpleLoaded;
 	bool m_templateListSimpleAppend;
 	// Structs
 	StructParamOT m_structAtDerived;
 	StructParamOT m_structSimple;
-	std::vector<StructParamOT *> m_structListSimple;
+	stdvector<StructParamOT *>::fwd m_structListSimple;
 	bool m_structListSimpleLoaded;
 	bool m_structListSimpleAppend;
 	StructParamOT m_structArrayEnum[3];

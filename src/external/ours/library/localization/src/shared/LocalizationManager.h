@@ -18,7 +18,7 @@
 #pragma warning (disable:4786)
 #endif
 
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 #include "Unicode.h"
 #include "UnicodeUtils.h"
 

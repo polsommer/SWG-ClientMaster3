@@ -9,7 +9,7 @@
 #ifndef INCLUDED_MessageQueueShowCombatTextArchive_H
 #define INCLUDED_MessageQueueShowCombatTextArchive_H
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 
 //======================================================================
 

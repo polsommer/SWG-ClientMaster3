@@ -52,7 +52,7 @@ private:
 
 	//-- list of families
 	class Family;
-	typedef std::map<int, Family*> FamilyMap;
+	typedef stdmap<int, Family*>::fwd FamilyMap;
 	FamilyMap*            m_familyMap;
 
 private:

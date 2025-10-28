@@ -13,22 +13,6 @@
 //-------------------------------------------------------------------
 
 //#define NOMINMAX
-
-#include "sharedFoundation/WinApiFamily.h"
-
-// The TerrainEditor tool was originally written for an ANSI build of MFC.
-// Modern Windows SDK headers default to Unicode which changes many common
-// typedefs (LPCTSTR, etc.) to their wide-character equivalents.  The legacy
-// editor codebase, however, expects the ANSI variants.  Explicitly disable
-// the Unicode macros here so the included headers match the expectations of
-// the existing source.
-#ifdef UNICODE
-#undef UNICODE
-#endif
-#ifdef _UNICODE
-#undef _UNICODE
-#endif
-
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 //-------------------------------------------------------------------
@@ -38,61 +22,6 @@
 #include <afxcview.h>
 #include <afxdisp.h>        // MFC Automation classes
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
-
-// Visual Studio's MFC headers normally define the import/export helper macros
-// such as AFX_IMPORT_DATA.  Some SDK configurations used with this legacy
-// project omit those definitions which causes <afxusertoolsmanager.h> to emit
-// syntax errors.  Supply a benign fallback so the class declarations in that
-// header remain valid even when the macro is not pre-defined by the toolchain.
-#ifndef AFX_IMPORT_DATA
-#define AFX_IMPORT_DATA
-#endif
-
-#include <ddraw.h>
-
-#include <afxbutton.h>
-#include <afxcontrolbars.h>
-
-//
-// The Visual Studio 2013 ATL/MFC headers reference CAtlTransactionManager
-// from <afxpriv.h> without pulling in the definition themselves.  Some
-// environments (including the stripped SDK that accompanies this project)
-// therefore surface IntelliSense errors unless the ATL transaction header is
-// included explicitly before <afxpriv.h> is parsed.
-#include <atltransactionmanager.h>
-
-#if defined(_MSC_VER)
-// Visual Studio's MFC headers emit spurious C4183 warnings when
-// afxvisualmanagerwindows.h pulls in afxcontrolbarutil.h.  Wrap the includes
-// in a warning scope so the tool's build output stays clean regardless of the
-// exact _MFC_VER that is defined by the toolchain.
-#pragma warning(push)
-#pragma warning(disable:4183)
-#endif
-#include <afxvisualmanager.h>
-#include <afxvisualmanagerwindows.h>
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-
-#if !defined(AFX_IMPORT_DATA)
-//
-// Older MFC toolchains (including the ancient SDK that the terrain editor was
-// originally authored against) never defined the AFX_IMPORT_DATA or
-// AFX_IMPORT_DATADEF storage-class helpers.  Newer releases, such as the Visual
-// Studio 2013 headers, expect those aliases to exist when including
-// afxcontrolbarutil.h.  When the macros are absent the compiler tries to parse
-// identifiers like `AFX_IMPORT_DATA BOOL m_bUseMemoryDC;` as variable
-// declarations which leads to a cascade of syntax errors in the system header.
-// Provide backward compatible fallbacks that map to the legacy AFX_DATA and
-// AFX_DATADEF definitions so the codebase continues to compile cleanly across
-// the wide range of supported environments.
-#define AFX_IMPORT_DATA    AFX_DATA
-#endif
-
-#if !defined(AFX_IMPORT_DATADEF)
-#define AFX_IMPORT_DATADEF AFX_DATADEF
-#endif
 
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC support for Windows Common Controls

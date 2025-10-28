@@ -9,8 +9,8 @@
 #define	INCLUDED_ChatDeleteAllPersistentMessages_H
 
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "sharedFoundation/NetworkId.h"
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 
 //-----------------------------------------------------------------------------
 

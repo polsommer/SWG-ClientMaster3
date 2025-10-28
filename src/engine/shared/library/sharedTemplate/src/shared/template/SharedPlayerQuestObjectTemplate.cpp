@@ -195,12 +195,12 @@ char paramName[MAX_NAME_SIZE];
 		file.read_string(baseFilename);
 		file.exitChunk();
 		const ObjectTemplate *base = ObjectTemplateList::fetch(baseFilename);
-		DEBUG_WARNING(base == nullptr, ("was unable to load base template %s", baseFilename.c_str()));
-		if (m_baseData == base && base != nullptr)
+		DEBUG_WARNING(base == NULL, ("was unable to load base template %s", baseFilename.c_str()));
+		if (m_baseData == base && base != NULL)
 			base->releaseReference();
 		else
 		{
-			if (m_baseData != nullptr)
+			if (m_baseData != NULL)
 				m_baseData->releaseReference();
 			m_baseData = base;
 		}

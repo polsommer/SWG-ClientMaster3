@@ -15,7 +15,7 @@ class GameLanguageManager
 {
 public:
 
-	typedef std::vector<std::string> StringVector;
+	typedef stdvector<std::string>::fwd StringVector;
 
 	static void install();
 

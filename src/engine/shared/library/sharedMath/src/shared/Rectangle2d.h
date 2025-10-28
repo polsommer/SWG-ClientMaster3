@@ -11,9 +11,6 @@
 #ifndef INCLUDED_Rectangle2d_H
 #define INCLUDED_Rectangle2d_H
 
-#include <algorithm>
-#include <cmath>
-
 //-------------------------------------------------------------------
 
 class Line2d;
@@ -100,14 +97,14 @@ inline void Rectangle2d::set (const float newX0, const float newY0, const float 
 
 inline float Rectangle2d::getWidth () const
 {	
-	return std::abs(x1 - x0);
+	return abs(x1 - x0);
 }
 
 //-------------------------------------------------------------------
 
 inline float Rectangle2d::getHeight () const
 {
-	return std::abs(y1 - y0);
+	return abs(y1 - y0);
 }
 
 //-------------------------------------------------------------------

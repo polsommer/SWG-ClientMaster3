@@ -3,6 +3,11 @@
 #include <ctime>
 
 
+real abs(real x)
+{
+  return fabs(x);
+}
+
 int _stricmp(const char* string1, const char* string2)
 {
     int first, second;
@@ -28,7 +33,7 @@ char* _itoa(int value, char* stringOut, int radix)
 bool QueryPerformanceCounter(__int64* time)
 {
   struct timeval tv;
-  gettimeofday(&tv, nullptr);
+  gettimeofday(&tv, NULL);
   *time = static_cast<LARGE_INTEGER>(tv.tv_sec);
   *time = (*time * 1000000) + static_cast<LARGE_INTEGER>(tv.tv_usec);
 
@@ -102,7 +107,7 @@ FILE* CreateFile(const char* fileName, DWORD access, DWORD shareMode, void* unsu
     FILE* retval = 0;
 
     DEBUG_FATAL(flagsAndAttributes != FILE_ATTRIBUTE_NORMAL, ("Unsupported File mode call to CreateFile()"));
-    DEBUG_FATAL(unsupB != nullptr, ("Unsupported File mode call to CreateFile()"));
+    DEBUG_FATAL(unsupB != NULL, ("Unsupported File mode call to CreateFile()"));
     //DEBUG_FATAL(shareMode != 0, ("Unsupported File mode call to CreateFile()"));
     DEBUG_FATAL(unsupA != 0, ("Unsupported File mode call to CreateFile()"));
 
@@ -113,7 +118,7 @@ FILE* CreateFile(const char* fileName, DWORD access, DWORD shareMode, void* unsu
             if (retval)
             {
                 fclose(retval);
-                retval = nullptr;
+                retval = NULL;
             }
             else
             {
@@ -174,6 +179,13 @@ DWORD GetFileSize(FILE* hFile, DWORD* lpHighSize)
     endPos = ftell(hFile);
     fseek(hFile, curPos, SEEK_SET);
     return endPos;
+
+#if 0
+//This is what I want to do, but I have no file des number
+    struct stat buf;
+    fstat(hFile, &buf);
+    return buf->st_size;
+#endif
 }
 
 BOOL FileExists(const char* filename)

@@ -58,6 +58,7 @@ void MessageQueueStringList::pack(const MessageQueue::Data* const data, Archive:
 MessageQueue::Data* MessageQueueStringList::unpack(Archive::ReadIterator & source)
 {
 	MessageQueueStringList * msg = new MessageQueueStringList;
+	NOT_NULL(msg);
 	
 	uint8 count;
 	Unicode::String string;

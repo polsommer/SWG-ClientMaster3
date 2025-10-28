@@ -16,7 +16,6 @@
 #include "sharedObject/CustomizationDataProperty.h"
 #include "sharedObject/CustomizationData.h"
 #include "sharedTerrain/TerrainObject.h"
-#include <algorithm>
 
 //======================================================================
 

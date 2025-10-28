@@ -13,8 +13,8 @@
 
 #include "Archive/AutoDeltaByteStream.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "sharedFoundation/NetworkId.h"
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "sharedMath/Vector2d.h"
 
 //-----------------------------------------------------------------------

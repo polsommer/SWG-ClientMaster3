@@ -10,7 +10,7 @@
 #ifndef INCLUDED_Range_H
 #define INCLUDED_Range_H
 
-#include "sharedFoundation/Misc.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Misc.h"
 
 // ======================================================================
 

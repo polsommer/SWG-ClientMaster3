@@ -10,7 +10,7 @@
 
 //======================================================================
 
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 #include "sharedUtility/Location.h"
 #include "Unicode.h"
 

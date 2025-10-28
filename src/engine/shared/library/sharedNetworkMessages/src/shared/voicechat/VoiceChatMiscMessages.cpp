@@ -8,7 +8,7 @@ const char* const VoiceChatAddClientToChannel::cms_name = "VoiceChatAddClientToC
 
 VoiceChatAddClientToChannel::VoiceChatAddClientToChannel(NetworkId const & clientId, std::string const & clientName, std::string const & roomName, bool forceShortlist)
 : GameNetworkMessage(cms_name),
-  m_clientId(clientId),
+  m_clientId(clientId), 
   m_clientName(clientName),
   m_channelName(roomName),
   m_forceShortlist(forceShortlist)
@@ -21,7 +21,7 @@ VoiceChatAddClientToChannel::VoiceChatAddClientToChannel(NetworkId const & clien
 
 VoiceChatAddClientToChannel::VoiceChatAddClientToChannel(Archive::ReadIterator &source)
 : GameNetworkMessage(cms_name),
-  m_clientId(),
+  m_clientId(), 
   m_clientName(),
   m_channelName(),
   m_forceShortlist(false)
@@ -45,7 +45,7 @@ const char* const VoiceChatRemoveClientFromChannel::cms_name = "VoiceChatRemoveC
 
 VoiceChatRemoveClientFromChannel::VoiceChatRemoveClientFromChannel(NetworkId const & clientId, std::string const & clientName, std::string const & roomName)
 : GameNetworkMessage(cms_name),
-m_clientId(clientId),
+m_clientId(clientId), 
 m_clientName(clientName),
 m_channelName(roomName)
 {
@@ -56,7 +56,7 @@ m_channelName(roomName)
 
 VoiceChatRemoveClientFromChannel::VoiceChatRemoveClientFromChannel(Archive::ReadIterator &source)
 : GameNetworkMessage(cms_name),
-m_clientId(),
+m_clientId(), 
 m_clientName(),
 m_channelName()
 {
@@ -193,7 +193,7 @@ VoiceChatDeleteChannel::~VoiceChatDeleteChannel()
 //-----------------------------------------------------------------------
 const char* const VoiceChatChannelCommand::cms_name = "VoiceChatChannelCommand";
 
-VoiceChatChannelCommand::VoiceChatChannelCommand(std::string const & _srcUserName, std::string const & _destUserName,
+VoiceChatChannelCommand::VoiceChatChannelCommand(std::string const & _srcUserName, std::string const & _destUserName, 
 	std::string const & _channelName, uint32 _command, uint32 _banTimeout)
 : GameNetworkMessage(cms_name),
 m_srcUserName(_srcUserName),
@@ -234,7 +234,7 @@ VoiceChatChannelCommand::~VoiceChatChannelCommand()
 //-----------------------------------------------------------------------
 const char* const VoiceChatOnChannelCommand::cms_name = "VoiceChatOnChannelCommand";
 
-VoiceChatOnChannelCommand::VoiceChatOnChannelCommand(std::string const & _srcUserName, std::string const & _destUserName,
+VoiceChatOnChannelCommand::VoiceChatOnChannelCommand(std::string const & _srcUserName, std::string const & _destUserName, 
 		std::string const & _channelName, uint32 _command, uint32 _banTimeout, uint32 _result)
 : GameNetworkMessage(cms_name),
  m_srcUserName(_srcUserName),

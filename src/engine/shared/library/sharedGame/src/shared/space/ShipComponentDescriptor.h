@@ -11,7 +11,7 @@
 //======================================================================
 
 #include "sharedGame/ShipComponentType.h"
-#include "sharedFoundation/PersistentCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
 
 class ObjectTemplate;
 
@@ -21,8 +21,8 @@ class ShipComponentDescriptor
 {
 public:
 	
-	typedef std::vector<std::string> StringVector;
-	typedef std::map<PersistentCrcString, ShipComponentDescriptor *> NameComponentMap;
+	typedef stdvector<std::string>::fwd StringVector;
+	typedef stdmap<PersistentCrcString, ShipComponentDescriptor *>::fwd NameComponentMap;
 
 	static void install ();
 	static void fetchSharedObjectTemplates();

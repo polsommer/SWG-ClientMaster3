@@ -1,2 +1,2 @@
-#include "../../src/shared/objectTemplate/SharedConstructionContractObjectTemplate.h"
+#include "../../../src/shared/objectTemplate/SharedConstructionContractObjectTemplate.h"
 

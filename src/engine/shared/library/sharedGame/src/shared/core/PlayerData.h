@@ -19,9 +19,8 @@ namespace PlayerDataPriviledgedTitle
 		NormalPlayer = 0,
 		CustomerServiceRepresentative = 1,
 		Developer = 2,
-                Contributer = 3,
-		Warden = 4,
-		QualityAssurance = 5,
+		Warden = 3,
+		QualityAssurance = 4,
 	};
 }	// namespace PlayerDataPriviledgedTitle
 

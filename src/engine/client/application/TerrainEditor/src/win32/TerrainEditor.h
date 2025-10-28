@@ -28,19 +28,18 @@ private:
 	CMultiDocTemplate* radialGroupTemplate;
 	CMultiDocTemplate* bookmarkTemplate;
 	CMultiDocTemplate* shaderGroupTemplate;
-        CMultiDocTemplate* consoleTemplate;
-        CMultiDocTemplate* layerTemplate;
-        CMultiDocTemplate* propertyTemplate;
-        CMultiDocTemplate* blendGroupTemplate;
-        CMultiDocTemplate* fractalPreviewTemplate;
-        CMultiDocTemplate* bitmapPreviewTemplate;
-        CMultiDocTemplate* view3dTemplate;
-        CMultiDocTemplate* helpTemplate;
-        CMultiDocTemplate* profileTemplate;
-        CMultiDocTemplate* warningTemplate;
-        CMultiDocTemplate* findTemplate;
-        CMultiDocTemplate* environmentTemplate;
-        CMultiDocTemplate* guidedCreationTemplate;
+	CMultiDocTemplate* consoleTemplate;
+	CMultiDocTemplate* layerTemplate;
+	CMultiDocTemplate* propertyTemplate;
+	CMultiDocTemplate* blendGroupTemplate;
+	CMultiDocTemplate* fractalPreviewTemplate;
+	CMultiDocTemplate* bitmapPreviewTemplate;
+	CMultiDocTemplate* view3dTemplate;
+	CMultiDocTemplate* helpTemplate;
+	CMultiDocTemplate* profileTemplate;
+	CMultiDocTemplate* warningTemplate;
+	CMultiDocTemplate* findTemplate;
+	CMultiDocTemplate* environmentTemplate;
 	CMultiDocTemplate* fractalGroupTemplate;
 	CMultiDocTemplate* bitmapGroupTemplate;
 
@@ -61,14 +60,13 @@ private:
 	void onViewBlends         (TerrainEditorDoc* terrainDocument);
 	void onViewFractals       (TerrainEditorDoc* terrainDocument);
 	void onViewBitmaps        (TerrainEditorDoc* terrainDocument);
-        void onViewFractalPreview (TerrainEditorDoc* terrainDocument);
-        void onViewBitmapPreview  (TerrainEditorDoc* terrainDocument);
-        void onView3d             (TerrainEditorDoc* terrainDocument);
-        void onViewProfile        (TerrainEditorDoc* terrainDocument);
-        void onViewWarning        (TerrainEditorDoc* terrainDocument, bool clear);
-        void onViewFind           (TerrainEditorDoc* terrainDocument, bool clear);
-        void onViewEnvironment    (TerrainEditorDoc* terrainDocument);
-        void onViewGuidedCreation (TerrainEditorDoc* terrainDocument);
+	void onViewFractalPreview (TerrainEditorDoc* terrainDocument);
+	void onViewBitmapPreview  (TerrainEditorDoc* terrainDocument);
+	void onView3d             (TerrainEditorDoc* terrainDocument);
+	void onViewProfile        (TerrainEditorDoc* terrainDocument);
+	void onViewWarning        (TerrainEditorDoc* terrainDocument, bool clear);
+	void onViewFind           (TerrainEditorDoc* terrainDocument, bool clear);
+	void onViewEnvironment    (TerrainEditorDoc* terrainDocument);
 
 public:
 
@@ -80,12 +78,11 @@ public:
 	void onOpenDefaultViews (TerrainEditorDoc* terrainDocument);
 	void showFractalPreview (void);
 	void showBitmapPreview (void);
-        void showConsole (void);
-        void showProfile (void);
-        void showLayers (void);
-        void showGuidedCreation (void);
-        void showWarning (bool clear);
-        void showFind (bool clear);
+	void showConsole (void);
+	void showProfile (void);
+	void showLayers (void);
+	void showWarning (bool clear);
+	void showFind (bool clear);
 
 	TerrainEditorDoc* getDocument (void);
 
@@ -131,12 +128,10 @@ public:
 	afx_msg void OnUpdateViewProfile(CCmdUI* pCmdUI);
 	afx_msg void OnViewWarning();
 	afx_msg void OnUpdateViewWarning(CCmdUI* pCmdUI);
-        afx_msg void OnViewFind();
-        afx_msg void OnUpdateViewFind(CCmdUI* pCmdUI);
-        afx_msg void OnViewEnvironment();
-        afx_msg void OnUpdateViewEnvironment(CCmdUI* pCmdUI);
-        afx_msg void OnViewGuidedcreation();
-        afx_msg void OnUpdateViewGuidedcreation(CCmdUI* pCmdUI);
+	afx_msg void OnViewFind();
+	afx_msg void OnUpdateViewFind(CCmdUI* pCmdUI);
+	afx_msg void OnViewEnvironment();
+	afx_msg void OnUpdateViewEnvironment(CCmdUI* pCmdUI);
 	afx_msg void OnEditFractal();
 	afx_msg void OnEditBitmap();
 	afx_msg void OnUpdateEditFractal(CCmdUI* pCmdUI);

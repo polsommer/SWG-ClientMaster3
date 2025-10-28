@@ -23,13 +23,13 @@ class AiDebugString
 {
 public:
 
-	typedef std::vector<Transform> TransformList;
-	typedef std::vector<std::string> TextList;
-	typedef std::vector<std::pair<CachedNetworkId, std::pair<Vector, PackedRgb> > > LineList;
-	typedef std::vector<std::pair<TransformList, bool/*cyclic*/> > PathList;
-	typedef std::vector<std::pair<CachedNetworkId, std::pair<Circle, PackedRgb> > > CircleList;
-	typedef std::vector<std::pair<Transform, float/*axisLength*/> > AxisList;
-	typedef std::vector<std::pair<float/*length*/, std::pair<float/*coneAngle*/, PackedRgb> > > ConeList;
+	typedef stdvector<Transform>::fwd TransformList;
+	typedef stdvector<std::string>::fwd TextList;
+	typedef stdvector<std::pair<CachedNetworkId, std::pair<Vector, PackedRgb> > >::fwd LineList;
+	typedef stdvector<std::pair<TransformList, bool/*cyclic*/> >::fwd PathList;
+	typedef stdvector<std::pair<CachedNetworkId, std::pair<Circle, PackedRgb> > >::fwd CircleList;
+	typedef stdvector<std::pair<Transform, float/*axisLength*/> >::fwd AxisList;
+	typedef stdvector<std::pair<float/*length*/, std::pair<float/*coneAngle*/, PackedRgb> > >::fwd ConeList;
 
 	// Use to custom embed multiple colors in text
 
@@ -102,6 +102,5 @@ private:
 };
 
 // ======================================================================
-
 #endif // _DEBUG
 #endif // INCLUDED_AiDebugString_H

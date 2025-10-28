@@ -21,7 +21,6 @@ public:
 	int             clockSyncDelay;
 	int             keepAliveDelay;
 	int             maxConnections;
-	int 			maxConnectionsPerIP;
 	int             maxRawPacketSize;
 	int             maxInstandingPackets;
 	int             maxOutstandingBytes;

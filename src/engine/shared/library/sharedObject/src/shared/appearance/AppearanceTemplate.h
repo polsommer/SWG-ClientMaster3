@@ -33,7 +33,6 @@ public:
 	static void install();
 
 	static AppearanceTemplate *create(const char *newName, Iff *iff);
-	static AppearanceTemplate *createDtla(const char *newName, Iff *iff);
 
 public:
 
@@ -84,7 +83,7 @@ protected:
 
 private:
 
-	typedef std::vector<Hardpoint*> HardpointList;
+	typedef stdvector<Hardpoint*>::fwd HardpointList;
 
 private:
 

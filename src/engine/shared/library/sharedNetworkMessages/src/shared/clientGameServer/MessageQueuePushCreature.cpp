@@ -76,6 +76,7 @@ MessageQueue::Data* MessageQueuePushCreature::unpack(Archive::ReadIterator & sou
 	Archive::get(source, distance);
 	
 	MessageQueuePushCreature * const msg = new MessageQueuePushCreature(attacker, defender, attackerPos, defenderPos, distance);
+	NOT_NULL(msg);
 
 	return msg;
 }

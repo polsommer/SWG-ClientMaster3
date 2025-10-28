@@ -13,7 +13,7 @@
 #include "sharedFoundation/ExitChain.h"
 #include "sharedRegex/ConfigSharedRegex.h"
 #include "sharedRegex/RegexServices.h"
-#include "pcre.h"
+#include "pcre/pcre.h"
 
 // ======================================================================
 

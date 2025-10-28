@@ -11,7 +11,7 @@
 
 //======================================================================
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 #include "StringId.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 

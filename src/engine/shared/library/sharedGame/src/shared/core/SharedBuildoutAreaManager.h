@@ -38,7 +38,6 @@ public:
 	Vector getRelativePosition(Vector const & pos_w, bool allowComposite) const;
 
 	std::string const & getRequiredEventName() const;
-	std::string const & getRequiredLoadLevel() const;
 
 	int areaIndex;
 	std::string areaName;
@@ -64,9 +63,6 @@ public:
 
 	// Required Event name for a particular buildout
 	std::string requiredEventName;
-
-	// Required Server level for a particular buildout
-	std::string requiredLoadLevel;
 };
 
 // ----------------------------------------------------------------------
@@ -104,7 +100,7 @@ class SharedBuildoutAreaManager
 {
 public:
 
-	typedef std::vector<BuildoutArea> BuildoutAreaVector;
+	typedef stdvector<BuildoutArea>::fwd BuildoutAreaVector;
 	typedef std::pair<std::string, std::string> StringPair;
 
 	static bool isBuildoutScene(std::string const & sceneName);

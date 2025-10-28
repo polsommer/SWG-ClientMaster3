@@ -14,7 +14,7 @@
 #define _INCLUDED_SharedMissionObjectTemplate_H
 
 #include "SharedIntangibleObjectTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedUtility/TemplateParameter.h"
 
 

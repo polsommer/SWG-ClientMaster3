@@ -149,7 +149,7 @@ inline int _mbstowcsz(__out_ecount_z(count) wchar_t* wcstr, __in_z const char* m
 inline void _AtlInstallStringThunk(void** ppThunk, void* pfnWin9x, void* pfnNT) throw()
 {
 #pragma warning (push)
-#pragma warning (disable : 4640 4996)	// construction of local static object is not thread-safe, GetVersion deprecated
+#pragma warning (disable : 4640)	// construction of local static object is not thread-safe
 
 	static bool s_bWin9x = (::GetVersion()&0x80000000) != 0;
 	

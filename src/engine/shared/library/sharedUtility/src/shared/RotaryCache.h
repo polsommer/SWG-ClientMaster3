@@ -43,20 +43,20 @@ protected:
 public:
 
 protected:
-	struct CacheListEntry
+	typedef struct CacheListEntry
 	{
 		CrcLowerString			key;
 		void*					value;
 	};
 
-	typedef std::list<CacheListEntry>	RotaryList;
+	typedef stdlist<CacheListEntry>::fwd	RotaryList;
 
-	struct CacheMapEntry
+	typedef struct CacheMapEntry		
 	{
 		RotaryList::iterator				iter;
 	};
 
-	typedef std::map<unsigned int,CacheMapEntry>	RotaryMap;
+	typedef stdmap<unsigned int,CacheMapEntry>::fwd	RotaryMap;
 
 	RotaryList		mList;
 	RotaryMap		mMap;

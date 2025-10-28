@@ -41,7 +41,8 @@ public:
 	void     add (const T& newElement);
 	void     addIfNotExist (const T& newElement);
 	void     allocateNext (void);
-	
+	int      findOrAdd (const T& newElement);
+
 	void     insert (int index, const T& newElement);
 
 	// remove an item from the list
@@ -146,7 +147,8 @@ inline void ArrayList<T>::copy (const ArrayList<T>& rhs)
 	// only delete and re-new the list if we don't have enough elements to hold the contents of rhs
 	if (m_numberOfElements < rhs.m_numberOfElements)
 	{
-		delete [] m_data;
+		if (m_data)
+			delete [] m_data;
 
 		m_size = rhs.m_size;
 		m_data = new T [m_size];
@@ -238,6 +240,19 @@ inline void ArrayList<T>::addIfNotExist (const T& newElement)
 		return;
 
 	add (newElement);
+}
+
+//-------------------------------------------------------------------
+
+template <class T>
+inline int ArrayList<T>::findOrAdd (const T& newElement)
+{
+	if (existsInList (newElement, index))
+		return index;
+
+	add (newElement);
+
+	return getNumberOfElements () - 1;
 }
 
 //-------------------------------------------------------------------

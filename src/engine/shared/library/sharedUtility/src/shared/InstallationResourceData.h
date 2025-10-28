@@ -11,7 +11,7 @@
 //======================================================================
 
 #include "Unicode.h"
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 
 //----------------------------------------------------------------------
 

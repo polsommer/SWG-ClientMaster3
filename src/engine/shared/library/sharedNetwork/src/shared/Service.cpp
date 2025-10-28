@@ -92,12 +92,12 @@ m_tcpServer(0)
 		p.icmpErrorRetryPeriod = setup.icmpErrorRetryPeriod;
 		p.maxDataHoldSize = setup.maxDataHoldSize;
 		p.allowPortRemapping = setup.allowPortRemapping;
-       		p.maxConnectionsPerIP = setup.maxConnectionsPerIP;
+		
 			
-        if (realAddress.length() > 0)
-        {
-            strncpy(p.bindIpAddress, realAddress.c_str(), sizeof(p.bindIpAddress));
-        }
+			if(realAddress.length() > 0)
+			{
+				strncpy(p.bindIpAddress, realAddress.c_str(), sizeof(p.bindIpAddress));
+			}
 
 		p.reliable[0].maxInstandingPackets = setup.maxInstandingPackets;
 		p.reliable[0].maxOutstandingBytes = setup.maxOutstandingBytes;
@@ -186,13 +186,13 @@ Service::~Service()
 	delete m_callback;
 
 	connections.clear();
-	connectionAllocator = nullptr;
-	m_callback = nullptr;
+	connectionAllocator = NULL;
+	m_callback = NULL;
 	delete m_tcpServer;
 }
 
 //-----------------------------------------------------------------------
-	
+
 void Service::onConnectionClosed(Connection * c)
 {
 	if (c)
@@ -201,9 +201,7 @@ void Service::onConnectionClosed(Connection * c)
 		if (f != connections.end())
 		{
 			if (m_tcpServer)
-			{
 				m_tcpServer->onConnectionClosed(c->getTcpClient());
-			}
 			connections.erase(f);
 		}
 		c->setService(0);
@@ -216,16 +214,10 @@ void Service::onConnectionOpened(Connection * c)
 {
 	if (c)
 	{
-	        if (connections.size() < static_cast<size_t>(m_maxConnections))
-        	{
-			c->setService(this);
-			c->onConnectionOpened();
-			connections.insert(c);
-		}
-		else
-	     	{
-			WARNING(true, ("Service has reached it's maximum connection count (%d).", m_maxConnections));
-        	}
+		c->setService(this);
+		c->onConnectionOpened();
+		connections.insert(c);
+		WARNING((connections.size() >= static_cast<size_t>(m_maxConnections)), ("Service has reached it's maximum connection count %d", m_maxConnections));
 	}
 }
 
@@ -268,7 +260,6 @@ int Service::flushAndConfirmAllData()
 		unsigned long startTime = Clock::timeMs();
 		bool needReport = false;
 		unsigned long stallReportDelay = ConfigSharedNetwork::getStallReportDelay();
-
 		do
 		{
 			if(stallReportDelay > 0)

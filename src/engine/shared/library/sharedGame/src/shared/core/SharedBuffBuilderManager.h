@@ -10,7 +10,7 @@
 
 // ======================================================================
 
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/BuffBuilderChangeMessage.h"
 
 #include <string>
@@ -58,7 +58,7 @@ public:
 		std::string m_requiredExpertise;
 	};
 
-	typedef std::map<std::string, BuffBuilderDataTypeRecord> BuffBuilderDataType;
+	typedef stdmap<std::string, BuffBuilderDataTypeRecord>::fwd BuffBuilderDataType;
 	static BuffBuilderDataType* ms_buffBuilderData;
 
 public:

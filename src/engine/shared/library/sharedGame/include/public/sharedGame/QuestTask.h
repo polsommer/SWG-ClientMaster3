@@ -1,2 +1,2 @@
-#include "../../src/shared/quest/QuestTask.h"
+#include "../../../src/shared/quest/QuestTask.h"
 

@@ -1,1 +1,1 @@
-#include "../../src/shared/core/LfgCharacterData.h"
+#include "../../../src/shared/core/LfgCharacterData.h"

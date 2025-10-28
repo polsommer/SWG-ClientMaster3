@@ -94,12 +94,6 @@
     <ClCompile Include="..\..\src\win32\EnvironmentView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\win32\GuidedCreationFrame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\win32\GuidedCreationView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\win32\FindFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -316,9 +310,6 @@
     <ClCompile Include="..\..\src\win32\external\SmartSliderCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\win32\SmartTerrainAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\win32\Splash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -448,12 +439,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\EnvironmentView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\win32\GuidedCreationFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\win32\GuidedCreationView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\FindFrame.h">
@@ -670,9 +655,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\external\SmartSliderCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\win32\SmartTerrainAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\Splash.h">

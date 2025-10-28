@@ -21,7 +21,6 @@
 #include "sharedMath/Vector.h"
 #include "sharedMath/VectorArgb.h"
 
-#include <cstdio>
 #include <string>
 
 // ======================================================================
@@ -146,11 +145,11 @@ bool Iff::isValid(char const * fileName)
 	int const fileLength = file->length();
 	byte *data = file->readEntireFileAndClose();
 	delete file;
-	file = nullptr;
+	file = NULL;
 
 	bool const result = IffNamespace::isValid(data, fileLength);
 	delete [] data;
-	data = nullptr;
+	data = NULL;
 
 	return result;
 }
@@ -167,12 +166,12 @@ bool Iff::isValid(char const * fileName)
 //   Iff::open()
 
 Iff::Iff(void)
-: fileName(nullptr),
+: fileName(NULL),
 	maxStackDepth(DEFAULT_STACK_DEPTH),
 	stackDepth(0),
 	stack(new Stack[DEFAULT_STACK_DEPTH]),
 	length(0),
-	data(nullptr),
+	data(NULL),
 	inChunk(false),
 	growable(false),
 	nonlinear(false),
@@ -207,7 +206,7 @@ Iff::Iff(void)
  */
 
 Iff::Iff(int newDataSize, const byte *newData, bool iffOwnsData) :
-	fileName(nullptr),
+	fileName(NULL),
 	maxStackDepth(DEFAULT_STACK_DEPTH),
 	stackDepth(0),
 	stack(new Stack[DEFAULT_STACK_DEPTH]),
@@ -242,12 +241,12 @@ Iff::Iff(int newDataSize, const byte *newData, bool iffOwnsData) :
  */
 
 Iff::Iff(const char *newFileName, bool optional)
-: fileName(nullptr),
+: fileName(NULL),
 	maxStackDepth(DEFAULT_STACK_DEPTH),
 	stackDepth(0),
 	stack(new Stack[DEFAULT_STACK_DEPTH]),
 	length(0),
-	data(nullptr),
+	data(NULL),
 	inChunk(false),
 	growable(false),
 	nonlinear(false),
@@ -270,7 +269,7 @@ Iff::Iff(const char *newFileName, bool optional)
  */
 
 Iff::Iff(int initialSize, bool isGrowable, bool clearDataBuffer)
-: fileName(nullptr),
+: fileName(NULL),
 	maxStackDepth(DEFAULT_STACK_DEPTH),
 	stackDepth(0),
 	stack(new Stack[DEFAULT_STACK_DEPTH]),
@@ -384,7 +383,7 @@ void Iff::open(AbstractFile & file, char const * const newFileName)
 	DEBUG_FATAL(data, ("causing memory leak"));
 	data = file.readEntireFileAndClose();
 
-	FATAL(ConfigSharedFile::getValidateIff() && !IffNamespace::isValid(data, length), ("File corruption detected! Iff::isValid failed for %s (size=%d, crc=%08X). Please try a \"Full Scan\" from the LaunchPad.", newFileName ? newFileName : "nullptr", length, Crc::calculate(data, length)));
+	FATAL(ConfigSharedFile::getValidateIff() && !IffNamespace::isValid(data, length), ("File corruption detected! Iff::isValid failed for %s (size=%d, crc=%08X). Please try a \"Full Scan\" from the LaunchPad.", newFileName ? newFileName : "null", length, Crc::calculate(data, length)));
 
 	// setup the stack data to know about the data
 	stack[0].start = 0;
@@ -406,11 +405,11 @@ void Iff::open(AbstractFile & file, char const * const newFileName)
 void Iff::close(void)
 {
 	delete [] fileName;
-	fileName = nullptr;
+	fileName = NULL;
 
 	if (ownsData)
 		delete [] data;
-	data = nullptr; //lint !e672 // possible memory leak in assignment to Iff::data // no, we only delete when we own it
+	data = NULL; //lint !e672 // possible memory leak in assignment to Iff::data // no, we only delete when we own it
 	stackDepth = 0;
 }
 
@@ -604,6 +603,7 @@ void Iff::adjustDataAsNeeded(int size)
 		// allocate the new memory
 		DEBUG_FATAL(newLength < 0, ("negative array allocation"));
 		byte *newData = new byte[static_cast<size_t>(newLength)];
+		NOT_NULL(newData);
 
 		// copy the old data over to the new data
 		memcpy(newData, data, stack[0].length);
@@ -886,7 +886,7 @@ void Iff::insertChunkFloatQuaternion(const Quaternion &quaternion)
  * Insert a string into the current chunk at the current location.
  * 
  * This routine will call insertChunkData(const void *, int length)
- * with the string using its string length (plus one for the nullptr
+ * with the string using its string length (plus one for the null
  * terminator).
  */
 
@@ -1355,7 +1355,7 @@ bool Iff::seek(Tag name, BlockType type)
 
 	while (!atEndOfForm())
 	{
-		if ((getCurrentName() == name) && ((type == BT_either) || ((type == BT_form && isCurrentForm()) ||  (type == BT_chunk && isCurrentChunk()))))
+		if (getCurrentName() == name && (type == BT_either || (type == BT_form && isCurrentForm() ||  (type == BT_chunk && isCurrentChunk()))))
 			return true;
 
 		// advance past the current block
@@ -1555,10 +1555,10 @@ void Iff::read_string(char *string, int maxLength)
 		*string = *source;
 	}
 
-	// step over the nullptr terminator on the input
+	// step over the null terminator on the input
 	++s.used;
 
-	// nullptr terminate the output string
+	// null terminate the output string
 	DEBUG_FATAL(maxLength <= 0, ("destination string too short"));
 	*string = '\0';
 }
@@ -1594,7 +1594,7 @@ char *Iff::read_string(void)
 	for ( ; sourceLength < maxLength && source[sourceLength]; ++sourceLength)
 		;
 
-	// verify that we found the nullptr terminator
+	// verify that we found the null terminator
 	DEBUG_FATAL(sourceLength >= maxLength, ("hit end of chunk before string terminator"));
 
 	// create and copy the string
@@ -1634,10 +1634,10 @@ void Iff::read_string(std::string &string)
 	for ( ; sourceLength < maxLength && source[sourceLength]; ++sourceLength)
 		;
 
-	// verify that we found the nullptr terminator
+	// verify that we found the null terminator
 	DEBUG_FATAL(sourceLength >= maxLength, ("hit end of chunk before string terminator"));
 
-	// account for the nullptr terminator
+	// account for the null terminator
 	++sourceLength;
 
 	s.used += sourceLength;

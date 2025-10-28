@@ -13,8 +13,8 @@
 
 // ======================================================================
 
-#include "sharedFoundation/DataResource.h"
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DataResource.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 
 class Iff;
 class Object;

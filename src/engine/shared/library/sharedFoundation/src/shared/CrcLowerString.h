@@ -12,8 +12,8 @@
 
 // ======================================================================
 
-#include "sharedFoundation/MemoryBlockManagerMacros.h"
-#include "sharedFoundation/PersistentCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
 
 class MemoryBlockManager;
 

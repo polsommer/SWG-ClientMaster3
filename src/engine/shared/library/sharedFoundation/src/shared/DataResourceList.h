@@ -7,20 +7,17 @@
 //
 //========================================================================
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundefined-var-template"
-
 #ifndef _INCLUDED_DataResourceList_H
 #define _INCLUDED_DataResourceList_H
 
 #include "sharedDebug/DataLint.h"
 #include "sharedFile/Iff.h"
-#include "sharedFoundation/ConfigSharedFoundation.h"
-#include "sharedFoundation/CrcString.h"
-#include "sharedFoundation/ExitChain.h"
-#include "sharedFoundation/LessPointerComparator.h"
-#include "sharedFoundation/Tag.h"
-#include "sharedFoundation/TemporaryCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/ConfigSharedFoundation.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/CrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/ExitChain.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/LessPointerComparator.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/TemporaryCrcString.h"
 
 #include <map>
 #include <string>
@@ -85,7 +82,7 @@ private:
 template <typename T>
 inline void DataResourceList<T>::install()
 {
-	if (ms_bindings == nullptr)
+	if (ms_bindings == NULL)
 	{
 		ms_bindings = new CreateDataResourceMap();
 		ms_loaded   = new LoadedDataResourceMap();
@@ -103,7 +100,7 @@ inline void DataResourceList<T>::install()
 template <typename T>
 inline void DataResourceList<T>::remove(void)
 {
-	if (ms_loaded != nullptr)
+	if (ms_loaded != NULL)
 	{
 #ifdef _DEBUG
 		if (!ms_loaded->empty())
@@ -125,13 +122,13 @@ inline void DataResourceList<T>::remove(void)
 #endif // _DEBUG
 
 		delete ms_loaded;
-		ms_loaded = nullptr;
+		ms_loaded = NULL;
 	}
 
-	if (ms_bindings != nullptr)
+	if (ms_bindings != NULL)
 	{
 		delete ms_bindings;
-		ms_bindings = nullptr;
+		ms_bindings = NULL;
 	}
 }	// DataResourceList<T>::remove
 
@@ -147,7 +144,7 @@ template <typename T>
 inline void DataResourceList<T>::registerTemplate(Tag id,
 	CreateDataResourceFunc createFunc)
 {
-	if (ms_bindings == nullptr)
+	if (ms_bindings == NULL)
 		install();
 
 #ifdef _DEBUG
@@ -240,7 +237,7 @@ inline T * DataResourceList<T>::fetch(Tag id)
 
 	typename CreateDataResourceMap::iterator iter = ms_bindings->find(id);
 	if (iter == ms_bindings->end())
-		return nullptr;
+		return NULL;
 
 	return (*(*iter).second)("");
 }	// DataResourceList<T>::fetch(Tag)
@@ -271,11 +268,11 @@ inline const T * DataResourceList<T>::fetch(Iff &source)
 		char buffer[5];
 		ConvertTagToString(id, buffer);
 		DEBUG_WARNING(true, ("DataResourceList::fetch Iff: trying to fetch resource for unknown tag %s!", buffer));
-		return nullptr;
+		return NULL;
 	}
 
 	T *newDataResource = (*(*createIter).second)(source.getFileName());
-	if (newDataResource != nullptr)
+	if (newDataResource != NULL)
 	{
 		// initialize the data resource
 		newDataResource->loadFromIff(source);
@@ -313,11 +310,11 @@ inline const T * DataResourceList<T>::fetch(const CrcString &filename)
 	// load the template
 	Iff iff;
 	if (!iff.open(filename.getString(), true))
-		return nullptr;
+		return NULL;
 
 	// put the template in the loaded list
 	const T * const newDataResource = fetch(iff);
-	if (newDataResource != nullptr)
+	if (newDataResource != NULL)
 	{
 		newDataResource->addReference();
 		ms_loaded->insert(std::make_pair(&newDataResource->getCrcName (), newDataResource));
@@ -340,13 +337,13 @@ inline void DataResourceList<T>::release(const T & dataResource)
 {
 	NOT_NULL(ms_loaded);
 
-	if (ms_loaded != nullptr && dataResource.getReferenceCount() == 0)
+	if (ms_loaded != NULL && dataResource.getReferenceCount() == 0)
 	{
 		typename LoadedDataResourceMap::iterator iter = ms_loaded->find(&dataResource.getCrcName());
 		if (iter != ms_loaded->end())
 		{
 			const T * const temp = (*iter).second;
-			(*iter).second = nullptr;
+			(*iter).second = NULL;
 			ms_loaded->erase(iter);
 			delete temp;
 		}
@@ -368,15 +365,15 @@ inline T * DataResourceList<T>::reload(Iff &source)
 	NOT_NULL(ms_loaded);
 
 	const TemporaryCrcString sourceCrcString (source.getFileName(), true);
-	typename LoadedDataResourceMap::iterator iter = ms_loaded->find((const CrcString*)&sourceCrcString);
+	typename LoadedDataResourceMap::iterator iter = ms_loaded->find(&sourceCrcString);
 	if (iter == ms_loaded->end())
 	{
 		DEBUG_WARNING(true, ("DataResourceList::reload: trying to reload unloaded resource %s!", source.getFileName()));
-		return nullptr;
+		return NULL;
 	}
 
 	T * const dataResource = const_cast<T *>((*iter).second);
-	if (dataResource != nullptr)
+	if (dataResource != NULL)
 	{
 		// initialize the data resource
 		dataResource->loadFromIff(source);
@@ -391,7 +388,7 @@ inline const bool DataResourceList<T>::isLoaded(const std::string & source)
 {
 	NOT_NULL(ms_loaded);
 	const TemporaryCrcString sourceCrcString (source.c_str (), true);
-	typename LoadedDataResourceMap::iterator iter = ms_loaded->find((const CrcString*)&sourceCrcString);
+	typename LoadedDataResourceMap::iterator iter = ms_loaded->find(&sourceCrcString);
 	return (iter != ms_loaded->end());
 }
 
@@ -422,5 +419,5 @@ void DataResourceList<T>::garbageCollect ()
 }
 
 //----------------------------------------------------------------------
-#pragma clang diagnostic pop
+
 #endif	// _INCLUDED_DataResourceList_H

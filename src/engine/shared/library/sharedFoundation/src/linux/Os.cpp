@@ -19,11 +19,6 @@
 
 #include <stack>
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <cstring>
-
 
 // ======================================================================
 
@@ -89,46 +84,52 @@ void Os::remove(void)
 
 void Os::installCommon(void)
 {
-	if (installed) {
-		throw std::runtime_error("Os already installed");
-	}
+	DEBUG_FATAL(installed, ("already installed"));
 
 	ExitChain::add(Os::remove, "Os::remove", 0, true);
+
+#if 0 //TODO For now we won't screw with the priority of the process
+	HANDLE threadHandle = GetCurrentThread();
+	DEBUG_FATAL(!SetThreadPriority(threadHandle, THREAD_PRIORITY_ABOVE_NORMAL), ("Failed to set game thread priority"));
+#endif
 
 	numberOfUpdates = 0;
 	mainThreadId = pthread_self();
 
-	// Set the program name (simplified)
-	strncpy(programName, "TempName", sizeof(programName)-1);
-	programName[sizeof(programName)-1] = '\0';
+	// get the name of the executable
+//Can't find UNIX call for this: DWORD result = GetModuleFileName(NULL, programName, sizeof(programName));
+        strcpy(programName, "TempName");
+        DWORD result = 1;
 
-	// Get the file name without the path
-	shortProgramName = strrchr(programName, '/');
-	if (!shortProgramName) {
-		shortProgramName = programName;
-	}
-	else {
+
+	FATAL(result == 0, ("GetModuleFileName failed"));
+
+	// get the file name without the path
+	shortProgramName = strrchr(programName, '\\');
+	if (shortProgramName)
 		++shortProgramName;
-	}
+	else
+		shortProgramName = programName;
 
-	// Determine the number of processors by parsing /proc/cpuinfo
+	// determine the number of processors by parsing /proc/cpuinfo
 	processorCount = 1;
-	std::ifstream cpuinfo("/proc/cpuinfo");
-	if (cpuinfo.is_open()) {
-		std::string line;
-		while (std::getline(cpuinfo, line)) {
-			if (line.find("processor") == 0) {
-				processorCount++;
+	FILE * f = fopen("/proc/cpuinfo", "r");
+	if (f)
+	{
+		char buffer[512];
+		while (!feof(f))
+		{
+			fgets(buffer, 512, f);
+			if (strncmp(buffer, "processor\t: ", 12)==0)
+			{
+				processorCount = atoi(buffer+12)+1;
 			}
 		}
+		fclose(f);
 	}
-	else {
-		throw std::runtime_error("Failed to open /proc/cpuinfo");
-	}
-
 	isMp = processorCount > 1;
 
-	// Switch into single-precision floating point mode
+	// switch into single-precision floating point mode
 	FloatingPointUnit::install();
 
 	installed = true;
@@ -163,15 +164,15 @@ void Os::abort(void)
 	if (!isMainThread())
 	{
 		threadDied = true;
-		pthread_exit(nullptr);
+		pthread_exit(NULL);
 	}
 
 	if (!shouldReturnFromAbort)
 	{
 		// let the C runtime deal with the abnormal termination
-    int *dummy = nullptr;
-        int forceCrash = *dummy;
-        (void)forceCrash;
+		int * dummy = NULL;
+		int forceCrash = *dummy;
+		UNREF(forceCrash);
 		for (;;)
 		{
 			// One of these should work:
@@ -254,14 +255,14 @@ bool Os::writeFile(const char *fileName, const void *data, int length)     // Le
 	DWORD  written;
 
 	// open the file for writing
-	handle = CreateFile(fileName, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	handle = CreateFile(fileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	// check if it was opened
 	if (handle == INVALID_HANDLE_VALUE)
 		return false;
 
 	// attempt to write the data
-	result = WriteFile(handle, data, static_cast<DWORD>(length), &written, nullptr);
+	result = WriteFile(handle, data, static_cast<DWORD>(length), &written, NULL);
 
 	// make sure the data was written okay
 	if (!result || written != static_cast<DWORD>(length))
@@ -297,6 +298,19 @@ bool Os::update(void)
 
     ++numberOfUpdates;
 
+#if 0
+#ifdef _DEBUG
+
+    if (DEBUG_FLAG_PLATFORM(validateHeap))
+    {
+        PROFILER_START("validate heap");
+        MemoryManager::validate();
+        PROFILER_STOP("validate heap");
+    }
+
+#endif
+#endif
+
     Clock::update();
 
     wasPaused = false;
@@ -307,7 +321,7 @@ bool Os::update(void)
 			WARNING(true, ("Parent process exited!"));
 			// reset the parent process id, so we don't keep spamming warnings for processes that don't exit because of this
 			ppid = getppid();
-			return true;
+			return false;
 		}
 
     return true;
@@ -335,10 +349,8 @@ bool Os::getAbsolutePath(const char *relativePath, char *absolutePath, int absol
 {
 	// realpath sucks and could cause a buffer overrun.  however, it's better than writing it ourselves for now.
 	char *result = realpath(relativePath, absolutePath);
-	if (!result){
-		free(result);
-		return true;
-	}
+	if (!result)
+		return false;
 
 	FATAL(istrlen(absolutePath)+1 > absolutePathBufferSize, ("buffer overrun"));
 	return true;

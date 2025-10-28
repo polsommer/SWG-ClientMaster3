@@ -881,7 +881,7 @@ void MergePolyPoly ( VertexList & polyA, VertexList & polyB, VertexList & outPol
 
 void BuildConvexHull ( Vector const * sortedVerts, int vertCount, VertexList & outPoly )
 {
-	if(sortedVerts == nullptr) return;
+	if(sortedVerts == NULL) return;
 
 	if(vertCount <= 0) return;
 	if(vertCount == 1) { outPoly.push_back(sortedVerts[0]); return; }
@@ -903,17 +903,6 @@ void BuildConvexHull ( Vector const * sortedVerts, int vertCount, VertexList & o
 bool VertexSorterX ( Vector const & A, Vector const & B )
 {
 	return A.x < B.x;
-}
-
-void BuildConvexHull ( VertexList const & verts, VertexList & outPoly )
-{
-	VertexList sortedVerts = verts;
-
-	std::sort(sortedVerts.begin(),sortedVerts.end(),VertexSorterX);
-
-	int count = verts.size();
-
-	BuildConvexHull( &sortedVerts.front(), count, outPoly );
 }
 
 // ----------------------------------------------------------------------
@@ -1104,7 +1093,7 @@ RangeLoop CalcAvoidanceThetas ( Sphere const & S, BaseExtent const * extent );
 
 RangeLoop CalcAvoidanceThetas ( Sphere const & S, SimpleExtent const * extent )
 {
-	if(extent == nullptr) return RangeLoop::empty;
+	if(extent == NULL) return RangeLoop::empty;
 
 	return CalcAvoidanceThetas(S,extent->getShape());
 }
@@ -1113,7 +1102,7 @@ RangeLoop CalcAvoidanceThetas ( Sphere const & S, SimpleExtent const * extent )
 
 RangeLoop CalcAvoidanceThetas ( Sphere const & S, ComponentExtent const * extent )
 {
-	if(extent == nullptr) return RangeLoop::empty;
+	if(extent == NULL) return RangeLoop::empty;
 
 	RangeLoop range = RangeLoop::empty;
 
@@ -1123,7 +1112,7 @@ RangeLoop CalcAvoidanceThetas ( Sphere const & S, ComponentExtent const * extent
 	{
 		BaseExtent const * child = extent->getExtent(i);
 
-		if(child == nullptr) continue;
+		if(child == NULL) continue;
 
 		RangeLoop temp = CalcAvoidanceThetas(S,child);
 
@@ -1137,13 +1126,13 @@ RangeLoop CalcAvoidanceThetas ( Sphere const & S, ComponentExtent const * extent
 
 RangeLoop CalcAvoidanceThetas ( Sphere const & S, DetailExtent const * extent )
 {
-	if(extent == nullptr) return RangeLoop::empty;
+	if(extent == NULL) return RangeLoop::empty;
 
 	int count = extent->getExtentCount();
 
 	BaseExtent const * child = extent->getExtent(count - 1);
 
-	if(child == nullptr) return RangeLoop::empty;
+	if(child == NULL) return RangeLoop::empty;
 
 	return CalcAvoidanceThetas(S,child);
 }
@@ -1152,7 +1141,7 @@ RangeLoop CalcAvoidanceThetas ( Sphere const & S, DetailExtent const * extent )
 
 RangeLoop CalcAvoidanceThetas ( Sphere const & S, BaseExtent const * extent )
 {
-	if(extent == nullptr) return RangeLoop::empty;
+	if(extent == NULL) return RangeLoop::empty;
 
 	ExtentType type = extent->getType();
 
@@ -1176,7 +1165,7 @@ RangeLoop CalcAvoidanceThetas ( Sphere const & S, ExtentVec const & extents )
 	{
 		BaseExtent const * child = extents[i];
 
-		if(child == nullptr) continue;
+		if(child == NULL) continue;
 
 		RangeLoop temp = CalcAvoidanceThetas(S,child);
 
@@ -1367,7 +1356,7 @@ void explodeObstacle ( Sphere const & sphere, Vector const & delta, SimpleExtent
 
 void explodeObstacle ( Sphere const & sphere, Vector const & delta, DetailExtent const * extent, ExtentVec & outList )
 {
-	if(extent == nullptr) return;
+	if(extent == NULL) return;
 
 	int count = extent->getExtentCount();
 
@@ -1376,7 +1365,7 @@ void explodeObstacle ( Sphere const & sphere, Vector const & delta, DetailExtent
 
 void explodeObstacle ( Sphere const & sphere, Vector const & delta, ComponentExtent const * extent, ExtentVec & outList )
 {
-	if(extent == nullptr) return;
+	if(extent == NULL) return;
 
 	int count = extent->getExtentCount();
 
@@ -1388,7 +1377,7 @@ void explodeObstacle ( Sphere const & sphere, Vector const & delta, ComponentExt
 
 void explodeObstacle ( Sphere const & sphere, Vector const & delta, BaseExtent const * extent, ExtentVec & outList )
 {
-	if(extent == nullptr) return;
+	if(extent == NULL) return;
 
 	ExtentType type = extent->getType();
 
@@ -1411,7 +1400,7 @@ void explodeObstacle ( Sphere const & sphere, Vector const & delta, ExtentVec co
 
 bool CalcAvoidancePoint ( Sphere const & sphere, Transform const & sphereTransform_p2w, Vector const & delta, CollisionProperty const * obstacle, Vector & out )
 {
-	if(obstacle == nullptr) return false;
+	if(obstacle == NULL) return false;
 
 	static ExtentVec tempExtents;
 
@@ -1455,12 +1444,12 @@ bool CalcAvoidancePoint ( Sphere const & sphere, Transform const & sphereTransfo
 
 bool CalcAvoidancePoint ( CollisionProperty const * mob, Vector const & delta, CollisionProperty const * obstacle, Vector & out )
 {
-	if(mob == nullptr) return false;
-	if(obstacle == nullptr) return false;
+	if(mob == NULL) return false;
+	if(obstacle == NULL) return false;
 
 	BaseExtent const * mobExtent = mob->getExtent_p();
 
-	if(mobExtent == nullptr) return false;
+	if(mobExtent == NULL) return false;
 
 	Sphere mobSphere = mobExtent->getBoundingSphere();
 
@@ -1471,8 +1460,8 @@ bool CalcAvoidancePoint ( CollisionProperty const * mob, Vector const & delta, C
 
 bool CalcAvoidancePoint ( Object const * mob, Vector const & delta, Object const * obstacle, Vector & out )
 {
-	if(mob == nullptr) return false;
-	if(obstacle == nullptr) return false;
+	if(mob == NULL) return false;
+	if(obstacle == NULL) return false;
 
 	CollisionProperty const * mobCollision = mob->getCollisionProperty();
 	CollisionProperty const * obstacleCollision = obstacle->getCollisionProperty();
@@ -1512,7 +1501,7 @@ bool CalcAvoidancePoints3d ( Sphere const & mob, Vector const & delta, Sphere co
 
 	Vector I,J;
 
-	if(std::abs(K.y) > 0.95)
+	if(abs(K.y) > 0.95)
 	{
 		// line A-B is almost vertical, build orthonormal basis using X axis
 
@@ -1601,8 +1590,8 @@ Vector transformToCell ( CellProperty const * cellA, Vector const & point_A, Cel
 {
 	CellProperty const * worldCell = CellProperty::getWorldCellProperty();
 
-	if(cellA == nullptr) cellA = worldCell;
-	if(cellB == nullptr) cellB = worldCell;
+	if(cellA == NULL) cellA = worldCell;
+	if(cellB == NULL) cellB = worldCell;
 
 	if(cellA == cellB) return point_A;
 
@@ -1627,8 +1616,8 @@ Vector rotateToCell ( CellProperty const * cellA, Vector const & point_A, CellPr
 {
 	CellProperty const * worldCell = CellProperty::getWorldCellProperty();
 
-	if(cellA == nullptr) cellA = worldCell;
-	if(cellB == nullptr) cellB = worldCell;
+	if(cellA == NULL) cellA = worldCell;
+	if(cellB == NULL) cellB = worldCell;
 
 	if(cellA == cellB) return point_A;
 
@@ -1655,8 +1644,8 @@ Transform transformToCell ( CellProperty const * cellA, Transform const & transf
 {
 	CellProperty const * worldCell = CellProperty::getWorldCellProperty();
 
-	if(cellA == nullptr) cellA = worldCell;
-	if(cellB == nullptr) cellB = worldCell;
+	if(cellA == NULL) cellA = worldCell;
+	if(cellB == NULL) cellB = worldCell;
 
 	if(cellA == cellB) return transform_A;
 
@@ -1743,8 +1732,8 @@ MultiShape transformToCell ( CellProperty const * cellA, MultiShape const & shap
 
 bool testPortalVis ( CellProperty const * cellA, Vector const & pointA, CellProperty const * cellB, Vector const & pointB )
 {
-	if(cellA == nullptr) return false;
-	if(cellB == nullptr) return false;
+	if(cellA == NULL) return false;
+	if(cellB == NULL) return false;
 
 	float hitTime = 0.0f;
 
@@ -1753,7 +1742,7 @@ bool testPortalVis ( CellProperty const * cellA, Vector const & pointA, CellProp
 
 	if(cellA == cellB)
 	{
-		return cellA->getDestinationCell(pointA,pointB,hitTime) == nullptr;
+		return cellA->getDestinationCell(pointA,pointB,hitTime) == NULL;
 	}
 
 	// ----------
@@ -1781,14 +1770,14 @@ bool testPortalVis ( CellProperty const * cellA, Vector const & pointA, CellProp
 
 bool epsilonEqual ( Sphere const & A, Sphere const & B, float epsilon )
 {
-	if(std::abs(A.getRadius() - B.getRadius()) > epsilon) return false;
+	if(abs(A.getRadius() - B.getRadius()) > epsilon) return false;
 
 	Vector cA = A.getCenter();
 	Vector cB = B.getCenter();
 
-	if(std::abs(cA.x - cB.x) > epsilon) return false;
-	if(std::abs(cA.y - cB.y) > epsilon) return false;
-	if(std::abs(cA.z - cB.z) > epsilon) return false;
+	if(abs(cA.x - cB.x) > epsilon) return false;
+	if(abs(cA.y - cB.y) > epsilon) return false;
+	if(abs(cA.z - cB.z) > epsilon) return false;
 
 	return true;
 }

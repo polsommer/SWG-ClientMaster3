@@ -23,7 +23,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>Static</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -98,7 +98,6 @@
       <OutputFile>$(OutDir)$(ProjectName)_d.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\..\..\external\3rd\library\directx9\lib;..\..\..\..\..\..\external\3rd\library\dpvs\lib\win32-x86;..\..\..\..\..\..\external\3rd\library\libxml2-2.6.7.win32\lib;..\..\..\..\..\..\external\3rd\library\atlmfc\lib\INTEL;..\..\..\..\..\..\external\3rd\library\miles\lib\win;..\..\..\..\..\..\external\3rd\library\stlport453\lib\win32;..\..\..\..\..\..\external\3rd\library\libMozilla\include\private\lib\release;..\..\..\..\..\..\external\3rd\library\vivoxSharedWrapper\lib;..\..\..\..\..\..\external\3rd\library\videocapture\VideoCapture\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\ImageCapture\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\Smart\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\ZlibUtil\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\SoeUtil\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\PICTools\Lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt;MSVCRTD;libc;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName)_d.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +139,6 @@
       <OutputFile>$(OutDir)$(ProjectName)_o.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\..\..\external\3rd\library\directx9\lib;..\..\..\..\..\..\external\3rd\library\dpvs\lib\win32-x86;..\..\..\..\..\..\external\3rd\library\libxml2-2.6.7.win32\lib;..\..\..\..\..\..\external\3rd\library\atlmfc\lib\INTEL;..\..\..\..\..\..\external\3rd\library\miles\lib\win;..\..\..\..\..\..\external\3rd\library\stlport453\lib\win32;..\..\..\..\..\..\external\3rd\library\libMozilla\include\private\lib\release;..\..\..\..\..\..\external\3rd\library\vivoxSharedWrapper\lib;..\..\..\..\..\..\external\3rd\library\videocapture\VideoCapture\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\ImageCapture\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\Smart\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\ZlibUtil\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\SoeUtil\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\PICTools\Lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt;MSVCRTD;libc;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName)_o.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -182,7 +180,6 @@
       <OutputFile>$(OutDir)$(ProjectName)_r.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\..\..\external\3rd\library\directx9\lib;..\..\..\..\..\..\external\3rd\library\dpvs\lib\win32-x86;..\..\..\..\..\..\external\3rd\library\libxml2-2.6.7.win32\lib;..\..\..\..\..\..\external\3rd\library\atlmfc\lib\INTEL;..\..\..\..\..\..\external\3rd\library\miles\lib\win;..\..\..\..\..\..\external\3rd\library\stlport453\lib\win32;..\..\..\..\..\..\external\3rd\library\libMozilla\include\private\lib\release;..\..\..\..\..\..\external\3rd\library\vivoxSharedWrapper\lib;..\..\..\..\..\..\external\3rd\library\videocapture\VideoCapture\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\ImageCapture\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\Smart\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\ZlibUtil\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\SoeUtil\lib\win32;..\..\..\..\..\..\external\3rd\library\videocapture\PICTools\Lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName)_r.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -205,9 +202,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
     <ClCompile Include="..\..\src\win32\CoolDialogBar.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
-    </ClCompile>
-    <ClCompile Include="..\..\src\win32\ContentCreationAssistantDialog.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
     <ClCompile Include="..\..\src\win32\DialogAddSkeleton.cpp">
@@ -262,7 +256,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
       <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</TreatWarningAsError>
     </ClCompile>
-    <ClCompile Include="..\..\src\win32\ViewerWinMain.cpp" />
     <ClCompile Include="..\..\src\win32\ViewerDoc.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">MaxSpeed</Optimization>
     </ClCompile>
@@ -280,8 +273,6 @@
     <ClInclude Include="..\..\src\win32\ChildFrm.h" />
     <ClInclude Include="..\..\src\win32\ClientBakedWearableWriter.h" />
     <ClInclude Include="..\..\src\win32\CoolDialogBar.h" />
-    <ClInclude Include="..\..\src\win32\ContentCreationAssistantDialog.h" />
-    <ClInclude Include="..\..\src\win32\ContentCreationPreset.h" />
     <ClInclude Include="..\..\src\win32\DialogAddSkeleton.h" />
     <ClInclude Include="..\..\src\win32\DialogFind.h" />
     <ClInclude Include="..\..\src\win32\DialogMapAnimation.h" />
@@ -364,6 +355,10 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\..\external\ours\library\unicode\build\win32\unicode.vcxproj">
       <Project>{b97963ef-49e4-477e-85ff-e7fee7c626d7}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\..\game\server\library\swgServerNetworkMessages\build\win32\swgServerNetworkMessages.vcxproj">
+      <Project>{950e9cf2-cd44-476c-826a-bb7869241f5b}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\..\game\shared\library\swgSharedNetworkMessages\build\win32\swgSharedNetworkMessages.vcxproj">

@@ -12,8 +12,8 @@
 
 // ======================================================================
 
-#include "sharedFoundation/PersistentCrcString.h"
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "sharedObject/AppearanceTemplate.h"
 #include "sharedMath/PackedArgb.h"
 #include "sharedMath/PackedRgb.h"
@@ -95,9 +95,9 @@ private:
 		float m_haloScale;
 		bool m_infiniteDistance;
 
-	//private:
+	private:
 
-	//	DistantAppearanceData operator=(DistantAppearanceData const & rhs);
+		DistantAppearanceData operator=(DistantAppearanceData const & rhs);
 	};
 
 	struct CelestialData
@@ -108,9 +108,9 @@ private:
 		float m_frontSize;
 		Vector m_direction_w;
 
-	//private:
+	private:
 
-	//	CelestialData operator=(CelestialData const & rhs);
+		CelestialData operator=(CelestialData const & rhs);
 	};
 
 private:
@@ -128,7 +128,7 @@ private:
 	
 	VectorArgb m_ambientColor;
 
-	typedef std::vector<LightData> LightDataList;
+	typedef stdvector<LightData>::fwd LightDataList;
 	LightDataList * const m_lightDataList;
 
 	PersistentCrcString m_environmentTextureName;
@@ -146,10 +146,10 @@ private:
 	bool m_skyBoxCubeMap;
 	PersistentCrcString m_skyBoxTextureNameMask;
 
-	typedef std::vector<CelestialData> CelestialDataList;
+	typedef stdvector<CelestialData>::fwd CelestialDataList;
 	CelestialDataList * const m_celestialDataList;
 
-	typedef std::vector<DistantAppearanceData> DistantAppearanceDataList;
+	typedef stdvector<DistantAppearanceData>::fwd DistantAppearanceDataList;
 	DistantAppearanceDataList * const m_distantAppearanceDataList;
 
 	float m_mapWidthInMeters;

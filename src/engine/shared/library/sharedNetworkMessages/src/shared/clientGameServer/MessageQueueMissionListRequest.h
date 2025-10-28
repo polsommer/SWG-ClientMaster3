@@ -7,8 +7,8 @@
 
 //-----------------------------------------------------------------------
 
-#include "sharedFoundation/MessageQueue.h"
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 class MemoryBlockManager;

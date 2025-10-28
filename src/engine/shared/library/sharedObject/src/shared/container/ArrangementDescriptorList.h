@@ -31,7 +31,7 @@ public:
 
 private:
 
-	typedef std::map<const CrcLowerString*, ArrangementDescriptor*, LessPointerComparator>  DescriptorMap;
+	typedef stdmap<const CrcLowerString*, ArrangementDescriptor*, LessPointerComparator>::fwd  DescriptorMap;
 
 private:
 

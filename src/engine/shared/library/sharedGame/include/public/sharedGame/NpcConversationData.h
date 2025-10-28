@@ -1,2 +1,2 @@
-#include "../../src/shared/core/NpcConversationData.h"
+#include "../../../src/shared/core/NpcConversationData.h"
 

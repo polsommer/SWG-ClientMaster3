@@ -9,8 +9,8 @@
 #ifndef _INCLUDED_TemplateDefinitionFile_H
 #define _INCLUDED_TemplateDefinitionFile_H
 
-#include "pcre.h"
-#include "sharedFoundation/Tag.h"
+#include "pcre/pcre.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 #include "TemplateData.h"
 
 class File;
@@ -24,7 +24,7 @@ public:
 
 	void setTemplateFilename(const std::string &name);
 	void setBaseFilename(const std::string &name);
-
+	
 	bool isWriteForCompiler(void) const;
 	void setWriteForCompiler(bool flag);
 
@@ -76,14 +76,14 @@ private:
 inline void TemplateDefinitionFile::setTemplateFilename(const std::string &name)
 {
 	m_templateFilename = name;
-	m_templateName = EnumLocationTypes[m_templateLocation] +
+	m_templateName = EnumLocationTypes[m_templateLocation] + 
 		filenameLowerToUpper(name);
 }
 
 inline void TemplateDefinitionFile::setBaseFilename(const std::string &name)
 {
 	m_baseFilename = name;
-	m_baseName = EnumLocationTypes[m_templateLocation] +
+	m_baseName = EnumLocationTypes[m_templateLocation] + 
 		filenameLowerToUpper(name);
 }
 
@@ -111,7 +111,7 @@ inline TemplateData *TemplateDefinitionFile::getTemplateData(int version) const
 {
 	std::map<int, TemplateData *>::const_iterator iter = m_templateMap.find(version);
 	if (iter == m_templateMap.end())
-		return nullptr;
+		return NULL;
 	return (*iter).second;
 }
 

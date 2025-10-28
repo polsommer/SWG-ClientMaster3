@@ -4,7 +4,7 @@
 #include "UIString.h"
 #include "UISoundCanvas.h"
 
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 
 class SimpleSoundCanvas : public UISoundCanvas
 {

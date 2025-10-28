@@ -11,7 +11,7 @@
 
 // Efficiently handle memory mangagement for rapidly allocated and deleted objects.
 
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 #include <hash_set>
 
 class UiMemoryBlockManager

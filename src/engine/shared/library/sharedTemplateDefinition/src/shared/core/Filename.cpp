@@ -17,15 +17,16 @@
 #include <libgen.h>
 #endif
 
-#include <climits>
+const char WIN32_PATH_SEPARATOR = '\\';
+const char LINUX_PATH_SEPARATOR = '/';
 
-#if defined(WIN32)
-const char PATH_SEPARATOR = '\\';
-#elif defined(linux)
-const char PATH_SEPARATOR = '/';
-#else
-#error unknown OS
-#endif
+//#if defined(WIN32)
+//const char PATH_SEPARATOR = WIN32_PATH_SEPARATOR;
+//#elif defined(linux)
+const char PATH_SEPARATOR = LINUX_PATH_SEPARATOR;
+//#else
+//#error unknown OS
+//#endif
 
 
 /**
@@ -36,8 +37,8 @@ const char PATH_SEPARATOR = '/';
  */
 void Filename::setPath(const char *path)
 {
-	if (path == nullptr || *path == '\0')
-		m_path.clear();
+	if (path == NULL || *path == '\0')
+		m_path = "";
 	else
 	{
 #ifdef WIN32
@@ -66,8 +67,8 @@ void Filename::setPath(const char *path)
  */
 void Filename::setName(const char *name)
 {
-	if (name == nullptr || *name == '\0')
-		m_name.clear();
+	if (name == NULL || *name == '\0')
+		m_name = "";
 	else
 	{
 #ifdef WIN32
@@ -82,7 +83,7 @@ void Filename::setName(const char *name)
 		const char *dot = strrchr(localname.c_str(), '.');
 		const char *firstSeparator = strchr(localname.c_str(), PATH_SEPARATOR);
 		const char *lastSeparator = strrchr(localname.c_str(), PATH_SEPARATOR);
-		if (firstSeparator != nullptr)
+		if (firstSeparator != NULL)
 		{
 			// name has a path
 			if (firstSeparator == localname)
@@ -97,11 +98,11 @@ void Filename::setName(const char *name)
 					localname.c_str() + 1);
 			}
 		}
-		if (dot != nullptr && (lastSeparator == nullptr || dot > lastSeparator))
+		if (dot != NULL && (lastSeparator == NULL || dot > lastSeparator))
 		{
 			// name has an extension
 			setExtension(dot);
-			if (lastSeparator == nullptr)
+			if (lastSeparator == NULL)
 				m_name = std::string(localname.c_str(), dot - localname.c_str());
 			else
 				m_name = std::string(lastSeparator + 1, dot - (lastSeparator + 1));
@@ -109,7 +110,7 @@ void Filename::setName(const char *name)
 		else
 		{
 			// name doesn't have an extension
-			if (lastSeparator == nullptr)
+			if (lastSeparator == NULL)
 				m_name = localname;
 			else
 				m_name = std::string(lastSeparator + 1);
@@ -126,8 +127,8 @@ void Filename::setName(const char *name)
  */
 void Filename::setExtension(const char *extension)
 {
-	if (extension == nullptr || *extension == '\0')
-		m_extension.clear();
+	if (extension == NULL || *extension == '\0')
+		m_extension = "";
 	else
 	{
 		if (*extension == '.')
@@ -250,10 +251,10 @@ static const std::string PATH_SEPARATOR_STRING(PATH_SEPARATOR_BUFF);
  */
 void Filename::setDrive(const char *drive)
 {
-	if (drive != nullptr && isalpha(*drive))
+	if (drive != NULL && isalpha(*drive))
 		m_drive = std::string(drive, 1) + ":";
 	else
-		m_drive.clear();
+		m_drive = "";
 
 	makeFullPath();
 }	// Filename::setDrive
@@ -270,7 +271,7 @@ std::string path;
 
 #if defined(WIN32)
 	char *pathBuf;
-	DWORD bufsize = GetFullPathName(getFullFilename().c_str(), 0, nullptr, nullptr);
+	DWORD bufsize = GetFullPathName(getFullFilename().c_str(), 0, NULL, NULL);
 	if (bufsize != 0)
 	{
 		pathBuf = new char[bufsize + 1];
@@ -282,7 +283,7 @@ std::string path;
 	}
 #elif defined(linux)
 	char pathBuf[PATH_MAX];
-	if (getcwd(pathBuf, PATH_MAX) != nullptr)
+	if (getcwd(pathBuf, PATH_MAX) != NULL)
 	{
 		strcat(pathBuf, "/");
 		strcat(pathBuf, getFullFilename().c_str());
@@ -303,19 +304,19 @@ void Filename::verifyAndCreatePath(void) const
 #if defined(WIN32)
 	if (WindowsUnicode)
 	{
-		char *buffer = nullptr;
+		char *buffer = NULL;
 		DWORD buflen;
 		// get our current path
-		buflen = GetFullPathName(".", 0, buffer, nullptr);
+		buflen = GetFullPathName(".", 0, buffer, NULL);
 		buffer = new char[buflen + 1];
-		buflen = GetFullPathName(".", buflen + 1, buffer, nullptr);
+		buflen = GetFullPathName(".", buflen + 1, buffer, NULL);
 		Unicode::String srcPath = Unicode::narrowToWide(buffer);
 		delete[] buffer;
 		// get the destination path
 		std::string correctPath(getDrive() + getPath());
-		buflen = GetFullPathName(correctPath.c_str(), 0, buffer, nullptr);
+		buflen = GetFullPathName(correctPath.c_str(), 0, buffer, NULL);
 		buffer = new char[buflen + 1];
-		buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, nullptr);
+		buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, NULL);
 		Unicode::String destPath = Unicode::narrowToWide(buffer);
 		delete[] buffer;
 
@@ -323,18 +324,18 @@ void Filename::verifyAndCreatePath(void) const
 		splitPath(destPath, splitDestPath,
 			static_cast<Unicode::unicode_char_t>(WIN32_PATH_SEPARATOR));
 
-		Unicode::String prefix = L"\\\\?\\";
+      Unicode::String prefix = L"\\\\?\\";
 		destPath = prefix + splitDestPath[0];
 		
 		for (size_t i = 1; i < splitDestPath.size(); ++i)
 		{
 			destPath += WIN32_PATH_SEPARATOR;
 			destPath += splitDestPath[i];
-			if (SetCurrentDirectoryW((LPCWSTR)destPath.c_str()) == 0)
+			if (SetCurrentDirectoryW(destPath.c_str()) == 0)
 			{
-				if (CreateDirectoryW((LPCWSTR)destPath.c_str(), nullptr) == 0)
+				if (CreateDirectoryW(destPath.c_str(), NULL) == 0)
 					return;
-				if (SetCurrentDirectoryW((LPCWSTR)destPath.c_str()) == 0)
+				if (SetCurrentDirectoryW(destPath.c_str()) == 0)
 					return;
 			}
 		}
@@ -344,19 +345,19 @@ void Filename::verifyAndCreatePath(void) const
 	}
 	else
 	{
-		char *buffer = nullptr;
+		char *buffer = NULL;
 		DWORD buflen;
 		// get our current path
-		buflen = GetFullPathName(".", 0, buffer, nullptr);
+		buflen = GetFullPathName(".", 0, buffer, NULL);
 		buffer = new char[buflen + 1];
-		buflen = GetFullPathName(".", buflen + 1, buffer, nullptr);
+		buflen = GetFullPathName(".", buflen + 1, buffer, NULL);
 		std::string srcPath = buffer;
 		delete[] buffer;
 		// get the destination path
 		std::string correctPath(getDrive() + getPath());
-		buflen = GetFullPathName(correctPath.c_str(), 0, buffer, nullptr);
+		buflen = GetFullPathName(correctPath.c_str(), 0, buffer, NULL);
 		buffer = new char[buflen + 1];
-		buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, nullptr);
+		buflen = GetFullPathName(correctPath.c_str(), buflen + 1, buffer, NULL);
 		std::string destPath = buffer;
 		delete[] buffer;
 
@@ -375,7 +376,7 @@ void Filename::verifyAndCreatePath(void) const
 			destPath += splitDestPath[i];
 			if (SetCurrentDirectory(destPath.c_str()) == 0)
 			{
-				if (CreateDirectory(destPath.c_str(), nullptr) == 0)
+				if (CreateDirectory(destPath.c_str(), NULL) == 0)
 					return;
 				if (SetCurrentDirectory(destPath.c_str()) == 0)
 					return;

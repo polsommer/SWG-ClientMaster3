@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "sharedDatabaseInterface/DbBindableString.h"
-#include "sharedFoundation/BitArray.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/BitArray.h"
 
 // ======================================================================
 

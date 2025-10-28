@@ -11,8 +11,8 @@
 
 //-----------------------------------------------------------------------
 
-#include "sharedFoundation/MessageQueue.h"
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 #include "sharedNetworkMessages/ObjectMenuRequestDataArchive.h"
 #include "Unicode.h"
 #include "unicodeArchive/UnicodeArchive.h"
@@ -36,10 +36,10 @@ class MessageQueueObjectMenuRequest : public MessageQueue::Data
 
 public:
 	
-	           MessageQueueObjectMenuRequest (const NetworkId & id, const NetworkId & requestorId, const std::vector<ObjectMenuRequestData> & data, uint8 sequence);
+	           MessageQueueObjectMenuRequest (const NetworkId & id, const NetworkId & requestorId, const stdvector<ObjectMenuRequestData>::fwd & data, uint8 sequence);
 	virtual   ~MessageQueueObjectMenuRequest ();
 
-	const std::vector<ObjectMenuRequestData> &  getData         () const;
+	const stdvector<ObjectMenuRequestData>::fwd &  getData         () const;
 	const NetworkId &                              getRequestorId  () const;
 	const NetworkId &                              getTargetId     () const;
 
@@ -47,7 +47,7 @@ public:
 
 private:
 
-	std::vector<ObjectMenuRequestData>  m_data;
+	stdvector<ObjectMenuRequestData>::fwd  m_data;
 	NetworkId                              m_requestorId;
 	NetworkId                              m_targetId;
 
@@ -58,7 +58,7 @@ private:
 
 //----------------------------------------------------------------------
 
-inline const std::vector<ObjectMenuRequestData> &  MessageQueueObjectMenuRequest::getData () const
+inline const stdvector<ObjectMenuRequestData>::fwd &  MessageQueueObjectMenuRequest::getData () const
 {
 	return m_data;
 }

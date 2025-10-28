@@ -22,9 +22,9 @@ class Command;
 class CommandTable // static class
 {
 public:
-	typedef std::map<uint32, Command> CommandMap;
+	typedef stdmap<uint32, Command>::fwd CommandMap;
 
-	static void                loadCommandTables  (std::vector<std::string> const &commandTableFilenames);
+	static void                loadCommandTables  (stdvector<std::string>::fwd const &commandTableFilenames);
 	static void                addCppFunction     (std::string const &funcName, CommandCppFunc::Type func);
 	static Command const &     getCommand         (uint32 commandHash);
 	static CommandMap const &  getCommandMap      ();

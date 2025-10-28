@@ -30,7 +30,6 @@ namespace ConfigSharedNetworkNamespace
 	int   outgoingBufferSize;
 	int   clockSyncDelay;
 	int   maxConnections;
-	int	  maxConnectionsPerIP;
 	int   maxRawPacketSize;
 	int   maxInstandingPackets;
 	int   maxOutstandingBytes;
@@ -86,19 +85,13 @@ namespace ConfigSharedNetworkNamespace
 	int   maxTCPRetries;
 
 	bool  logSendingTooMuchData;
-	bool  useAdaptiveDispatch;
-	float adaptiveDispatchSmoothingFactor;
-	float adaptiveDispatchHighWatermarkMultiplier;
-	float adaptiveDispatchLowWatermarkMultiplier;
-	int   adaptiveDispatchMinTimeMilliseconds;
-	int   adaptiveDispatchMaxTimeMilliseconds;
 }
 
 using namespace ConfigSharedNetworkNamespace;
 
 #define KEY_INT(a,b)    (a = ConfigFile::getKeyInt("SharedNetwork", #a, b))
 #define KEY_BOOL(a,b)   (a = ConfigFile::getKeyBool("SharedNetwork", #a, b))
-#define KEY_REAL(a,b)   (a = ConfigFile::getKeyFloat("SharedNetwork", #a, b))
+#define KEY_REAL(a,b)   (a = ConfigFile::getKeyReal("SharedNetwork", #a, b))
 #define KEY_STRING(a,b) (a = ConfigFile::getKeyString("SharedNetwork", #a, b))
 
 // ======================================================================
@@ -513,86 +506,28 @@ bool  ConfigSharedNetwork::getLogSendingTooMuchData()
 	return 	logSendingTooMuchData;
 }
 
-int ConfigSharedNetwork::getMaxConnectionsPerIP()
-{
-	return maxConnectionsPerIP;
-}
-
-//-----------------------------------------------------------------------
-
-bool ConfigSharedNetwork::getUseAdaptiveDispatch()
-{
-	return useAdaptiveDispatch;
-}
-
-//-----------------------------------------------------------------------
-
-float ConfigSharedNetwork::getAdaptiveDispatchSmoothingFactor()
-{
-	return adaptiveDispatchSmoothingFactor;
-}
-
-//-----------------------------------------------------------------------
-
-float ConfigSharedNetwork::getAdaptiveDispatchHighWatermarkMultiplier()
-{
-	return adaptiveDispatchHighWatermarkMultiplier;
-}
-
-//-----------------------------------------------------------------------
-
-float ConfigSharedNetwork::getAdaptiveDispatchLowWatermarkMultiplier()
-{
-	return adaptiveDispatchLowWatermarkMultiplier;
-}
-
-//-----------------------------------------------------------------------
-
-int ConfigSharedNetwork::getAdaptiveDispatchMinTimeMilliseconds()
-{
-	return adaptiveDispatchMinTimeMilliseconds;
-}
-
-//-----------------------------------------------------------------------
-
-int ConfigSharedNetwork::getAdaptiveDispatchMaxTimeMilliseconds()
-{
-	return adaptiveDispatchMaxTimeMilliseconds;
-}
-
 //-----------------------------------------------------------------------
 
 void ConfigSharedNetwork::install(int newClockSyncDelay)
 {
 	DEBUG_FATAL(s_installed, ("ConfigSharedNetwork already installed."));
 
-	KEY_BOOL  (logAllNetworkTraffic, true);
-	KEY_INT   (crcBytes, 4);
-	if (crcBytes > 4)
-	{
-		WARNING(true, ("SharedNetwork.crcBytes of %d exceeds the 32-bit maximum.  Clamping to 4.", crcBytes));
-		crcBytes = 4;
-	}
-	else if (crcBytes > 0 && crcBytes < 4)
-	{
-		WARNING(true, ("SharedNetwork.crcBytes of %d is below the 32-bit requirement.  Upgrading to 4.", crcBytes));
-		crcBytes = 4;
-	}
+	KEY_BOOL  (logAllNetworkTraffic, false);
+	KEY_INT   (crcBytes, 2);
 	KEY_INT   (hashTableSize, 100);
-	KEY_INT   (incomingBufferSize, 8 * 1024 * 1024);
-	KEY_INT   (outgoingBufferSize, 8 * 1024 * 1024);
-	KEY_INT   (maxConnections, 1000);
-	KEY_INT   (maxConnectionsPerIP, 0); // unlimited
-	KEY_INT   (maxRawPacketSize, 496); 
-	KEY_INT   (maxInstandingPackets, 400);
-	KEY_INT   (maxOutstandingBytes, 200 * 1024);
-	KEY_INT   (maxOutstandingPackets, 400);
+	KEY_INT   (incomingBufferSize, 4 * 1024 * 2024);
+	KEY_INT   (outgoingBufferSize, 4 * 1024 * 2024);
+	KEY_INT   (maxConnections, 2000);
+	KEY_INT   (maxRawPacketSize, 596); 
+	KEY_INT   (maxInstandingPackets, 800);
+	KEY_INT   (maxOutstandingBytes, 200 * 2024);
+	KEY_INT   (maxOutstandingPackets, 800);
 	KEY_BOOL  (processOnSend, false);
 	KEY_BOOL  (processIcmpErrors, true);
 	KEY_INT   (fragmentSize, 496);
-	KEY_INT   (pooledPacketMax, 1024);
+	KEY_INT   (pooledPacketMax, 2024);
 	KEY_INT   (pooledPacketSize, -1);
-	KEY_INT   (packetHistoryMax, 100);
+	KEY_INT   (packetHistoryMax, 200);
 	KEY_INT   (oldestUnacknowledgedTimeout, 90000);
 	KEY_INT   (overflowLimit, 0);
 	KEY_INT   (reportStatisticsInterval, 60000);
@@ -621,12 +556,12 @@ void ConfigSharedNetwork::install(int newClockSyncDelay)
 	KEY_BOOL  (useTcp, true);
 	KEY_INT   (tcpMinimumFrame, 1000);
 	KEY_BOOL  (reportUdpDisconnects, false);
-	KEY_BOOL  (reportTcpDisconnects, false);
+	KEY_BOOL  (reportTcpDisconnects, true);
 	KEY_BOOL  (logConnectionConstructionDestruction, false);
 	KEY_BOOL  (logConnectionOpenedClosed, false);
 	KEY_BOOL  (logConnectionDeferredMessagesWarning, false);
 	KEY_INT   (logConnectionDeferredMessagesWarningInterval, 1000);
-	KEY_INT   (maxTCPRetries,1);
+	KEY_INT   (maxTCPRetries,10);
 	KEY_BOOL  (logSendingTooMuchData, true);
 	{
 		int i = 0;
@@ -645,12 +580,6 @@ void ConfigSharedNetwork::install(int newClockSyncDelay)
 	KEY_BOOL  (networkHandlerDispatchThrottle, false);
 	KEY_INT   (networkHandlerDispatchThrottleTimeMilliseconds, 100);
 	KEY_INT   (networkHandlerDispatchQueueSize, 1024);
-	KEY_BOOL  (useAdaptiveDispatch, true);
-	KEY_REAL  (adaptiveDispatchSmoothingFactor, 0.2f);
-	KEY_REAL  (adaptiveDispatchHighWatermarkMultiplier, 1.5f);
-	KEY_REAL  (adaptiveDispatchLowWatermarkMultiplier, 0.5f);
-	KEY_INT   (adaptiveDispatchMinTimeMilliseconds, 25);
-	KEY_INT   (adaptiveDispatchMaxTimeMilliseconds, 250);
 
 	//-- Do not let a config file override this setting.
 	//   It is critical that it be set properly in all client

@@ -33,7 +33,7 @@ namespace DB
 			int m_fetchCount;
 		};
 
-		typedef std::map<std::string, QueryData> QueryDataMapType;
+		typedef stdmap<std::string, QueryData>::fwd QueryDataMapType;
 		QueryDataMapType *m_queryDataMap;
 	};
 	

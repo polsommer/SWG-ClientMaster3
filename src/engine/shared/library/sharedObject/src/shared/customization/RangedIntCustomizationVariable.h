@@ -46,6 +46,10 @@ protected:
 
 private:
 
+#if 0	
+	bool                 loadFromString_0002(const std::string &data);
+#endif
+	
 	// disabled
 	RangedIntCustomizationVariable(const RangedIntCustomizationVariable&);
 	RangedIntCustomizationVariable &operator =(const RangedIntCustomizationVariable&);

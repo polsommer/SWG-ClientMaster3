@@ -11,7 +11,7 @@
 #ifndef INCLUDED_MessageQueueCraftRequestSession_H
 #define INCLUDED_MessageQueueCraftRequestSession_H
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
 class MemoryBlockManager;

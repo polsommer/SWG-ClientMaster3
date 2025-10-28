@@ -21,7 +21,7 @@ class MessageQueueDraftSlotsData
 {
 public:
 	typedef MessageQueueDraftSlotsDataOption Option;
-	typedef std::vector<Option>           OptionVector;
+	typedef stdvector<Option>::fwd           OptionVector;
 	
 	StringId                   name;
 	bool                       optional;

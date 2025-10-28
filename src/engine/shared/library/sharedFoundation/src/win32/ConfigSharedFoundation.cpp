@@ -8,292 +8,304 @@
 
 #include "sharedFoundation/FirstSharedFoundation.h"
 #include "sharedFoundation/ConfigSharedFoundation.h"
-#include "sharedFoundation/ConfigFile.h"
-#include "sharedFoundation/Production.h"
-#include "sharedFoundation/Logger.h"  // Assume Logger is a logging utility
 
-#include <optional>
+#include "sharedFoundation/ConfigFile.h"
+
+// ======================================================================
+
+#define KEY_INT(a,b)     (ms_ ## a = ConfigFile::getKeyInt("SharedFoundation", #a, b))
+#define KEY_BOOL(a,b)    (ms_ ## a = ConfigFile::getKeyBool("SharedFoundation", #a, b))
+#define KEY_FLOAT(a,b)   (ms_ ## a = ConfigFile::getKeyFloat("SharedFoundation", #a, b))
+#define KEY_STRING(a,b)  (ms_ ## a = ConfigFile::getKeyString("SharedFoundation", #a, b))
+
+// ======================================================================
+
+const int c_defaultFatalCallStackDepth   = 32;
+const int c_defaultWarningCallStackDepth = -1;
 
 // ======================================================================
 
 namespace ConfigSharedFoundationNamespace
 {
-	std::optional<bool>        ms_noExceptionHandling;
+	bool        ms_noExceptionHandling;
 
-	std::optional<bool>        ms_fpuExceptionPrecision;
-	std::optional<bool>        ms_fpuExceptionUnderflow;
-	std::optional<bool>        ms_fpuExceptionOverflow;
-	std::optional<bool>        ms_fpuExceptionZeroDivide;
-	std::optional<bool>        ms_fpuExceptionDenormal;
-	std::optional<bool>        ms_fpuExceptionInvalid;
+	bool        ms_fpuExceptionPrecision;
+	bool        ms_fpuExceptionUnderflow;
+	bool        ms_fpuExceptionOverflow;
+	bool        ms_fpuExceptionZeroDivide;
+	bool        ms_fpuExceptionDenormal;
+	bool        ms_fpuExceptionInvalid;
 
-	std::optional<bool>        ms_demoMode;
+	bool        ms_demoMode;
 
-	std::optional<real>        ms_frameRateLimit;
-	std::optional<real>        ms_minFrameRate;
+	real        ms_frameRateLimit;
+	real        ms_minFrameRate;
 
-	std::optional<bool>        ms_useRemoteDebug;
-	std::optional<int>         ms_defaultRemoteDebugPort;
+	bool        ms_useRemoteDebug;
+	int         ms_defaultRemoteDebugPort;
 
-	std::optional<bool>        ms_profilerExpandAllBranches;
+	bool        ms_profilerExpandAllBranches;
 
-	std::optional<bool>        ms_memoryManagerReportAllocations;
-	std::optional<bool>        ms_memoryManagerReportOnOutOfMemory;
+	bool        ms_memoryManagerReportAllocations;
+	bool        ms_memoryManagerReportOnOutOfMemory;
 
-	std::optional<bool>        ms_useMemoryBlockManager;
-	std::optional<bool>        ms_memoryBlockManagerDebugDumpOnRemove;
+	bool        ms_useMemoryBlockManager;
+	bool        ms_memoryBlockManagerDebugDumpOnRemove;
 
-	std::optional<int>         ms_fatalCallStackDepth;
-	std::optional<int>         ms_warningCallStackDepth;
-	std::optional<bool>        ms_lookUpCallStackNames;
+	int         ms_fatalCallStackDepth;
+	int         ms_warningCallStackDepth;
+	bool        ms_lookUpCallStackNames;
 
-	std::optional<int>         ms_processPriority;
+	int         ms_processPriority;
 
-	std::optional<bool>        ms_verboseHardwareLogging;
-	std::optional<bool>        ms_verboseWarnings;
+	bool        ms_verboseHardwareLogging;
+	bool        ms_verboseWarnings;
 
-	std::optional<bool>        ms_causeAccessViolation;
+	bool        ms_causeAccessViolation;
 
-	std::optional<float>       ms_debugReportLongFrameTime;
+	float       ms_debugReportLongFrameTime;
+
+	bool		ms_developmentMode;
 }
 
 using namespace ConfigSharedFoundationNamespace;
 
 // ======================================================================
+// Determine the Platform-specific configuration information
+//
+// Remarks:
+//
+//   This routine inspects the ConfigFile class to set some variables for rapid access
+//   by the rest of the engine.
 
-const int c_defaultFatalCallStackDepth   = 32;
-const int c_defaultWarningCallStackDepth = PRODUCTION ? -1 : 8;
-
-// ======================================================================
-
-#define LOAD_KEY_BOOL(name, defaultValue) \
-    ms_##name = ConfigFile::getKeyBool("SharedFoundation", #name, defaultValue)
-
-#define LOAD_KEY_INT(name, defaultValue) \
-    ms_##name = ConfigFile::getKeyInt("SharedFoundation", #name, defaultValue)
-
-#define LOAD_KEY_FLOAT(name, defaultValue) \
-    ms_##name = ConfigFile::getKeyFloat("SharedFoundation", #name, defaultValue)
-
-#define LOAD_KEY_STRING(name, defaultValue) \
-    ms_##name = ConfigFile::getKeyString("SharedFoundation", #name, defaultValue)
-
-// ======================================================================
-
-void ConfigSharedFoundation::install(const Defaults &defaults)
+void ConfigSharedFoundation::install (const Defaults &defaults)
 {
-    try
-    {
-        LOAD_KEY_BOOL(noExceptionHandling,             false);
+	KEY_BOOL(noExceptionHandling,             false);
 
-        LOAD_KEY_BOOL(fpuExceptionPrecision,           false);
-        LOAD_KEY_BOOL(fpuExceptionUnderflow,           false);
-        LOAD_KEY_BOOL(fpuExceptionOverflow,            false);
-        LOAD_KEY_BOOL(fpuExceptionZeroDivide,          false);
-        LOAD_KEY_BOOL(fpuExceptionDenormal,            false);
-        LOAD_KEY_BOOL(fpuExceptionInvalid,             false);
+	KEY_BOOL(fpuExceptionPrecision,           false);
+	KEY_BOOL(fpuExceptionUnderflow,           false);
+	KEY_BOOL(fpuExceptionOverflow,            false);
+	KEY_BOOL(fpuExceptionZeroDivide,          false);
+	KEY_BOOL(fpuExceptionDenormal,            false);
+	KEY_BOOL(fpuExceptionInvalid,             false);
 
-        LOAD_KEY_BOOL(demoMode,                        defaults.demoMode);
+	KEY_BOOL(demoMode,                        defaults.demoMode);
 
-    #if defined (WIN32) && PRODUCTION == 1
-        // In production builds, force our frame rate limit to be the application-defined limit
-        ms_frameRateLimit = defaults.frameRateLimit;
-    #else
-        LOAD_KEY_FLOAT(frameRateLimit,                 defaults.frameRateLimit);
-    #endif
+	KEY_FLOAT(frameRateLimit,				  defaults.frameRateLimit);
+	KEY_FLOAT(minFrameRate,					  defaults.minFrameRate);
 
-        LOAD_KEY_FLOAT(minFrameRate,                   1.0f);
+	KEY_BOOL(useRemoteDebug,                  false);
+	KEY_INT(defaultRemoteDebugPort,           4445);
 
-        LOAD_KEY_BOOL(useRemoteDebug,                  false);
-        LOAD_KEY_INT(defaultRemoteDebugPort,           4445);
+	KEY_BOOL(profilerExpandAllBranches,       false);
+	KEY_BOOL(memoryManagerReportAllocations, true);
+	KEY_BOOL(memoryManagerReportOnOutOfMemory, true);
+	KEY_BOOL(useMemoryBlockManager, true);
+	KEY_BOOL(memoryBlockManagerDebugDumpOnRemove, false);
 
-        LOAD_KEY_BOOL(profilerExpandAllBranches,       false);
-        LOAD_KEY_BOOL(memoryManagerReportAllocations,  false);
-        LOAD_KEY_BOOL(memoryManagerReportOnOutOfMemory,false);
-        LOAD_KEY_BOOL(useMemoryBlockManager,           false);
-        LOAD_KEY_BOOL(memoryBlockManagerDebugDumpOnRemove, false);
+	KEY_INT(fatalCallStackDepth,              c_defaultFatalCallStackDepth);
+	KEY_INT(warningCallStackDepth,            c_defaultWarningCallStackDepth);
+	KEY_BOOL(lookUpCallStackNames,            true);
 
-        LOAD_KEY_INT(fatalCallStackDepth,              c_defaultFatalCallStackDepth);
-        LOAD_KEY_INT(warningCallStackDepth,            PRODUCTION ? -1 : c_defaultWarningCallStackDepth);
-        LOAD_KEY_BOOL(lookUpCallStackNames,            true);
+	KEY_INT(processPriority,                  0);
 
-        LOAD_KEY_INT(processPriority,                  0);
+	KEY_BOOL(verboseHardwareLogging,          false);
+	KEY_BOOL(verboseWarnings,                 defaults.verboseWarnings);
 
-        LOAD_KEY_BOOL(verboseHardwareLogging,          false);
-        LOAD_KEY_BOOL(verboseWarnings,                 defaults.verboseWarnings);
+	KEY_BOOL(causeAccessViolation,            false);
 
-        LOAD_KEY_BOOL(causeAccessViolation,            false);
+	KEY_FLOAT(debugReportLongFrameTime,       0.25f);
 
-        LOAD_KEY_FLOAT(debugReportLongFrameTime,       0.25f);
-        
-        Logger::logInfo("ConfigSharedFoundation", "Configuration loaded successfully.");
-    }
-    catch (const std::exception& e)
-    {
-        Logger::logError("ConfigSharedFoundation", std::string("Error loading configuration: ") + e.what());
-        throw;
-    }
+	KEY_BOOL(developmentMode, true);
 }
 
 // ----------------------------------------------------------------------
+/**
+ * Return whether to run with exception handling enabled.
+ *
+ * @return True to run without exception handling
+ */
 
 bool ConfigSharedFoundation::getNoExceptionHandling()
 {
-	return ms_noExceptionHandling.value_or(false);
+	return ms_noExceptionHandling;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getFpuExceptionPrecision()
 {
-	return ms_fpuExceptionPrecision.value_or(false);
+	return ms_fpuExceptionPrecision;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getFpuExceptionUnderflow()
 {
-	return ms_fpuExceptionUnderflow.value_or(false);
+	return ms_fpuExceptionUnderflow;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getFpuExceptionOverflow()
 {
-	return ms_fpuExceptionOverflow.value_or(false);
+	return ms_fpuExceptionOverflow;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getFpuExceptionZeroDivide()
 {
-	return ms_fpuExceptionZeroDivide.value_or(false);
+	return ms_fpuExceptionZeroDivide;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getFpuExceptionDenormal()
 {
-	return ms_fpuExceptionDenormal.value_or(false);
+	return ms_fpuExceptionDenormal;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getFpuExceptionInvalid()
 {
-	return ms_fpuExceptionInvalid.value_or(false);
+	return ms_fpuExceptionInvalid;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getDemoMode()
 {
-	return ms_demoMode.value_or(false);
+  return ms_demoMode;
 }
 
 // ----------------------------------------------------------------------
+/**
+ * Return the frame rate limit value for the game.
+ *
+ * @return The initial frame rate limiter value
+ */
 
 real ConfigSharedFoundation::getFrameRateLimit()
 {
-	return ms_frameRateLimit.value_or(1.0f);
+	return ms_frameRateLimit;
 }
 
 // ----------------------------------------------------------------------
+/**
+ * Return the minimum frame rate value for the game.  Frames that take longer
+ * will log a warning and be hard set to the given value.
+ *
+ * @return The initial min frame rate value
+ */
 
 real ConfigSharedFoundation::getMinFrameRate()
 {
-	return ms_minFrameRate.value_or(1.0f);
+	return ms_minFrameRate;
 }
 
 // ----------------------------------------------------------------------
 
 int ConfigSharedFoundation::getDefaultRemoteDebugPort()
 {
-	return ms_defaultRemoteDebugPort.value_or(4445);
+	return ms_defaultRemoteDebugPort;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getUseRemoteDebug()
 {
-	return ms_useRemoteDebug.value_or(false);
+	return ms_useRemoteDebug;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getProfilerExpandAllBranches()
 {
-	return ms_profilerExpandAllBranches.value_or(false);
+	return ms_profilerExpandAllBranches;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getMemoryManagerReportAllocations()
 {
-	return ms_memoryManagerReportAllocations.value_or(false);
+	return ms_memoryManagerReportAllocations;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getMemoryManagerReportOnOutOfMemory()
 {
-	return ms_memoryManagerReportOnOutOfMemory.value_or(false);
+	return ms_memoryManagerReportOnOutOfMemory;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getUseMemoryBlockManager()
 {
-	return ms_useMemoryBlockManager.value_or(false);
+	return ms_useMemoryBlockManager;
 }
 
 // ----------------------------------------------------------------------
 
-bool ConfigSharedFoundation::getMemoryBlockManagerDebugDumpOnRemove()
+bool ConfigSharedFoundation::getMemoryBlockManagerDebugDumpOnRemove ()
 {
-	return ms_memoryBlockManagerDebugDumpOnRemove.value_or(false);
+	return ms_memoryBlockManagerDebugDumpOnRemove;
 }
 
 // ----------------------------------------------------------------------
 
 int ConfigSharedFoundation::getFatalCallStackDepth()
 {
-	return ms_fatalCallStackDepth.value_or(c_defaultFatalCallStackDepth);
+	if(getDevelopmentMode())
+	{
+		return c_defaultFatalCallStackDepth;
+	}
+	return ms_fatalCallStackDepth;
 }
 
 // ----------------------------------------------------------------------
 
 int ConfigSharedFoundation::getWarningCallStackDepth()
 {
-	return ms_warningCallStackDepth.value_or(c_defaultWarningCallStackDepth);
+	if(getDevelopmentMode())
+	{
+		return 12;
+	}
+	return ms_warningCallStackDepth;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getLookUpCallStackNames()
 {
-	return ms_lookUpCallStackNames.value_or(true);
+	if(getDevelopmentMode())
+	{
+		return true;
+	}
+	return ms_lookUpCallStackNames;
 }
 
 // ----------------------------------------------------------------------
 
 int ConfigSharedFoundation::getProcessPriority()
 {
-	return ms_processPriority.value_or(0);
+	return ms_processPriority;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getVerboseHardwareLogging()
 {
-	return ms_verboseHardwareLogging.value_or(false);
+	return ms_verboseHardwareLogging;
 }
 
 // ----------------------------------------------------------------------
 
 bool ConfigSharedFoundation::getVerboseWarnings()
 {
-	return ms_verboseWarnings.value_or(false);
+	return ms_verboseWarnings;
 }
 
 // ----------------------------------------------------------------------
@@ -307,15 +319,33 @@ void ConfigSharedFoundation::setVerboseWarnings(bool const verboseWarnings)
 
 bool ConfigSharedFoundation::getCauseAccessViolation()
 {
-	return ms_causeAccessViolation.value_or(false);
+	return ms_causeAccessViolation;
 }
+
 
 // ----------------------------------------------------------------------
 
 float ConfigSharedFoundation::getDebugReportLongFrameTime()
 {
-	return ms_debugReportLongFrameTime.value_or(0.25f);
+	return ms_debugReportLongFrameTime;
+}
+
+// ----------------------------------------------------------------------
+
+// This is an SWG Source addition we're using for the purposes of defaulting
+// more verbose logging and development tools to ON but we're using a config
+// option so players wanting a more live-like client to share don't have to
+// recompile based on the PRODUCTION constant and can instead just set this
+// [SharedFoundation] developmentMode=false if they want
+
+// ***** WARNING ******
+// This is a config toggle which anyone can change so obviously nothing
+// related to access should be wrapped in this (read: things that should
+// require god mode still need to use PlayerObject::isAdmin() not this)
+
+bool ConfigSharedFoundation::getDevelopmentMode()
+{
+	return ms_developmentMode;
 }
 
 // ======================================================================
-

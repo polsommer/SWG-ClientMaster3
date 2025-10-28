@@ -8,8 +8,6 @@
 #ifndef INCLUDED_FormattedString_H
 #define INCLUDED_FormattedString_H
 
-#include <cstdio>
-
 // ----------------------------------------------------------------------
 template <int bufferSize>
 class FormattedString
@@ -42,7 +40,7 @@ inline FormattedString<bufferSize>::FormattedString()
 template <int bufferSize>
 inline char const * FormattedString<bufferSize>::sprintf(char const * const format, ...)
 {
-	char const * result = nullptr;
+	char const * result = NULL;
 	va_list va;
 
 	va_start(va, format);
@@ -64,7 +62,7 @@ inline char const * FormattedString<bufferSize>::vsprintf(char const * const for
 	int const charactersWritten = vsnprintf(m_text, lastIndex, format, va);
 
     // vsnprintf returns the number of characters written, not including
-	// the terminating nullptr character, or a negative value if an output error occurs.
+	// the terminating null character, or a negative value if an output error occurs.
 	// If the number of characters to write exceeds count, then count characters are
 	// written and -1 is returned.
 

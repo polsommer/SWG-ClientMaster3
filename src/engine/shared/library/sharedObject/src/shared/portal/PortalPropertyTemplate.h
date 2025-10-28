@@ -19,14 +19,12 @@ class BaseClass;
 class BaseExtent;
 class Extent;
 class IndexedTriangleList;
-class Portal;
-class Iff;
 
 #include "sharedMath/Plane.h"
 #include "sharedMath/VectorArgb.h"
 #include "sharedMath/Transform.h"
-#include "sharedFoundation/CrcLowerString.h"
-#include "sharedFoundation/PersistentCrcString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/CrcLowerString.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/PersistentCrcString.h"
 
 // ======================================================================
 
@@ -106,9 +104,9 @@ class PortalPropertyTemplateCell
 public:
 
 	typedef PortalPropertyTemplateCellLight                     Light;
-	typedef std::vector<Light>                               LightList;
-	typedef std::vector<Portal *>                            PortalList;
-	typedef std::vector<PortalPropertyTemplateCellPortal *>  PortalPropertyTemplateCellPortalList;
+	typedef stdvector<Light>::fwd                               LightList;
+	typedef stdvector<Portal *>::fwd                            PortalList;
+	typedef stdvector<PortalPropertyTemplateCellPortal *>::fwd  PortalPropertyTemplateCellPortalList;
 
 public:
 
@@ -140,7 +138,7 @@ private:
 	void load_0005(const PortalPropertyTemplate &portalPropertyTemplate, int cellIndex, Iff &iff);
 
 	// disabled
-	PortalPropertyTemplateCell(const PortalPropertyTemplateCell &);
+	PortalPropertyTemplateCell(PortalPropertyTemplateCell &);
 	PortalPropertyTemplateCell &operator =(PortalPropertyTemplateCell &);
 
 private:
@@ -187,12 +185,12 @@ public:
 
 
 	typedef PortalPropertyTemplateCell     Cell;
-	typedef std::vector<Cell *>         CellList;
-	typedef std::vector<Vector>         VertexList;
-	typedef std::vector<Portal *>       PortalList;
-	typedef std::vector<PortalOwners>   PortalOwnersList;
-	typedef std::vector<IndexedTriangleList *> PortalGeometryList;
-	typedef std::vector<const char *>   CellNameList;
+	typedef stdvector<Cell *>::fwd         CellList;
+	typedef stdvector<Vector>::fwd         VertexList;
+	typedef stdvector<Portal *>::fwd       PortalList;
+	typedef stdvector<PortalOwners>::fwd   PortalOwnersList;
+	typedef stdvector<IndexedTriangleList *>::fwd PortalGeometryList;
+	typedef stdvector<const char *>::fwd   CellNameList;
 
 public:
 

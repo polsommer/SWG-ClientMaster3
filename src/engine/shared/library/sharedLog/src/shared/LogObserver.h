@@ -38,7 +38,7 @@ private:
 	LogObserver(LogObserver const &);
 	LogObserver &operator=(LogObserver const &);
 
-	std::vector<std::string>* m_filters;
+	stdvector<std::string>::fwd* m_filters;
 };
 
 // ======================================================================

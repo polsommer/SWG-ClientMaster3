@@ -46,7 +46,7 @@ private:
 
 // ======================================================================
 
-inline const std::vector<Vector> & SlopeEffectProperty::getNormals() const
+inline const stdvector<Vector>::fwd & SlopeEffectProperty::getNormals() const
 {
 	return m_normals;
 }

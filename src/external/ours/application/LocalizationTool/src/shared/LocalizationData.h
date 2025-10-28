@@ -13,7 +13,7 @@ class LocalizedStringTableRW;
 
 #include "LocalizedString.h"
 
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 #include <set>
 
 struct DataChangeListener;

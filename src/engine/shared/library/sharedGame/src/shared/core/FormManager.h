@@ -12,7 +12,7 @@
 
 class DataTable;
 
-//#include "sharedFoundation/StlForwardDeclaration.h"
+//#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/StlForwardDeclaration.h"
 
 //----------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ class FormManager
 {
 public:
 	typedef Unicode::String PackedFormData;
-	typedef std::map<std::string, std::vector<std::string> > UnpackedFormData;
+	typedef stdmap<std::string, stdvector<std::string>::fwd >::fwd UnpackedFormData;
 
 	//the various types of fields that the form can support
 	enum FieldType
@@ -65,17 +65,17 @@ public:
 			bool isFloatType() const;
 			bool isStringType() const;
 			bool isArrayType() const;
-			bool isValidValue(std::string const & value, std::map<std::string, std::string> const & pendingData, std::string & errorString /*OUT*/) const;
-			bool isValidValue(int value, std::map<std::string, std::string> const & pendingData, std::string & errorString /*OUT*/) const;
-			bool isValidValue(float value, std::map<std::string, std::string> const & pendingData, std::string & errorString /*OUT*/) const;
-			int getMinimumIntValue(std::map<std::string, std::string> const & pendingData, std::string & validationField /*OUT*/) const;
-			int getMaximumIntValue(std::map<std::string, std::string> const & pendingData, std::string & validationField /*OUT*/) const;
-			float getMinimumFloatValue(std::map<std::string, std::string> const & pendingData, std::string & validationField /*OUT*/) const;
-			float getMaximumFloatValue(std::map<std::string, std::string> const & pendingData, std::string & validationField /*OUT*/) const;
+			bool isValidValue(std::string const & value, stdmap<std::string, std::string>::fwd const & pendingData, std::string & errorString /*OUT*/) const;
+			bool isValidValue(int value, stdmap<std::string, std::string>::fwd const & pendingData, std::string & errorString /*OUT*/) const;
+			bool isValidValue(float value, stdmap<std::string, std::string>::fwd const & pendingData, std::string & errorString /*OUT*/) const;
+			int getMinimumIntValue(stdmap<std::string, std::string>::fwd const & pendingData, std::string & validationField /*OUT*/) const;
+			int getMaximumIntValue(stdmap<std::string, std::string>::fwd const & pendingData, std::string & validationField /*OUT*/) const;
+			float getMinimumFloatValue(stdmap<std::string, std::string>::fwd const & pendingData, std::string & validationField /*OUT*/) const;
+			float getMaximumFloatValue(stdmap<std::string, std::string>::fwd const & pendingData, std::string & validationField /*OUT*/) const;
 
 			std::string const & getName() const;
 			std::string const & getExternalName() const;
-			std::vector<OtherValidationRules> const & getOtherValidationRules() const;
+			stdvector<OtherValidationRules>::fwd const & getOtherValidationRules() const;
 			std::string const & getDefaultValue() const;
 			std::string const & getObjvarBinding() const;
 
@@ -93,11 +93,11 @@ public:
 			std::string m_maximumValue;
 			bool m_minimumValueSet;
 			bool m_maximumValueSet;
-			std::vector<std::string> * m_choices;
+			stdvector<std::string>::fwd * m_choices;
 			bool        m_mustUseList;
 			std::string m_validationFilename;
 			int         m_validationFilenameColumn;
-			std::vector<OtherValidationRules> * m_otherValidationRules;
+			stdvector<OtherValidationRules>::fwd * m_otherValidationRules;
 			Form const * m_parentForm;
 			std::string m_objvarBinding;
 	};
@@ -113,7 +113,7 @@ public:
 			bool isNameOfField(std::string const & fieldName) const;
 			Field const * getField(std::string const & fieldName) const;
 			std::string const & getName() const;
-			std::vector<Field const *> const & getOrderedFieldList() const;
+			stdvector<Field const *>::fwd const & getOrderedFieldList() const;
 
 			Form();
 			virtual ~Form();
@@ -124,8 +124,8 @@ public:
 
 		private:
 			std::string m_name;
-			std::map<std::string, Field *>* m_fields;
-			std::vector<Field const *>* m_orderedFieldList;
+			stdmap<std::string, Field *>::fwd* m_fields;
+			stdvector<Field const *>::fwd* m_orderedFieldList;
 	};
 
 //This is an "abstract" static manager, which is instanciated by clientGame/FormManagerClient and serverGame/FormManagerServer
@@ -155,13 +155,13 @@ private:
 
 private:
 	//this map OWNS the Form pointers
-	static std::map<std::string, Form *> * ms_forms;
+	static stdmap<std::string, Form *>::fwd * ms_forms;
 	//this map hold pointers to Forms, but does NOT own them
-	static std::map<std::string, Form const *> * ms_serverObjectTemplateToForms;
+	static stdmap<std::string, Form const *>::fwd * ms_serverObjectTemplateToForms;
 	//this map hold pointers to Forms, but does NOT own them
-	static std::map<std::string, Form const *> * ms_sharedObjectTemplateToForms;
+	static stdmap<std::string, Form const *>::fwd * ms_sharedObjectTemplateToForms;
 	//this map stores whether a particular server template was mapped for an "auto-object-creating" form in formmap.tab
-	static std::map<std::string, bool> * ms_automaticallyCreateObjectForServerObjectTemplate;
+	static stdmap<std::string, bool>::fwd * ms_automaticallyCreateObjectForServerObjectTemplate;
 };
 
 //======================================================================

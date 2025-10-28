@@ -27,7 +27,6 @@ class TerrainEditorDoc;
 #include "sharedTerrain/TerrainGenerator.h"
 #include "sharedMath/Vector2d.h"
 #include "sharedMath/VectorArgb.h"
-#include "SmartTerrainAnalyzer.h"
 
 //-------------------------------------------------------------------
 
@@ -483,10 +482,6 @@ private:
 	void           drawRibbonAffector       (CDC* pDC, const VectorArgb& color, const TerrainGenerator::Affector* affector, bool forceDraw=false) const;
 	void           drawRibbonAffectors      (CDC* pDC, const VectorArgb& color, const TerrainGenerator::Layer* layer, bool forceDraw=false) const;
 	void           drawRibbonAffectors      (CDC* pDC, const VectorArgb& color, bool forceDraw=false) const;
-
-	void           drawGuidanceOverlay      (CDC* pDC, const SmartTerrainAnalyzer::AuditReport &report) const;
-	void           drawHeatmapPreview       (CDC* pDC, const SmartTerrainAnalyzer::AuditReport &report) const;
-	void           drawDesignGuides         (CDC* pDC) const;
 
 	void           zoomIn (void);
 	void           zoomOut (void);

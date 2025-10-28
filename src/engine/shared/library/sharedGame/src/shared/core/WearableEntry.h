@@ -11,10 +11,9 @@
 // ======================================================================
 
 #include "Archive/AutoByteStream.h"
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/BaselinesMessage.h"
-
-#include <memory>
+#include "boost/smart_ptr.hpp"
 
 
 class WearableEntry;
@@ -29,8 +28,8 @@ namespace Archive
 
 class WearableEntry
 {
-	friend void Archive::get(Archive::ReadIterator & source, WearableEntry & target);
-	friend void Archive::put(Archive::ByteStream & target, const WearableEntry & source);
+	friend void Archive::get(ReadIterator & source, WearableEntry & target);
+	friend void Archive::put(ByteStream & target, const WearableEntry & source);
 
   public:
 	WearableEntry(const std::string&, int, const NetworkId&, int);
@@ -43,8 +42,8 @@ class WearableEntry
 	int         m_arrangement;
 	NetworkId   m_networkId;
 	int         m_objectTemplate;
-	std::shared_ptr<const BaselinesMessage> m_weaponSharedBaselines;
-	std::shared_ptr<const BaselinesMessage> m_weaponSharedNpBaselines;
+	boost::shared_ptr<const BaselinesMessage> m_weaponSharedBaselines;
+	boost::shared_ptr<const BaselinesMessage> m_weaponSharedNpBaselines;
 
 	bool operator==(const WearableEntry&) const;
 

@@ -1,2 +1,2 @@
-#include "../../src/shared/objectTemplate/SharedDraftSchematicObjectTemplate.h"
+#include "../../../src/shared/objectTemplate/SharedDraftSchematicObjectTemplate.h"
 

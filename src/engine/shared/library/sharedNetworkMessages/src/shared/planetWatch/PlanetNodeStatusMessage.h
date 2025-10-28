@@ -10,7 +10,7 @@
 
 // ======================================================================
 
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 
 // ======================================================================
@@ -25,7 +25,7 @@ class PlanetNodeStatusMessageData
 	std::vector<int>    m_subscriptionCounts;
 	
   public:
-	PlanetNodeStatusMessageData(int x, int z, bool loaded, const std::vector<uint32> &servers, const std::vector<int> &subscriptionCounts);
+	PlanetNodeStatusMessageData(int x, int z, bool loaded, const stdvector<uint32>::fwd &servers, const stdvector<int>::fwd &subscriptionCounts);
 	PlanetNodeStatusMessageData();
 };
 

@@ -1,1 +1,1 @@
-#include "../../src/shared/object/WaypointData.h"
+#include "../../../src/shared/object/WaypointData.h"

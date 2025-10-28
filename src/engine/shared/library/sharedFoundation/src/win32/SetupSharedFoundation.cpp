@@ -31,6 +31,7 @@
 
 #include <eh.h>
 #include <cstdio>
+#include <cstring>
 
 // ======================================================================
 
@@ -60,8 +61,30 @@ LONG __stdcall SetupSharedFoundationNamespace::MyUnhandledExceptionFilter(LPEXCE
 
 	// log some important information
 	static char buffer[128];
-	sprintf(buffer, "Exception %08x(%d)=code %08x=addr\n", exceptionPointers->ExceptionRecord->ExceptionCode, exceptionPointers->ExceptionRecord->ExceptionCode, exceptionPointers->ExceptionRecord->ExceptionAddress);
+        DWORD const exceptionCode = exceptionPointers->ExceptionRecord->ExceptionCode;
+
+        // Breakpoint exceptions are typically generated intentionally by the
+        // Fatal() reporting utilities.  They should fall through to the
+        // debugger without being treated as an unexpected crash, otherwise we
+        // end up recursively calling Fatal() and reporting a misleading
+        // "Unhandled exception 0x80000003" error.  Simply continue the search
+        // so the debugger (or the runtime) can process the breakpoint
+        // normally.
+        if (exceptionCode == EXCEPTION_BREAKPOINT)
+        {
+                entered = false;
+                return EXCEPTION_CONTINUE_SEARCH;
+        }
+	void *const exceptionAddress = exceptionPointers->ExceptionRecord->ExceptionAddress;
+	sprintf(buffer, "Exception %08x(%d)=code %08x=addr %p\n", exceptionCode, exceptionCode, exceptionCode, exceptionAddress);
 	OutputDebugString(buffer);
+
+	bool wroteMiniDumpFile = false;
+	char miniDumpFileName[512];
+	miniDumpFileName[0] = '\0';
+	bool wroteCrashLogFile = false;
+	char crashLogFileName[512];
+	crashLogFileName[0] = '\0';
 
 	// write the minidump if we're in here for the first time
 	static bool ms_alreadyWroteMiniDump = false;
@@ -90,6 +113,8 @@ LONG __stdcall SetupSharedFoundationNamespace::MyUnhandledExceptionFilter(LPEXCE
 		static char fileName[512];
 
 		sprintf(fileName, "%s-%s-%I64d.txt", Os::getShortProgramName(), ApplicationVersion::getInternalVersion(), timestamp);
+		strncpy(crashLogFileName, fileName, sizeof(crashLogFileName) - 1);
+		crashLogFileName[sizeof(crashLogFileName) - 1] = '\0';
 		HANDLE const file = CreateFile(fileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, NULL);
 		if (file != INVALID_HANDLE_VALUE)
 		{
@@ -137,9 +162,13 @@ LONG __stdcall SetupSharedFoundationNamespace::MyUnhandledExceptionFilter(LPEXCE
 			}
 
 			CloseHandle(file);
+			wroteCrashLogFile = true;
 		}
 
 		sprintf(fileName, "%s-%s-%I64d.mdmp", Os::getShortProgramName(), ApplicationVersion::getInternalVersion(), timestamp);
+		strncpy(miniDumpFileName, fileName, sizeof(miniDumpFileName) - 1);
+		miniDumpFileName[sizeof(miniDumpFileName) - 1] = '\0';
+		wroteMiniDumpFile = true;
 		OutputDebugString("Generating minidump ");
 		OutputDebugString(fileName);
 		OutputDebugString("\n");
@@ -152,8 +181,18 @@ LONG __stdcall SetupSharedFoundationNamespace::MyUnhandledExceptionFilter(LPEXCE
 	// tell the Os not to abort so we can rethrow the exception
 	Os::returnFromAbort();
 
-	// Let the ExitChain do its job
-	Fatal("ExceptionHandler invoked");
+	if (wroteMiniDumpFile)
+	{
+		Fatal("Unhandled exception 0x%08lx at address %p. Minidump written to %s. Crash log written to %s.", exceptionCode, exceptionAddress, miniDumpFileName, wroteCrashLogFile ? crashLogFileName : "(unavailable)");
+	}
+	else if (wroteCrashLogFile)
+	{
+		Fatal("Unhandled exception 0x%08lx at address %p. Crash log written to %s.", exceptionCode, exceptionAddress, crashLogFileName);
+	}
+	else
+	{
+		Fatal("Unhandled exception 0x%08lx at address %p.", exceptionCode, exceptionAddress);
+	}
 
 	// rethrow the exception so that the debugger can catch it
 	entered = false;
@@ -223,6 +262,7 @@ void SetupSharedFoundation::install(const Data &data)
 	{
 		ConfigSharedFoundation::Defaults defaults;
 		defaults.frameRateLimit = data.frameRateLimit;
+		defaults.minFrameRate = data.minFrameRate;
 		defaults.demoMode       = data.demoMode;
 		defaults.verboseWarnings = data.verboseWarnings;
 		ConfigSharedFoundation::install(defaults);
@@ -338,6 +378,7 @@ void SetupSharedFoundation::Data::setupGameDefaults()
 	productRegistryKey                       = NULL;
 
 	frameRateLimit                           = CONST_REAL(0);
+	minFrameRate							 = CONST_REAL(0);
 
 	lostFocusCallback                        = NULL;
 
@@ -370,6 +411,7 @@ void SetupSharedFoundation::Data::setupConsoleDefaults()
 	productRegistryKey                       = NULL;
 
 	frameRateLimit                           = CONST_REAL(0);
+	minFrameRate							 = CONST_REAL(0);
 
 	lostFocusCallback                        = NULL;
 
@@ -402,6 +444,7 @@ void SetupSharedFoundation::Data::setupMfcDefaults()
 	productRegistryKey                       = NULL;
 
 	frameRateLimit                           = CONST_REAL(0);
+	minFrameRate							 = CONST_REAL(0);
 
 	demoMode                                 = false;
 	verboseWarnings                          = false;

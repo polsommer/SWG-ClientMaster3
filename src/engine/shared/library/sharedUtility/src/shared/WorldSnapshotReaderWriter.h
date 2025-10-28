@@ -14,7 +14,7 @@
 
 #include "sharedMath/Sphere.h"
 #include "sharedMath/Transform.h"
-#include "sharedFoundation/MemoryBlockManagerMacros.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
 #include <string>
 
 class CrcString;
@@ -119,7 +119,7 @@ public:
 		Node*            m_parent;
 		std::string      m_eventName;
 
-		typedef std::vector<Node*> NodeList;
+		typedef stdvector<Node*>::fwd NodeList;
 		NodeList*        m_nodeList;
 
 		mutable SpatialSubdivisionHandle* m_spatialSubdivisionHandle;
@@ -169,16 +169,16 @@ private:
 
 private:
 
-	typedef std::vector<Node*> NodeList;
+	typedef stdvector<Node*>::fwd NodeList;
 	NodeList* const m_nodeList;
 
-	typedef std::vector<char*> ObjectTemplateNameList;
+	typedef stdvector<char*>::fwd ObjectTemplateNameList;
 	ObjectTemplateNameList* const m_objectTemplateNameList;
 
-	typedef std::unordered_map<uint32, uint> ObjectTemplateCrcMap;
+	typedef stdhash_map<uint32, uint>::fwd ObjectTemplateCrcMap;
 	ObjectTemplateCrcMap* const m_objectTemplateCrcMap; // map from crc to index in name list
 
-	typedef std::map<int64, Node*> NetworkIdNodeMap;
+	typedef stdmap<int64, Node*>::fwd NetworkIdNodeMap;
 	NetworkIdNodeMap* const m_networkIdNodeMap;
 };
 

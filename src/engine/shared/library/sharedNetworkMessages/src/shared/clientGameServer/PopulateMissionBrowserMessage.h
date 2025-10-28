@@ -13,8 +13,8 @@
 
 #include "Archive/AutoDeltaByteStream.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "sharedFoundation/NetworkId.h"
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 
 //-----------------------------------------------------------------------
 
@@ -22,14 +22,14 @@ class PopulateMissionBrowserMessage : public GameNetworkMessage
 {
 public:
 
-	PopulateMissionBrowserMessage(std::vector<NetworkId> const & missions);
+	PopulateMissionBrowserMessage(stdvector<NetworkId>::fwd const & missions);
 	explicit PopulateMissionBrowserMessage(Archive::ReadIterator &source);
 
 	~PopulateMissionBrowserMessage();
 
 public: // methods
 
-	std::vector<NetworkId> const &getMissions() const;
+	stdvector<NetworkId>::fwd const &getMissions() const;
 
 public: // types
 
@@ -39,7 +39,7 @@ private:
 
 // ----------------------------------------------------------------------
 
-inline std::vector<NetworkId> const & PopulateMissionBrowserMessage::getMissions() const
+inline stdvector<NetworkId>::fwd const & PopulateMissionBrowserMessage::getMissions() const
 {
 	return m_missions.get();
 }

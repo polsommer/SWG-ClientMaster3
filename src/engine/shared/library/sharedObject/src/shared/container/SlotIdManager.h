@@ -26,7 +26,7 @@ class SlotIdManager
 {
 public:
 
-	typedef std::vector<std::string> AnythingSlotVector;
+	typedef stdvector<std::string>::fwd AnythingSlotVector;
 
 public:
 
@@ -34,7 +34,7 @@ public:
 	static bool                  isInstalled();
 
 	static SlotId                findSlotId(const CrcString &slotName);
-	static void                  findSlotIdsForCombatBone(uint32 bone, std::vector<SlotId> & slots);
+	static void                  findSlotIdsForCombatBone(uint32 bone, stdvector<SlotId>::fwd & slots);
 
 	static CrcString const      &getSlotName(SlotId const &slotId);
 	static bool                  isSlotPlayerModifiable(const SlotId &slotId);

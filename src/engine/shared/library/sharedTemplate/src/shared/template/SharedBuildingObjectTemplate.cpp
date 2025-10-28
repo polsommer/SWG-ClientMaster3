@@ -117,9 +117,9 @@ StringParam * SharedBuildingObjectTemplate::getStringParam(const char *name, boo
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != nullptr)
+				if (getBaseTemplate() != NULL)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return nullptr;
+				return NULL;
 			}
 			return &m_terrainModificationFileName;
 		}
@@ -131,9 +131,9 @@ StringParam * SharedBuildingObjectTemplate::getStringParam(const char *name, boo
 		{
 			if (deepCheck && !isParamLoaded(name, false, 0))
 			{
-				if (getBaseTemplate() != nullptr)
+				if (getBaseTemplate() != NULL)
 					return getBaseTemplate()->getStringParam(name, deepCheck, index);
-				return nullptr;
+				return NULL;
 			}
 			return &m_interiorLayoutFileName;
 		}
@@ -141,7 +141,7 @@ StringParam * SharedBuildingObjectTemplate::getStringParam(const char *name, boo
 	}
 	else
 		return SharedTangibleObjectTemplate::getStringParam(name, deepCheck, index);
-	return nullptr;
+	return NULL;
 }	//SharedBuildingObjectTemplate::getStringParam
 
 StringIdParam * SharedBuildingObjectTemplate::getStringIdParam(const char *name, bool deepCheck, int index)
@@ -224,12 +224,12 @@ char paramName[MAX_NAME_SIZE];
 		file.read_string(baseFilename);
 		file.exitChunk();
 		const ObjectTemplate *base = ObjectTemplateList::fetch(baseFilename);
-		DEBUG_WARNING(base == nullptr, ("was unable to load base template %s", baseFilename.c_str()));
-		if (m_baseData == base && base != nullptr)
+		DEBUG_WARNING(base == NULL, ("was unable to load base template %s", baseFilename.c_str()));
+		if (m_baseData == base && base != NULL)
 			base->releaseReference();
 		else
 		{
-			if (m_baseData != nullptr)
+			if (m_baseData != NULL)
 				m_baseData->releaseReference();
 			m_baseData = base;
 		}

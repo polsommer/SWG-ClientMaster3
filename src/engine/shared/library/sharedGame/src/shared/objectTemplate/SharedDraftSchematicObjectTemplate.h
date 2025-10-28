@@ -14,7 +14,7 @@
 #define _INCLUDED_SharedDraftSchematicObjectTemplate_H
 
 #include "SharedIntangibleObjectTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedUtility/TemplateParameter.h"
 
 
@@ -61,6 +61,7 @@ public:
 
 	enum DamageType
 	{
+		DT_none = 0x00000000,
 		DT_kinetic = 0x00000001,
 		DT_energy = 0x00000002,
 		DT_blast = 0x00000004,
@@ -199,10 +200,10 @@ protected:
 private:
 	// this enum is also defined in the server object_template.tdf file
 	// this enum is also defined in the server object_template.tdf file
-	std::vector<StructParamOT *> m_slots;		// ingredient slots
+	stdvector<StructParamOT *>::fwd m_slots;		// ingredient slots
 	bool m_slotsLoaded;
 	bool m_slotsAppend;
-	std::vector<StructParamOT *> m_attributes;		// what attributes the schematic can affect
+	stdvector<StructParamOT *>::fwd m_attributes;		// what attributes the schematic can affect
 	bool m_attributesLoaded;
 	bool m_attributesAppend;
 	StringParam m_craftedSharedTemplate;

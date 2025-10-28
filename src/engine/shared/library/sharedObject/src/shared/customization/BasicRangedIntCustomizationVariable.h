@@ -11,7 +11,7 @@
 
 // ======================================================================
 
-#include "sharedFoundation/MemoryBlockManagerMacros.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
 #include "sharedObject/RangedIntCustomizationVariable.h"
 
 class MemoryBlockManager;

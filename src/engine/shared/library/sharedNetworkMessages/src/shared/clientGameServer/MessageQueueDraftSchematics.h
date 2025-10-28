@@ -11,7 +11,7 @@
 #ifndef INCLUDED_MessageQueueDraftSchematics_H
 #define INCLUDED_MessageQueueDraftSchematics_H
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 #include "sharedNetworkMessages/MessageQueueDraftSchematicsData.h"
 #include "sharedNetworkMessages/ControllerMessageMacros.h"
 
@@ -26,7 +26,7 @@ class MessageQueueDraftSchematics : public MessageQueue::Data
 public:
 	typedef MessageQueueDraftSchematicsData SchematicData;
 
-	typedef std::vector<SchematicData> SchematicVector;
+	typedef stdvector<SchematicData>::fwd SchematicVector;
 
 public:
 

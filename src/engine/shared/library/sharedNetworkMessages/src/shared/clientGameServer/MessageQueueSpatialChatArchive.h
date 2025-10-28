@@ -8,7 +8,7 @@
 #ifndef INCLUDED_MessageQueueSpatialChatArchive_H
 #define INCLUDED_MessageQueueSpatialChatArchive_H
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 
 class MessageQueueSpatialChat;
 class MessageQueueData;

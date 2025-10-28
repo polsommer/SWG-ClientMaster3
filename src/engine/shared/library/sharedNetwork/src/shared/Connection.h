@@ -11,7 +11,7 @@
 
 #include "sharedNetwork/NetworkHandler.h"
 
-#include "sharedFoundation/Watcher.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Watcher.h"
 #include <string>
 #include <vector>
 
@@ -32,9 +32,8 @@ class Connection : public NetworkHandler
 {
 public:
 	Connection   (const std::string & remoteAddress, const unsigned short remotePort, const NetworkSetupData & setup);
-	explicit Connection   (UdpConnectionMT * newConnection, TcpClient * t = 0);
+	Connection   (UdpConnectionMT * newConnection, TcpClient * t);
 
-	virtual   ~Connection  ();
 	void                  disconnect               ();
 	void                  describeConnection       (const std::string &);
 	const std::string &   getConnectionDescription () const;
@@ -78,6 +77,7 @@ protected:
 	friend class Service;
 	friend class NetworkHandler;
 	friend class TcpClient;
+	virtual   ~Connection  ();
 	virtual void  onConnectionClosed       (Connection *);
 	void          onConnectionOpened       (UdpConnectionMT *);
 	int           flushAndConfirmAllData   ();

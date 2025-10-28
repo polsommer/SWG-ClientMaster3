@@ -157,7 +157,6 @@
 */ 
 //-----------------------------------------------------------------------
 
-#include <algorithm>
 #include <set>
 #include <typeinfo>
 #include <vector>

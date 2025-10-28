@@ -14,7 +14,7 @@
 #define _INCLUDED_SharedWeaponObjectTemplate_H
 
 #include "SharedTangibleObjectTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedUtility/TemplateParameter.h"
 
 

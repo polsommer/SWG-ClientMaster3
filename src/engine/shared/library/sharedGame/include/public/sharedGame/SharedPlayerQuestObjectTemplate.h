@@ -1,1 +1,1 @@
-#include "../../src/shared/objectTemplate/SharedPlayerQuestObjectTemplate.h"
+#include "../../../src/shared/objectTemplate/SharedPlayerQuestObjectTemplate.h"

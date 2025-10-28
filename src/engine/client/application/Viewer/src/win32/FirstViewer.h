@@ -10,14 +10,6 @@
 
 // ======================================================================
 
-#ifdef UNICODE
-#undef UNICODE
-#endif
-
-#ifdef _UNICODE
-#undef _UNICODE
-#endif
-
 #define NOMINMAX
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 

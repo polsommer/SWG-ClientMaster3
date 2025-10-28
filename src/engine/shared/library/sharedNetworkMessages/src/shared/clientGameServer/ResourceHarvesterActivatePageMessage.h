@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------
 
 #include "sharedNetworkMessages/GameNetworkMessage.h"
-#include "sharedFoundation/NetworkIdArchive.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkIdArchive.h"
 
 //-----------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ public:
 
 	static const char * const MESSAGE_TYPE;
 
-	typedef std::vector<NetworkId> NetworkIdVector;
+	typedef stdvector<NetworkId>::fwd NetworkIdVector;
 
 	           ResourceHarvesterActivatePageMessage (const NetworkId & harvesterId);
 	explicit   ResourceHarvesterActivatePageMessage (Archive::ReadIterator & source);

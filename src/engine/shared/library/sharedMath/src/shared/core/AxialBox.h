@@ -18,7 +18,7 @@ class AxialBox
 {
 public:
 
-	typedef std::vector<Vector> VertexList;
+	typedef stdvector<Vector>::fwd VertexList;
 
 public:
 

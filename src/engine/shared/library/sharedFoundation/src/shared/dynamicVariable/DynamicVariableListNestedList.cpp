@@ -183,59 +183,31 @@ bool DynamicVariableListNestedList::getItem(const std::string &name, T &value) c
 }
 
 NESTED_LIST_GET_ITEM(int)
-NESTED_LIST_GET_ITEM(std::vector<int>)
+NESTED_LIST_GET_ITEM(stdvector<int>::fwd)
 NESTED_LIST_GET_ITEM(float)
-NESTED_LIST_GET_ITEM(std::vector<float>)
+NESTED_LIST_GET_ITEM(stdvector<float>::fwd)
 NESTED_LIST_GET_ITEM(Unicode::String)
 NESTED_LIST_GET_ITEM(std::string)
-NESTED_LIST_GET_ITEM(std::vector<Unicode::String>)
+NESTED_LIST_GET_ITEM(stdvector<Unicode::String>::fwd)
 NESTED_LIST_GET_ITEM(NetworkId)
-NESTED_LIST_GET_ITEM(std::vector<NetworkId>)
+NESTED_LIST_GET_ITEM(stdvector<NetworkId>::fwd)
 NESTED_LIST_GET_ITEM(DynamicVariableLocationData)
-NESTED_LIST_GET_ITEM(std::vector<DynamicVariableLocationData>)
+NESTED_LIST_GET_ITEM(stdvector<DynamicVariableLocationData>::fwd)
 NESTED_LIST_GET_ITEM(StringId)
-NESTED_LIST_GET_ITEM(std::vector<StringId>)
+NESTED_LIST_GET_ITEM(stdvector<StringId>::fwd)
 NESTED_LIST_GET_ITEM(Transform)
-NESTED_LIST_GET_ITEM(std::vector<Transform>)
+NESTED_LIST_GET_ITEM(stdvector<Transform>::fwd)
 NESTED_LIST_GET_ITEM(Vector)
-NESTED_LIST_GET_ITEM(std::vector<Vector>)
+NESTED_LIST_GET_ITEM(stdvector<Vector>::fwd)
 
 // ======================================================================
 // DynamicVariableListNestedList::const_iterator
 
 DynamicVariableListNestedList::const_iterator::const_iterator(const DynamicVariableListNestedList &context, const DynamicVariableList::MapType::const_iterator &position, bool atEnd) :
-        m_context(context),
-        m_current(position),
-        m_atEnd(atEnd)
+	m_context(context),
+	m_current(position),
+	m_atEnd(atEnd)
 {
-}
-
-// ----------------------------------------------------------------------
-
-DynamicVariableListNestedList::const_iterator::reference DynamicVariableListNestedList::const_iterator::operator*() const
-{
-        if (m_atEnd)
-        {
-                static const value_type s_empty(value_type());
-                DEBUG_FATAL(true, ("Programmer bug: attempted to dereference end iterator.\n"));
-                return s_empty;
-        }
-
-        return *m_current;
-}
-
-// ----------------------------------------------------------------------
-
-DynamicVariableListNestedList::const_iterator::pointer DynamicVariableListNestedList::const_iterator::operator->() const
-{
-        if (m_atEnd)
-        {
-                static const value_type s_empty(value_type());
-                DEBUG_FATAL(true, ("Programmer bug: attempted to access end iterator.\n"));
-                return &s_empty;
-        }
-
-        return &(*m_current);
 }
 
 // ----------------------------------------------------------------------
@@ -336,20 +308,20 @@ bool DynamicVariableListNestedList::const_iterator::getValue(T &value) const \
 }
 
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(int)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<int>)
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<int>::fwd)
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(float)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<float>)
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<float>::fwd)
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(Unicode::String)
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::string)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<Unicode::String>)
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<Unicode::String>::fwd)
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(NetworkId)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<NetworkId>)
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<NetworkId>::fwd)
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(DynamicVariableLocationData)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<DynamicVariableLocationData>)
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<DynamicVariableLocationData>::fwd)
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(StringId)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<StringId>) 
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<StringId>::fwd) 
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(Transform)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<Transform>) 
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<Transform>::fwd) 
 NESTED_LIST_CONST_ITERATOR_GET_VALUE(Vector)
-NESTED_LIST_CONST_ITERATOR_GET_VALUE(std::vector<Vector>) 
+NESTED_LIST_CONST_ITERATOR_GET_VALUE(stdvector<Vector>::fwd) 
 //======================================================================

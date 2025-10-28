@@ -31,7 +31,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 #include <list>
 #include <map>
 #include <set>

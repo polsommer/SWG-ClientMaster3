@@ -5,6 +5,7 @@
 //
 // ======================================================================
 
+#include <climits>
 #include "sharedDatabaseInterface/FirstSharedDatabaseInterface.h"
 #include "sharedDatabaseInterface/BufferString.h"
 
@@ -13,8 +14,6 @@
 #include "sharedDatabaseInterface/NullEncodedStandardString.h"
 #include "sharedDatabaseInterface/NullEncodedUnicodeString.h"
 #include "sharedLog/Log.h"
-
-#include <climits>
 
 using namespace DB;
 

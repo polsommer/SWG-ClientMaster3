@@ -14,7 +14,7 @@
 #define _INCLUDED_ServerManufactureSchematicObjectTemplate_H
 
 #include "ServerIntangibleObjectTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -119,11 +119,11 @@ protected:
 private:
 	StringParam m_draftSchematic;		// source draft schematic
 	StringParam m_creator;		// who created me
-	std::vector<StructParamOT *> m_ingredients;		// ingredients needed to create
+	stdvector<StructParamOT *>::fwd m_ingredients;		// ingredients needed to create
 	bool m_ingredientsLoaded;
 	bool m_ingredientsAppend;
 	CompilerIntegerParam m_itemCount;		// number of items this schematic can make
-	std::vector<StructParamOT *> m_attributes;		// values for the attributes the schematic affects
+	stdvector<StructParamOT *>::fwd m_attributes;		// values for the attributes the schematic affects
 	bool m_attributesLoaded;
 	bool m_attributesAppend;
 //@END TFD

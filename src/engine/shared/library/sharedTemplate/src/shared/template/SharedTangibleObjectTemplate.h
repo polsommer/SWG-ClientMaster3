@@ -14,7 +14,7 @@
 #define _INCLUDED_SharedTangibleObjectTemplate_H
 
 #include "SharedObjectTemplate.h"
-#include "sharedFoundation/DynamicVariable.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/DynamicVariable.h"
 #include "sharedTemplateDefinition/TpfTemplate.h"
 
 
@@ -290,25 +290,25 @@ protected:
 	virtual void save(Iff &file);
 
 private:
-	std::vector<StructParamOT *> m_paletteColorCustomizationVariables;		// // all palette color customization variables exposed by an Object created with this template
+	stdvector<StructParamOT *>::fwd m_paletteColorCustomizationVariables;		// // all palette color customization variables exposed by an Object created with this template
 	bool m_paletteColorCustomizationVariablesLoaded;
 	bool m_paletteColorCustomizationVariablesAppend;
-	std::vector<StructParamOT *> m_rangedIntCustomizationVariables;		// // all ranged-int style customization variables exposed by an Object created with this template
+	stdvector<StructParamOT *>::fwd m_rangedIntCustomizationVariables;		// // all ranged-int style customization variables exposed by an Object created with this template
 	bool m_rangedIntCustomizationVariablesLoaded;
 	bool m_rangedIntCustomizationVariablesAppend;
-	std::vector<StructParamOT *> m_constStringCustomizationVariables;		// // constant string values added to the Object's customization data, not persisted in the DB
+	stdvector<StructParamOT *>::fwd m_constStringCustomizationVariables;		// // constant string values added to the Object's customization data, not persisted in the DB
 	bool m_constStringCustomizationVariablesLoaded;
 	bool m_constStringCustomizationVariablesAppend;
-	std::vector<CompilerIntegerParam *> m_socketDestinations;		// // GOTs that this object can be socketed into
+	stdvector<CompilerIntegerParam *>::fwd m_socketDestinations;		// // GOTs that this object can be socketed into
 	bool m_socketDestinationsLoaded;
 	bool m_socketDestinationsAppend;
 	StringParam m_structureFootprintFileName;
 	BoolParam m_useStructureFootprintOutline;
 	BoolParam m_targetable;		// // can the object be targetted by the client
-	std::vector<StringParam *> m_certificationsRequired;		// // List of the certifications required to use this item (used in x1 only)
+	stdvector<StringParam *>::fwd m_certificationsRequired;		// // List of the certifications required to use this item (used in x1 only)
 	bool m_certificationsRequiredLoaded;
 	bool m_certificationsRequiredAppend;
-	std::vector<StructParamOT *> m_customizationVariableMapping;		// // Allows remapping of variables when needed
+	stdvector<StructParamOT *>::fwd m_customizationVariableMapping;		// // Allows remapping of variables when needed
 	bool m_customizationVariableMappingLoaded;
 	bool m_customizationVariableMappingAppend;
 	CompilerIntegerParam m_clientVisabilityFlag;		// // can the object be viewed on the client

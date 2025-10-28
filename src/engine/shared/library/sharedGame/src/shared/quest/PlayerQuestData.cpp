@@ -253,7 +253,6 @@ namespace Archive
 		put(target,source.m_hasReceivedReward);
 	}
 
-	template<>
 	void Archive::AutoDeltaPackedMap<uint32,PlayerQuestData>::unpack(ReadIterator & source, std::string & buffer)
 	{
 		char temp[200];
@@ -308,7 +307,6 @@ namespace Archive
 		}
 	}
 
-	template<>
 	void Archive::AutoDeltaPackedMap<uint32,PlayerQuestData>::pack(ByteStream & target, std::string const & buffer)
 	{
 		char temp[200];
@@ -327,42 +325,35 @@ namespace Archive
 				char giver[100];
 				temp[tempPos]='\0';
 				int const numScanned = sscanf(temp,"%lu %hi %hi %s", &c.key, &activeTasks, &completedTasks, giver);
-				
 				//active quests
-				switch (numScanned) {
-				  case 4:
-					{
-				    		// in-progress quest
-				    		Archive::put(target, static_cast<unsigned char>(Command::ADD));
-				    		Archive::put(target, c.key);
-				    		Archive::put(target, PlayerQuestData(NetworkId(giver), activeTasks, completedTasks, false));
-					}
-				  break;
-				  case 1:
-					{
-				    		// completed quest
-				    		Archive::put(target, static_cast<unsigned char>(Command::ADD));
-				    		Archive::put(target, c.key);
-				    		Archive::put(target, PlayerQuestData(true, true));
-					}
-				  break;
-				  case 2: 
-					{
-						// completed quest
-						Archive::put(target, static_cast<unsigned char>(Command::ADD));
-						Archive::put(target, c.key);
-
-						//this is really a flags field
-						uint16 const flags = activeTasks;
-						bool const hasReceivedReward = (flags != 0);
-						Archive::put(target, PlayerQuestData(true, hasReceivedReward));
-					}
-				  break;
-				  default:
-					FATAL(true,("Could not parse packed quest data %s,",temp));
-				  break;
+				if (numScanned == 4)
+				{
+					// in-progress quest
+					Archive::put(target, static_cast<unsigned char>(Command::ADD));
+					Archive::put(target, c.key);
+					Archive::put(target, PlayerQuestData(NetworkId(giver), activeTasks, completedTasks, false));
 				}
-				
+				//"old-style" completed quests, which don't store extra flags
+				else if (numScanned==1)
+				{
+					// completed quest
+					Archive::put(target, static_cast<unsigned char>(Command::ADD));
+					Archive::put(target, c.key);
+					Archive::put(target, PlayerQuestData(true, true));
+				}
+				//completed quests with store flags
+				else if (numScanned==2)
+				{
+					// completed quest
+					Archive::put(target, static_cast<unsigned char>(Command::ADD));
+					Archive::put(target, c.key);
+					//this is really a flags field
+					uint16 const flags = activeTasks;
+					bool const hasReceivedReward = (flags != 0);
+					Archive::put(target, PlayerQuestData(true, hasReceivedReward));
+				}
+				else
+					FATAL(true,("Could not parse packed quest data %s,",temp));
 				tempPos=0;
 			}
 			else

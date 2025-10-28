@@ -30,6 +30,7 @@
 namespace SpaceAvoidanceManagerNamespace
 {
 	// Lag/Slop factors.
+	float const cs_lookAheadGain = 1.5f;
 	float const cs_shipBoundSphereRadiusGain = 1.5f;
 
 	// Dynamic and static query flags.

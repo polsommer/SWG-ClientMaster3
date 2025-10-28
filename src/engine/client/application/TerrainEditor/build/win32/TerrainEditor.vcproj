@@ -2568,70 +2568,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\win32\GuidedCreationFrame.cpp"
-				>
-				<FileConfiguration
-					Name="Optimized|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\win32\GuidedCreationView.cpp"
-				>
-				<FileConfiguration
-					Name="Optimized|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\src\win32\HelpFrame.cpp"
 				>
 				<FileConfiguration
@@ -4298,14 +4234,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\win32\FractalView.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\win32\GuidedCreationFrame.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\win32\GuidedCreationView.h"
 				>
 			</File>
 			<File

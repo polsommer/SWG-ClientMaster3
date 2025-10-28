@@ -28,7 +28,6 @@ class BoundaryPolygon;
 class ConsoleFrame;
 class EnvironmentFrame;
 class FindFrame;
-class GuidedCreationFrame;
 class FloraGroupFrame;
 class FractalFrame;
 class FractalPreviewFrame;
@@ -178,11 +177,10 @@ private:
 	HelpFrame*              helpFrame;
 	ProfileFrame*           profileFrame;
 	WarningFrame*           warningFrame;
-        FindFrame*              findFrame;
-        EnvironmentFrame*       environmentFrame;
-        GuidedCreationFrame*    guidedCreationFrame;
+	FindFrame*              findFrame;
+	EnvironmentFrame*       environmentFrame;
 
-        CString                 consoleMessage;
+	CString                 consoleMessage;
 
 	Item*                   selectedItem;
 
@@ -192,25 +190,20 @@ private:
 	real                    lastTotalChunkGenerationTime;
 	real                    lastAverageChunkGenerationTime;
 	real                    lastMinimumChunkGenerationTime;
-        real                    lastMaximumChunkGenerationTime;
+	real                    lastMaximumChunkGenerationTime;
 
-        BakedTerrain*           m_bakedTerrain;
+	BakedTerrain*           m_bakedTerrain;
 
-        PackedIntegerMap       *m_staticCollidableFloraMap;
-        PackedFixedPointMap    *m_staticCollidableFloraHeightMap;
-
-        bool                    m_guidanceOverlayEnabled;
-        bool                    m_heatmapPreviewEnabled;
-        bool                    m_guidelineLayerEnabled;
+	PackedIntegerMap       *m_staticCollidableFloraMap;
+	PackedFixedPointMap    *m_staticCollidableFloraHeightMap;
 
 private:
 
 	void load_0013 (Iff& iff);
 	void _load(Iff& iff, Tag version);
 
-        bool _bakeFlora(const char *terrainFile);
-        bool _importFloraSampleFile(const char *sampleFileName);
-        void populateDefaultTerrainContent();
+	bool _bakeFlora(const char *terrainFile);
+	bool _importFloraSampleFile(const char *sampleFileName);
 
 protected:
 
@@ -258,10 +251,9 @@ protected:
 	afx_msg void OnViewMapPreferences();
 	afx_msg void OnNewAffectorEnvironment();
 	afx_msg void OnDebugAddallrules();
-        afx_msg void OnToolsBaketerrain();
-        afx_msg void OnToolsBakeriversroads();
-        afx_msg void OnToolsBakeflora();
-        afx_msg void OnToolsTerrainintelligence();
+	afx_msg void OnToolsBaketerrain();
+	afx_msg void OnToolsBakeriversroads();
+	afx_msg void OnToolsBakeflora();
 	afx_msg void OnDebugViewbakedterrain();
 	afx_msg void OnEditClearconsole();
 	//}}AFX_MSG
@@ -329,15 +321,11 @@ public:
 	void                    setFindFrame (FindFrame* newFindFrame);
 	FindFrame*              getFindFrame (void);
 
-        void                    setEnvironmentFrame (EnvironmentFrame* newEnvironmentFrame);
-        EnvironmentFrame*       getEnvironmentFrame (void);
+	void                    setEnvironmentFrame (EnvironmentFrame* newEnvironmentFrame);
+	EnvironmentFrame*       getEnvironmentFrame (void);
 
-        void                    setGuidedCreationFrame (GuidedCreationFrame* newGuidedCreationFrame);
-        GuidedCreationFrame*    getGuidedCreationFrame (void);
-        const GuidedCreationFrame* getGuidedCreationFrame (void) const;
-
-        void                    setView3dFrame (View3dFrame* newView3dFrame);
-        View3dFrame*            getView3dFrame (void);
+	void                    setView3dFrame (View3dFrame* newView3dFrame);
+	View3dFrame*            getView3dFrame (void);
 
 	void                    setHelpFrame (HelpFrame* newHelpFrame);
 	HelpFrame*              getHelpFrame (void);
@@ -377,45 +365,16 @@ public:
 	BakedTerrain*           getBakedTerrain ();
 	const BakedTerrain*     getBakedTerrain () const;
 
-        real                    getDefaultShaderSize (void) const;
+	real                    getDefaultShaderSize (void) const;
 
-        real                    getBlackHeight (void) const;
-        real                    getWhiteHeight (void) const;
+	real                    getBlackHeight (void) const;
+	real                    getWhiteHeight (void) const;
 
-        int                     getEnvironmentCycleTime () const;
-
-        float                   getCollidableMinimumDistance () const;
-        float                   getCollidableMaximumDistance () const;
-        float                   getCollidableTileSize () const;
-        uint32                  getCollidableSeed () const;
-
-        float                   getNonCollidableMinimumDistance () const;
-        float                   getNonCollidableMaximumDistance () const;
-        float                   getNonCollidableTileSize () const;
-        uint32                  getNonCollidableSeed () const;
-
-        float                   getRadialMinimumDistance () const;
-        float                   getRadialMaximumDistance () const;
-        float                   getRadialTileSize () const;
-        uint32                  getRadialSeed () const;
-
-        float                   getFarRadialMinimumDistance () const;
-        float                   getFarRadialMaximumDistance () const;
-        float                   getFarRadialTileSize () const;
-        uint32                  getFarRadialSeed () const;
-
-        void                    setGuidanceOverlayEnabled(bool enabled);
-        bool                    isGuidanceOverlayEnabled() const;
-        void                    setHeatmapPreviewEnabled(bool enabled);
-        bool                    isHeatmapPreviewEnabled() const;
-        void                    setGuidelineLayerEnabled(bool enabled);
-        bool                    isGuidelineLayerEnabled() const;
-
-        void                    BuildFloraFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-        void                    BuildShaderFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-        void                    BuildRadialFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-        void                    BuildEnvironmentFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
-        void                    BuildFractalFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+	void                    BuildFloraFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+	void                    BuildShaderFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+	void                    BuildRadialFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+	void                    BuildEnvironmentFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
+	void                    BuildFractalFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
 	void                    BuildBitmapFamilyDropList (CComboBox& cbox, int hiliteFamilyId) const;
 
 	void                    setLastChunkGenerationTimes (real total, real average, real minimum, real maximum);
@@ -702,28 +661,7 @@ inline void TerrainEditorDoc::setEnvironmentFrame (EnvironmentFrame* newEnvironm
 
 inline EnvironmentFrame* TerrainEditorDoc::getEnvironmentFrame (void)
 {
-        return environmentFrame;
-}
-
-//-------------------------------------------------------------------
-
-inline void TerrainEditorDoc::setGuidedCreationFrame (GuidedCreationFrame* newGuidedCreationFrame)
-{
-        guidedCreationFrame = newGuidedCreationFrame;
-}
-
-//-------------------------------------------------------------------
-
-inline GuidedCreationFrame* TerrainEditorDoc::getGuidedCreationFrame (void)
-{
-        return guidedCreationFrame;
-}
-
-//-------------------------------------------------------------------
-
-inline const GuidedCreationFrame* TerrainEditorDoc::getGuidedCreationFrame (void) const
-{
-        return guidedCreationFrame;
+	return environmentFrame;
 }
 
 //-------------------------------------------------------------------
@@ -828,164 +766,24 @@ inline real TerrainEditorDoc::getWhiteHeight (void) const
 
 inline bool TerrainEditorDoc::getUseGlobalWaterTable (void) const
 {
-        return useGlobalWaterTable;
+	return useGlobalWaterTable;
 }
 
 //-------------------------------------------------------------------
 
 inline real TerrainEditorDoc::getGlobalWaterTableHeight (void) const
 {
-        return globalWaterTableHeight;
-}
-
-//-------------------------------------------------------------------
-
-inline int TerrainEditorDoc::getEnvironmentCycleTime () const
-{
-        return m_environmentCycleTime;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getCollidableMinimumDistance () const
-{
-        return m_collidableMinimumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getCollidableMaximumDistance () const
-{
-        return m_collidableMaximumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getCollidableTileSize () const
-{
-        return m_collidableTileSize;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getNonCollidableMinimumDistance () const
-{
-        return m_nonCollidableMinimumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getNonCollidableMaximumDistance () const
-{
-        return m_nonCollidableMaximumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getNonCollidableTileSize () const
-{
-        return m_nonCollidableTileSize;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getRadialMinimumDistance () const
-{
-        return m_radialMinimumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getRadialMaximumDistance () const
-{
-        return m_radialMaximumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getRadialTileSize () const
-{
-        return m_radialTileSize;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getFarRadialMinimumDistance () const
-{
-        return m_farRadialMinimumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getFarRadialMaximumDistance () const
-{
-        return m_farRadialMaximumDistance;
-}
-
-//-------------------------------------------------------------------
-
-inline float TerrainEditorDoc::getFarRadialTileSize () const
-{
-        return m_farRadialTileSize;
-}
-
-//-------------------------------------------------------------------
-
-inline uint32 TerrainEditorDoc::getCollidableSeed () const
-{
-        return m_collidableSeed;
-}
-
-//-------------------------------------------------------------------
-
-inline uint32 TerrainEditorDoc::getNonCollidableSeed () const
-{
-        return m_nonCollidableSeed;
-}
-
-//-------------------------------------------------------------------
-
-inline uint32 TerrainEditorDoc::getRadialSeed () const
-{
-        return m_radialSeed;
-}
-
-//-------------------------------------------------------------------
-
-inline uint32 TerrainEditorDoc::getFarRadialSeed () const
-{
-        return m_farRadialSeed;
-}
-
-//-------------------------------------------------------------------
-
-inline bool TerrainEditorDoc::isGuidanceOverlayEnabled() const
-{
-        return m_guidanceOverlayEnabled;
-}
-
-//-------------------------------------------------------------------
-
-inline bool TerrainEditorDoc::isHeatmapPreviewEnabled() const
-{
-        return m_heatmapPreviewEnabled;
-}
-
-//-------------------------------------------------------------------
-
-inline bool TerrainEditorDoc::isGuidelineLayerEnabled() const
-{
-        return m_guidelineLayerEnabled;
+	return globalWaterTableHeight;
 }
 
 //-------------------------------------------------------------------
 
 inline void TerrainEditorDoc::setLastChunkGenerationTimes (real total, real average, real minimum, real maximum)
 {
-        lastTotalChunkGenerationTime   = total;
-        lastAverageChunkGenerationTime = average;
-        lastMinimumChunkGenerationTime = minimum;
-        lastMaximumChunkGenerationTime = maximum;
+	lastTotalChunkGenerationTime   = total;
+	lastAverageChunkGenerationTime = average;
+	lastMinimumChunkGenerationTime = minimum;
+	lastMaximumChunkGenerationTime = maximum;
 }
 
 //-------------------------------------------------------------------

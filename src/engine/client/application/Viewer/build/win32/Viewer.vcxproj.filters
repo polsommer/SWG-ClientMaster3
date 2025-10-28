@@ -37,9 +37,6 @@
     <ClCompile Include="..\..\src\win32\CoolDialogBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\win32\ContentCreationAssistantDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\win32\DialogAddSkeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -91,9 +88,6 @@
     <ClCompile Include="..\..\src\win32\Viewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\win32\ViewerWinMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\win32\ViewerDoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -121,12 +115,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\CoolDialogBar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\win32\ContentCreationAssistantDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\win32\ContentCreationPreset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\win32\DialogAddSkeleton.h">

@@ -67,9 +67,7 @@ void SetupSharedLog::install(std::string const &procId, bool flushOnWrite)
 	ConfigSharedLog::install();
 	LogManager::install(procId, flushOnWrite);
 	FileLogObserver::install();
-	if (procId.compare("LogServer") != 0) {
-		NetLogObserver::install();
-	}
+	NetLogObserver::install();
 	TailFileLogObserver::install();
 
 	if (ConfigSharedLog::getLogReportLogs())

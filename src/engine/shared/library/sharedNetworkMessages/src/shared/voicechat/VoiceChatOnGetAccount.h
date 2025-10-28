@@ -5,7 +5,7 @@
 #ifndef _INCLUDED_VoiceChatOnGetAccount_H
 #define _INCLUDED_VoiceChatOnGetAccount_H
 
-#include "sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
 #include "sharedNetworkMessages/GameNetworkMessage.h"
 
 #include <string>

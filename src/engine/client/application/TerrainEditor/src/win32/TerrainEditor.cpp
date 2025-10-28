@@ -29,8 +29,6 @@
 #include "FindView.h"
 #include "FloraGroupFrame.h"
 #include "FloraMeshView.h"
-#include "GuidedCreationFrame.h"
-#include "GuidedCreationView.h"
 #include "FractalFrame.h"
 #include "FractalPreviewFrame.h"
 #include "FractalPreviewView.h"
@@ -131,11 +129,9 @@ BEGIN_MESSAGE_MAP(TerrainEditorApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_VIEWWARNING, OnUpdateViewWarning)
 	ON_COMMAND(ID_VIEWFIND, OnViewFind)
 	ON_UPDATE_COMMAND_UI(ID_VIEWFIND, OnUpdateViewFind)
-        ON_COMMAND(ID_VIEWENVIRONMENT, OnViewEnvironment)
-        ON_UPDATE_COMMAND_UI(ID_VIEWENVIRONMENT, OnUpdateViewEnvironment)
-        ON_COMMAND(ID_VIEW_GUIDEDCREATION, OnViewGuidedcreation)
-        ON_UPDATE_COMMAND_UI(ID_VIEW_GUIDEDCREATION, OnUpdateViewGuidedcreation)
-        ON_COMMAND(ID_EDIT_FRACTAL, OnEditFractal)
+	ON_COMMAND(ID_VIEWENVIRONMENT, OnViewEnvironment)
+	ON_UPDATE_COMMAND_UI(ID_VIEWENVIRONMENT, OnUpdateViewEnvironment)
+	ON_COMMAND(ID_EDIT_FRACTAL, OnEditFractal)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_FRACTAL, OnUpdateEditFractal)
 	ON_COMMAND(ID_EDIT_BITMAP, OnEditBitmap)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_BITMAP, OnUpdateEditBitmap)
@@ -172,11 +168,10 @@ TerrainEditorApp::TerrainEditorApp (void) :
 	helpTemplate (0),
 	profileTemplate (0),
 	warningTemplate (0),
-        findTemplate (0),
-        environmentTemplate (0),
-        guidedCreationTemplate (0),
-        fractalGroupTemplate (0),
-        bitmapGroupTemplate (0)
+	findTemplate (0),
+	environmentTemplate (0),
+	fractalGroupTemplate (0),
+	bitmapGroupTemplate (0)
 {
 }
 
@@ -286,17 +281,11 @@ TerrainEditorApp::~TerrainEditorApp (void)
 		findTemplate = 0;
 	}
 
-    if (environmentTemplate)
-    {
-            delete environmentTemplate;
-            environmentTemplate = 0;
-    }
-
-    if (guidedCreationTemplate)
-    {
-            delete guidedCreationTemplate;
-            guidedCreationTemplate = 0;
-    }
+	if (environmentTemplate)
+	{
+		delete environmentTemplate;
+		environmentTemplate = 0;
+	}
 
 	//-- this is deleted by the document
 //	if (mapViewTemplate)
@@ -319,12 +308,7 @@ BOOL TerrainEditorApp::InitInstance()
 		SplashScreen::EnableSplashScreen(cmdInfo.m_bShowSplash);
 	}
 
-        AfxEnableControlContainer();
-
-#if _MFC_VER >= 0x0900
-        CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
-        CMFCButton::m_bUseVisualManagerTheme = TRUE;
-#endif
+	AfxEnableControlContainer();
 
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
@@ -461,20 +445,14 @@ BOOL TerrainEditorApp::InitInstance()
 		RUNTIME_CLASS(FindFrame), // custom MDI child frame
 		RUNTIME_CLASS(FindView));
 
-        environmentTemplate = new CMultiDocTemplate(
-                IDR_TERRAITYPE,
-                RUNTIME_CLASS(TerrainEditorDoc),
-                RUNTIME_CLASS(EnvironmentFrame), // custom MDI child frame
-                RUNTIME_CLASS(EnvironmentView));
+	environmentTemplate = new CMultiDocTemplate(
+		IDR_TERRAITYPE,
+		RUNTIME_CLASS(TerrainEditorDoc),
+		RUNTIME_CLASS(EnvironmentFrame), // custom MDI child frame
+		RUNTIME_CLASS(EnvironmentView));
 
-        guidedCreationTemplate = new CMultiDocTemplate(
-                IDR_TERRAITYPE,
-                RUNTIME_CLASS(TerrainEditorDoc),
-                RUNTIME_CLASS(GuidedCreationFrame),
-                RUNTIME_CLASS(GuidedCreationView));
-
-        // create main MDI Frame window
-        MainFrame* pMainFrame = new MainFrame;
+	// create main MDI Frame window
+	MainFrame* pMainFrame = new MainFrame;
 	if (!pMainFrame->LoadFrame(IDR_MAINFRAME))
 		return FALSE;
 	m_pMainWnd = pMainFrame;
@@ -685,29 +663,19 @@ void TerrainEditorApp::showBitmapPreview (void)
 	
 void TerrainEditorApp::showLayers (void)
 {
-        TerrainEditorDoc* const terrainDocument = getDocument ();
+	TerrainEditorDoc* const terrainDocument = getDocument ();
 
-        if (terrainDocument)
-                onViewLayers (terrainDocument);
+	if (terrainDocument)
+		onViewLayers (terrainDocument);
 }
 
 //-------------------------------------------------------------------
-
-void TerrainEditorApp::showGuidedCreation (void)
-{
-        TerrainEditorDoc* const terrainDocument = getDocument ();
-
-        if (terrainDocument)
-                onViewGuidedCreation (terrainDocument);
-}
-
-//-------------------------------------------------------------------
-
+	
 void TerrainEditorApp::showConsole (void)
 {
-        TerrainEditorDoc* const terrainDocument = getDocument ();
+	TerrainEditorDoc* const terrainDocument = getDocument ();
 
-        if (terrainDocument)
+	if (terrainDocument)
 		onViewConsole (terrainDocument);
 }
 
@@ -745,16 +713,14 @@ void TerrainEditorApp::showFind (bool clear)
 	
 void TerrainEditorApp::onOpenDefaultViews (TerrainEditorDoc* terrainDocument)
 {
-        onViewLayers      (terrainDocument);
-        onViewFlora       (terrainDocument);
-        onViewRadial      (terrainDocument);
-        onViewShaders     (terrainDocument);
-        onViewProperties  (terrainDocument);
-        onViewFractals    (terrainDocument);
-        onViewBitmaps     (terrainDocument);
-        onViewEnvironment (terrainDocument);
-        onViewGuidedCreation (terrainDocument);
-        onView3d          (terrainDocument);
+	onViewLayers      (terrainDocument);
+	onViewFlora       (terrainDocument);
+	onViewRadial      (terrainDocument);
+	onViewShaders     (terrainDocument);
+	onViewProperties  (terrainDocument);
+	onViewFractals    (terrainDocument);
+	onViewBitmaps     (terrainDocument);
+	onViewEnvironment (terrainDocument);
 }
 
 //-------------------------------------------------------------------
@@ -1648,50 +1614,6 @@ void TerrainEditorApp::OnUpdateViewEnvironment(CCmdUI* pCmdUI)
 	if (terrainDocument)
 		pCmdUI->SetCheck (terrainDocument->getEnvironmentFrame () != 0 ? TRUE : FALSE);
 }
-
-//-------------------------------------------------------------------
-
-void TerrainEditorApp::onViewGuidedCreation (TerrainEditorDoc* terrainDocument)
-{
-        if (terrainDocument->getGuidedCreationFrame ())
-        {
-                terrainDocument->getGuidedCreationFrame ()->ActivateFrame ();
-        }
-        else
-        {
-                NOT_NULL (guidedCreationTemplate);
-                CFrameWnd* guidedFrame = guidedCreationTemplate->CreateNewFrame (terrainDocument, NULL);
-
-                if (!guidedFrame)
-                        return;
-
-                guidedCreationTemplate->InitialUpdateFrame (guidedFrame, terrainDocument);
-                terrainDocument->setGuidedCreationFrame (NON_NULL (dynamic_cast<GuidedCreationFrame*> (guidedFrame)));
-        }
-}
-
-//-------------------------------------------------------------------
-
-void TerrainEditorApp::OnViewGuidedcreation()
-{
-        TerrainEditorDoc* terrainDocument = GetApp ()->getDocument ();
-
-        if (terrainDocument)
-                onViewGuidedCreation (terrainDocument);
-}
-
-//-------------------------------------------------------------------
-
-void TerrainEditorApp::OnUpdateViewGuidedcreation(CCmdUI* pCmdUI)
-{
-        TerrainEditorDoc* const terrainDocument = getDocument ();
-
-        pCmdUI->Enable (terrainDocument != 0 ? TRUE : FALSE);
-
-        if (terrainDocument)
-                pCmdUI->SetCheck (terrainDocument->getGuidedCreationFrame () != 0 ? TRUE : FALSE);
-}
-
 
 //-------------------------------------------------------------------
 

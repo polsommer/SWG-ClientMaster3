@@ -19,15 +19,15 @@ public:
 	virtual ~SkillObject();
 	bool load(DataTable & file, const std::string & skillName);
 
-	typedef std::vector<const SkillObject *> SkillVector;
+	typedef stdvector<const SkillObject *>::fwd SkillVector;
 	typedef std::pair<int, int>                 XpPair;             // xp needed, xp limit
 	typedef std::pair<std::string, XpPair>      ExperiencePair;
-	typedef std::vector<ExperiencePair>      ExperienceVector;
+	typedef stdvector<ExperiencePair>::fwd      ExperienceVector;
 	typedef std::pair<std::string, int>         GenericMod;	
-	typedef std::vector<GenericMod>          GenericModVector;
-	typedef std::vector<std::string>         StringVector;
+	typedef stdvector<GenericMod>::fwd          GenericModVector;
+	typedef stdvector<std::string>::fwd         StringVector;
 	typedef std::pair<std::string, bool>        SpeciesFlag;
-	typedef std::vector<SpeciesFlag>         SpeciesFlagVector;
+	typedef stdvector<SpeciesFlag>::fwd         SpeciesFlagVector;
 
 	const SkillObject *                         findCategory                    () const;
 

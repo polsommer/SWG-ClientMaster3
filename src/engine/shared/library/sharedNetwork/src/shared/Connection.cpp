@@ -1,5 +1,5 @@
 // Connection.cpp
-// Copyright 2000-02, Sony Online Entertainment Inc., all rights reserved.
+// Copyright 2000-02, Sony Online Entertainment Inc., all rights reserved. 
 
 //-----------------------------------------------------------------------
 
@@ -22,7 +22,6 @@
 #include "sharedNetwork/UdpLibraryMT.h"
 #include "TcpClient.h"
 #include "TcpServer.h"
-#include "../../../../../../external/3rd/library/udplibrary/UdpLibrary.hpp"
 
 #include <algorithm>
 
@@ -207,7 +206,6 @@ m_disconnectReason()
 				p.clockSyncDelay = setup.clockSyncDelay;
 				p.keepAliveDelay = setup.keepAliveDelay;
 				p.maxConnections = 1;
-				p.maxConnectionsPerIP = setup.maxConnectionsPerIP;
 				p.maxRawPacketSize = setup.maxRawPacketSize;
 				p.maxDataHoldSize = setup.maxDataHoldSize;
 				p.reliable[0].maxInstandingPackets = setup.maxInstandingPackets;
@@ -253,7 +251,7 @@ m_disconnectReason()
 			else
 			{
 				do
-				{
+				{					
 					TcpClient *t = new TcpClient(a, p);
 					t->addRef();
 					m_tcpClient = t;
@@ -261,7 +259,7 @@ m_disconnectReason()
 					if (isPortReserved(getBindPort()) || (getBindPort() == p))
 					{
 						t->release();
-						m_tcpClient = 0;
+						m_tcpClient = 0; 
 					}
 				} while (!m_tcpClient);
 				m_tcpClient->setConnection(this);
@@ -364,7 +362,7 @@ Connection::~Connection()
 	std::vector<Connection *>::iterator f = std::find(s_connections.begin(), s_connections.end(), this);
 	if (f != s_connections.end())
 		s_connections.erase(f);
-
+	
 	f = std::find(s_clientConnections.begin(), s_clientConnections.end(), this);
 	if (f != s_clientConnections.end())
 		s_clientConnections.erase(f);
@@ -390,7 +388,7 @@ Connection::~Connection()
 		m_connectionHandler->Release();
 		m_connectionHandler = 0;
 	}
-
+	
 	std::for_each(m_deferredMessages.begin(), m_deferredMessages.end(), PointerDeleter());
 	m_deferredMessages.clear();
 
@@ -490,7 +488,7 @@ void Connection::flush()
 	{
 		if (!m_deferredMessages.empty())
 		{
-
+			
 			for (std::vector<DeferredSend *>::const_iterator i = m_deferredMessages.begin(); i != m_deferredMessages.end(); ++i)
 			{
 				DeferredSend * d = (*i);
@@ -579,22 +577,17 @@ void Connection::onConnectionOverflowing(unsigned int totalBytes)
 
 void Connection::onConnectionClosed(Connection *)
 {
-        if (getService())
-        {
-                getService()->onConnectionClosed(this);
-        }
-
+	if (getService())
+		getService()->onConnectionClosed(this);
 
 	if (udpConnection)
 	{
-        	UdpConnection::DisconnectReason reason = udpConnection->GetDisconnectReason();
+		UdpConnection::DisconnectReason reason = udpConnection->GetDisconnectReason();
 		setDisconnectReason("Connection::onConnectionClosed (udplibrary:%s)", UdpConnection::DisconnectReasonText(reason));
 		FATAL(ConfigSharedNetwork::getFatalOnConnectionClosed(), ("Connection closed %s", UdpConnection::DisconnectReasonText(reason)));
 	}
 	else
-	{
-        	setDisconnectReason("Connection::onConnectionClosed called");
-	}
+		setDisconnectReason("Connection::onConnectionClosed called");
 
 	if (ConfigSharedNetwork::getLogConnectionOpenedClosed())
 	{
@@ -670,7 +663,7 @@ void Connection::receive(const unsigned char * buffer, int length)
 		{
 			m_tcpInput->put( buffer, length );
 			NetworkHandler::onReceive(this, m_tcpInput->getBuffer(), m_tcpInput->getSize());
-			m_tcpInput->clear();
+			m_tcpInput->clear();			
 			return;
 		}
 		// check current state of the header
@@ -762,7 +755,7 @@ void Connection::receive(const Archive::ByteStream & bs)
 
 						if (bytesPerSecond > m_recvPeakBytesPerSecond)
 							m_recvPeakBytesPerSecond = bytesPerSecond;
-
+					
 						m_recvAverageBytesPerSecond = m_bytesReceived / lifeTime;
 
 						std::string logChan = "Network:ConnectionStatsRecv:" + getRemoteAddress() + ":";
@@ -804,7 +797,7 @@ void Connection::reportSend(const int sendSize)
 
 	static const int packetSizeWarnThreshold = ConfigSharedNetwork::getPacketSizeWarnThreshold();
 	static const int reportInterval = ConfigSharedNetwork::getReportStatisticsInterval();
-
+	
 	if (reportInterval > 0 && !isNetLogConnection())
 	{
 		if (packetSizeWarnThreshold > 0)
@@ -830,7 +823,7 @@ void Connection::reportSend(const int sendSize)
 
 					if (bytesPerSecond > m_sendPeakBytesPerSecond)
 						m_sendPeakBytesPerSecond = bytesPerSecond;
-
+				
 					m_sendAverageBytesPerSecond = m_bytesSent / lifeTime;
 
 					std::string logChan = "Network:ConnectionStatsSend:" + getRemoteAddress() + ":";
@@ -840,7 +833,7 @@ void Connection::reportSend(const int sendSize)
 					LOG(logChan, ("Current(%d/sec), Average(%d/sec), Peak(%d/sec) Total Bytes(%d) Total Time(%lu)", bytesPerSecond, m_sendAverageBytesPerSecond, m_sendPeakBytesPerSecond, m_bytesSent, lifeTime));
 					m_lastSendReportTime = m_lastSendTime;
 					m_sendBytesReportInterval = 0;
-
+					
 					if (m_managerHandler->getSendCompressedByteCount() > 0)
 						LOG(logChan, ("Compression Ratio: %.2f : 1.0 Send(%d / %d)", m_managerHandler->getCompressionRatio(), m_managerHandler->getSendUncompressedByteCount(), m_managerHandler->getSendCompressedByteCount()));
 				}
@@ -856,7 +849,7 @@ void Connection::send(const Archive::ByteStream & bs, const bool r)
 {
 	if (NetworkHandler::removing())
 		return;
-
+	
 	if (NetworkHandler::getCurrentFrame() != m_currentFrame)
 	{
 		// clear pending packet vector
@@ -869,7 +862,7 @@ void Connection::send(const Archive::ByteStream & bs, const bool r)
 	{
 		if (reportMessages)
 			reportSend(bs);
-
+	
 		reportSend(bs.getSize());
 
 		static const bool logAllNetworkTraffic = ConfigSharedNetwork::getLogAllNetworkTraffic();
@@ -931,7 +924,7 @@ void Connection::sendSharedPacket(const LogicalPacket * packet, const bool relia
 {
 	if (NetworkHandler::removing())
 		return;
-
+	
 	if (packet)
 		reportSend(packet->GetDataLen());
 
@@ -1036,7 +1029,7 @@ void Connection::remove()
 		c->onConnectionClosed();
 		delete c;
 	}
-
+	
 	TcpClient::remove();
 }
 
@@ -1134,7 +1127,7 @@ void Connection::update()
 				c->m_tcpClient->checkKeepalive();
 		}
 	}
-
+	
 	// update client connections
 	{
 		std::vector<Connection *> activeConnections = s_clientConnections;
@@ -1187,5 +1180,5 @@ void Connection::setRawTCP( bool bNewValue )
 		m_rawTCP = bNewValue;
 		m_tcpClient->setRawTCP( bNewValue );
 	}
-
+	
 }

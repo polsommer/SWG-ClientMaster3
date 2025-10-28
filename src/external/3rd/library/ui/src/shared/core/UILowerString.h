@@ -9,7 +9,7 @@
 #define INCLUDED_UILowerString_H
 
 //======================================================================
-#include "sharedFoundation/HashMap.h"
+#include <hash_map>
 
 class UILowerString
 {

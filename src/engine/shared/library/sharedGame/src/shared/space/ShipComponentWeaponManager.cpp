@@ -55,7 +55,7 @@ namespace ShipComponentWeaponManagerNamespace
 		}
 	};
 
-	typedef std::map<uint32, Data> CrcIntMap;
+	typedef stdmap<uint32, Data>::fwd CrcIntMap;
 	CrcIntMap s_dataMap;
 
 	bool s_installed = false;
@@ -76,7 +76,7 @@ void ShipComponentWeaponManager::install()
 	
 	DataTable * const dt = DataTableManager::getTable(filename, true);
 
-	if (dt == nullptr)
+	if (dt == NULL)
 	{
 		WARNING(true, ("ShipComponentWeaponManager no such datatable [%s]", filename.c_str()));
 		return;
@@ -90,7 +90,7 @@ void ShipComponentWeaponManager::install()
 		ShipComponentDescriptor const * const shipComponentDescriptor = 
 			ShipComponentDescriptor::findShipComponentDescriptorByName(TemporaryCrcString(componentName.c_str(), true));
 		
-		if (shipComponentDescriptor == nullptr)
+		if (shipComponentDescriptor == NULL)
 		{
 			WARNING(true, ("getComponentType datatable specified invalid component [%s]", componentName.c_str()));
 			continue;

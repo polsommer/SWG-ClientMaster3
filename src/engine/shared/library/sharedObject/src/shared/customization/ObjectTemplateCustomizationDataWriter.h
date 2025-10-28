@@ -36,7 +36,7 @@ public:
 
 private:
 
-	typedef std::list<std::string>  StringList;
+	typedef stdlist<std::string>::fwd  StringList;
 
 private:
 

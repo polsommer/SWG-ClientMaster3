@@ -11,8 +11,8 @@
 
 // ======================================================================
 
-#include "sharedFoundation/NetworkId.h"
-#include "sharedFoundation/Watcher.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/NetworkId.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Watcher.h"
 
 #include "sharedObject/Object.h"
 

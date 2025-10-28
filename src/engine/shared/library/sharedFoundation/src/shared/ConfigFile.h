@@ -12,7 +12,7 @@
 
 class StringCompare;
 
-#include "sharedFoundation/Tag.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Tag.h"
 
 // ======================================================================
 
@@ -43,7 +43,7 @@ public:
 		/// a buffer holding the entry string, which may be recast to other types
 		char       *m_entry;
 	};
-	typedef std::list<Element *> ElementList;
+	typedef stdlist<Element *>::fwd ElementList;
 
 	// -----------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ public:
 		/// track whether this was added lazily (not explicitly in the config file)
 		bool m_lazyAdd;
 	};
-	typedef std::map<const char *, Key *, StringCompare> KeyMap;
+	typedef stdmap<const char *, Key *, StringCompare>::fwd KeyMap;
 
 	// -----------------------------------------------------------------------
 
@@ -99,7 +99,7 @@ public:
 		int          getKeyInt   (const char *key, int index, int defaultValue = 0) const;
 		bool         getKeyBool  (const char *key, int index, bool defaultValue = false) const;
 		float        getKeyFloat (const char *key, int index, float defaultValue = 0.f) const;
-		const char  *getKeyString(const char *key, int index, const char *defaultValue = nullptr) const;
+		const char  *getKeyString(const char *key, int index, const char *defaultValue = NULL) const;
 		Tag          getKeyTag   (const char *key, int index, Tag defaultValue = 0) const;
 		int          getKeyCount(const char *key) const;
 		void         addKey(const char *keyName, const char *value, bool lazyAdd = false);
@@ -124,7 +124,7 @@ public:
 		///String representation of the section's name
 		char* m_name;
 	};
-	typedef std::map<const char *, Section *, StringCompare> SectionMap;
+	typedef stdmap<const char *, Section *, StringCompare>::fwd SectionMap;
 
 public:
 	//public interface

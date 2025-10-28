@@ -10,7 +10,7 @@
 #define INCLUDED_ControllerMessageMacros_H
 
 // ======================================================================
-#include "sharedFoundation/MemoryBlockManagerMacros.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MemoryBlockManagerMacros.h"
 #include "Archive/Archive.h"
 
 #define CONTROLLER_MESSAGE_INTERFACE \

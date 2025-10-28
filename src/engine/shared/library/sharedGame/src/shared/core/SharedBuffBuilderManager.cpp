@@ -16,7 +16,6 @@
 
 #include "UnicodeUtils.h"
 
-#include <algorithm>
 #include <map>
 
 // ======================================================================
@@ -29,7 +28,7 @@ namespace SharedBuffBuilderManagerNamespace
 	const std::string ms_reactiveSecondChanceComponentName = "reactive_second_chance";
 }
 
-SharedBuffBuilderManager::BuffBuilderDataType * SharedBuffBuilderManager::ms_buffBuilderData=nullptr;
+SharedBuffBuilderManager::BuffBuilderDataType * SharedBuffBuilderManager::ms_buffBuilderData=NULL;
 using namespace SharedBuffBuilderManagerNamespace;
 
 // ======================================================================

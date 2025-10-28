@@ -7,7 +7,7 @@
 
 //-----------------------------------------------------------------------
 
-#include "sharedFoundation/FirstSharedFoundation.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FirstSharedFoundation.h"
 #include "sharedSkillSystem/SkillManager.h"
 #include "sharedSkillSystem/SkillObject.h"
 

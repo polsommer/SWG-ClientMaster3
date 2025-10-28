@@ -1,2 +1,2 @@
-#include "../../src/shared/objectTemplate/SharedWaypointObjectTemplate.h"
+#include "../../../src/shared/objectTemplate/SharedWaypointObjectTemplate.h"
 

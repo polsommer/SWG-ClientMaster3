@@ -23,7 +23,7 @@ namespace SetupSharedXmlNamespace
 	void remove();
 
 	void *xmlAllocate(size_t byteCount);
-	void  xmlFree2(void *memory);
+	void  xmlFree(void *memory);
 	char *xmlDuplicateString(char const *source);
 	void *xmlReAllocate(void *memory, size_t byteCount);
 
@@ -55,7 +55,7 @@ void *SetupSharedXmlNamespace::xmlAllocate(size_t byteCount)
 
 // ----------------------------------------------------------------------
 
-void SetupSharedXmlNamespace::xmlFree2(void *memory)
+void SetupSharedXmlNamespace::xmlFree(void *memory)
 {
 	delete [] reinterpret_cast<byte*>(memory);
 }
@@ -71,7 +71,7 @@ char *SetupSharedXmlNamespace::xmlDuplicateString(char const *source)
 
 void *SetupSharedXmlNamespace::xmlReAllocate(void *memory, size_t byteCount)
 {
-	return realloc(memory, byteCount);
+	return MemoryManager::reallocate(memory, byteCount);
 }
 
 // ======================================================================
@@ -85,7 +85,7 @@ void SetupSharedXml::install()
 	FATAL(s_installed, ("SetupSharedXml already installed."));
 
 	//-- Tell libxml to use our memory management functions via these stubs.
-	int const result = xmlMemSetup(SetupSharedXmlNamespace::xmlFree2, SetupSharedXmlNamespace::xmlAllocate, SetupSharedXmlNamespace::xmlReAllocate, SetupSharedXmlNamespace::xmlDuplicateString);
+	int const result = xmlMemSetup(SetupSharedXmlNamespace::xmlFree, SetupSharedXmlNamespace::xmlAllocate, SetupSharedXmlNamespace::xmlReAllocate, SetupSharedXmlNamespace::xmlDuplicateString);
 	FATAL(result != 0, ("sharedXml failed to install memory handlers with error code [%d].", result));
 
 	XmlTreeDocumentList::install();

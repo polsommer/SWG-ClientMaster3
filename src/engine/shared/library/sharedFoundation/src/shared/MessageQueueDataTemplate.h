@@ -8,7 +8,7 @@
 #ifndef INCLUDED_MessageQueueDataTemplate_H
 #define INCLUDED_MessageQueueDataTemplate_H
 
-#include "sharedFoundation/MessageQueue.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MessageQueue.h"
 
 //======================================================================
 

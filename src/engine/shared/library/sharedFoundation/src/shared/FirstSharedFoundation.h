@@ -32,9 +32,9 @@
 // ======================================================================
 // things we really have to have
 
-#include "sharedFoundationTypes/FoundationTypes.h"
-#include "sharedFoundation/FirstPlatform.h"
-
+#include "../../../../../../engine/shared/library/sharedFoundationTypes/include/public/sharedFoundationTypes/FoundationTypes.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FirstPlatform.h"
+#include "../../../../../../engine/shared/library/sharedMemoryManager/include/public/sharedMemoryManager/MemoryManager.h"
 
 // ======================================================================
 
@@ -70,16 +70,16 @@ const float REAL_MAX = FLT_MAX;
 #include <ctype.h>
 #include <stdarg.h>
 
-#include "sharedFoundation/MacroFoundation.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/MacroFoundation.h"
 
-#include "sharedFoundation/Binary.h"
-#include "sharedFoundation/Fatal.h"
-#include "sharedFoundation/StlForwardDeclaration.h"
-#include "sharedFoundation/Misc.h"
-#include "sharedDebug/RemoteDebug.h"
-#include "sharedDebug/Report.h"
-#include "sharedFoundation/FloatMath.h"
-#include "sharedFoundation/SafeCast.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Binary.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Fatal.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/StlForwardDeclaration.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/Misc.h"
+#include "../../../../../../engine/shared/library/sharedDebug/include/public/sharedDebug/RemoteDebug.h"
+#include "../../../../../../engine/shared/library/sharedDebug/include/public/sharedDebug/Report.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/FloatMath.h"
+#include "../../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/SafeCast.h"
 
 // ======================================================================
 

@@ -32,8 +32,8 @@ public:
 	explicit   WhoListMessage (Archive::ReadIterator & source);
 	virtual   ~WhoListMessage ();
 
-	const std::vector<Unicode::String> &    getDataArray () const;
-	void                                       setData (const std::vector<Unicode::String> & data);
+	const stdvector<Unicode::String>::fwd &    getDataArray () const;
+	void                                       setData (const stdvector<Unicode::String>::fwd & data);
 	
 private:
 
@@ -46,7 +46,7 @@ private:
 
 //-----------------------------------------------------------------------
 
-inline const std::vector<Unicode::String> & WhoListMessage::getDataArray () const
+inline const stdvector<Unicode::String>::fwd & WhoListMessage::getDataArray () const
 {
 	return m_data.get ();
 }

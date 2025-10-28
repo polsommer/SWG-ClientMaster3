@@ -56,13 +56,7 @@ hostAddress(newHostAddress)
 			// The first byte is a letter, resolve it
 			if( (h = gethostbyname(hostAddress.c_str())) != 0)
 			{
-                int i = 0;
-                while (h->h_addr_list[i] != 0) {
-                    memcpy(&addr4->sin_addr, h->h_addr_list[i++], sizeof(addr4->sin_addr));
-                    //addr4->sin_addr = *(u_long *) h->h_addr_list[i++];
-                    //printf("\tIP Address #%d: %s\n", i, inet_ntoa(addr));
-                }
-				//memcpy(&addr4->sin_addr, h->h_addr_list[0], sizeof(addr4->sin_addr));
+				memcpy(&addr4->sin_addr, h->h_addr_list[0], sizeof(addr4->sin_addr));
 			}
 			else
 			{
@@ -374,7 +368,7 @@ size_t Address::hashFunction() const
 
 	Example:
 	\code
-	typedef std::unordered_map<Address, Connection *, Address::HashFunction, Address::EqualFunction> AddressMap;
+	typedef std::hash_map<Address, Connection *, Address::HashFunction, Address::EqualFunction> AddressMap;
 	\endcode
 
 	@return true if the left hand side and right hand side are equal

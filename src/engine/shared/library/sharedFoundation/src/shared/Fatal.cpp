@@ -33,7 +33,7 @@ namespace FatalNamespace
 	int   ms_numberOfWarnings = 0;
 	bool  ms_strict = false;
 
-	WarningCallback s_warningCallback = nullptr;
+	WarningCallback s_warningCallback = NULL;
 
 #if PRODUCTION == 0
 	PixCounter::ResetInteger ms_numberOfWarningsThisFrame;
@@ -55,7 +55,7 @@ void FatalInstall()
 static void formatMessage(char *buffer, int bufferLength, int stackDepth, const char *type, const char *format, va_list va)
 {
 	const int callStackOffset = 4;
-	const int maxStackDepth   = 128;
+	const int maxStackDepth   = 64;
 
 	if (stackDepth > maxStackDepth)
 		stackDepth = maxStackDepth;
@@ -70,23 +70,29 @@ static void formatMessage(char *buffer, int bufferLength, int stackDepth, const 
 	else
 		DebugHelp::getCallStack(callStack, callStackOffset + stackDepth);
 
-	// make sure the buffer is always nullptr terminated
+	// make sure the buffer is always null terminated
 	buffer[--bufferLength] = '\0';
 
 	// look up the caller's file and line
-	if (callStack[callStackOffset])
-	{
-		char lib[4 * 1024] = { '\0' };
-		char file[4 * 1024] = { '\0' };
-		int line = 0;
-		if (ConfigSharedFoundation::getLookUpCallStackNames() && DebugHelp::lookupAddress(callStack[callStackOffset], lib, file, sizeof(file), line))
-			snprintf(buffer, bufferLength, "%s(%d) : %s %08x: \n", file, line, type, static_cast<int>(Crc::calculate(format)));
-		else
-			snprintf(buffer, bufferLength, "(0x%08X) : %s %08x: \n", static_cast<int>(callStack[callStackOffset]), type, static_cast<int>(Crc::calculate(format)));
-	}
+        if (callStack[callStackOffset])
+        {
+                char lib[4 * 1024] = { '\0' };
+                char file[4 * 1024] = { '\0' };
+                int line = 0;
+				bool const haveLookup = ConfigSharedFoundation::getLookUpCallStackNames() && DebugHelp::lookupAddress(callStack[callStackOffset], lib, file, sizeof(file), line);
+				if (haveLookup)
+				{
+					if (line >= 0)
+						snprintf(buffer, bufferLength, "%s(%d) : %s %08x: ", file, line, type, static_cast<int>(Crc::calculate(format)));
+					else
+						snprintf(buffer, bufferLength, "%s : %s %08x: ", file, type, static_cast<int>(Crc::calculate(format)));
+                }
+                else
+                        snprintf(buffer, bufferLength, "unknown(0x%08X) : %s %08x: ", static_cast<int>(callStack[callStackOffset]), type, static_cast<int>(Crc::calculate(format)));
+        }
 	else
 	{
-		snprintf(buffer, bufferLength, "    (%08x): ", static_cast<int>(Crc::calculate(format)));
+		snprintf(buffer, bufferLength, "unknown location : %s %08x: ", type, static_cast<int>(Crc::calculate(format)));
 	}
 
 	{
@@ -123,10 +129,16 @@ static void formatMessage(char *buffer, int bufferLength, int stackDepth, const 
 				char file[1024];
 				int line = 0;
 
-				if (ConfigSharedFoundation::getLookUpCallStackNames() && DebugHelp::lookupAddress(callStack[i], lib, file, sizeof(file), line))
-					snprintf(buffer, bufferLength, "   %s(%d) : caller %d\n", file, line, i-callStackOffset);
-				else
-					snprintf(buffer, bufferLength, "   (0x%08X) : caller %d\n", static_cast<int>(callStack[i]), i-callStackOffset);
+					bool const haveLookup = ConfigSharedFoundation::getLookUpCallStackNames() && DebugHelp::lookupAddress(callStack[i], lib, file, sizeof(file), line);
+					if (haveLookup)
+					{
+						if (line >= 0)
+							snprintf(buffer, bufferLength, "  %s(%d) : caller %d\n", file, line, i-callStackOffset);
+						else
+							snprintf(buffer, bufferLength, "  %s : caller %d\n", file, i-callStackOffset);
+					}
+					else
+                                        snprintf(buffer, bufferLength, "  unknown(0x%08X) : caller %d\n", static_cast<int>(callStack[i]), i-callStackOffset);
 
 				const int length = strlen(buffer);
 				buffer += length;
@@ -191,7 +203,7 @@ static void InternalWarning(const char *format, int extraFlags, va_list va, int 
 
 	char buffer[4 * 1024];
 
-	if (nullptr != s_warningCallback)
+	if (NULL != s_warningCallback)
 	{
 		strcpy(buffer, "WARNING: ");
 		vsnprintf(buffer + 9, sizeof(buffer) - 9, format, va);

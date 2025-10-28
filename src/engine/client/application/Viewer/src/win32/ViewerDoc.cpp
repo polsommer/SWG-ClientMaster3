@@ -22,7 +22,6 @@
 #include "ViewerPreferences.h"
 #include "ViewerView.h"
 #include "AnimationTreeDialog.h"
-#include "ContentCreationPreset.h"
 
 #include "clientGraphics/Light.h"
 #include "clientGraphics/RenderWorld.h"
@@ -70,7 +69,6 @@
 #include "sharedFile/TreeFile.h"
 #include "sharedFoundation/Clock.h"
 #include "sharedFoundation/ConfigFile.h"
-#include "sharedFoundation/CrcLowerString.h"
 #include "sharedFoundation/ConstCharCrcLowerString.h"
 #include "sharedFoundation/MessageQueue.h"
 #include "sharedFoundation/PointerDeleter.h"
@@ -3059,195 +3057,7 @@ void CViewerDoc::OnButtonDebugdump()
 
 void CViewerDoc::debugDump ()
 {
-        OnButtonDebugdump ();
-}
-
-// ----------------------------------------------------------------------
-
-bool CViewerDoc::applyContentPreset(const ViewerContentPreset &preset, CString &statusMessage)
-{
-        if (!preset.skeletonTemplate.GetLength() && !preset.meshGenerator.GetLength())
-        {
-                statusMessage = _T("Preset does not define a skeleton or mesh generator.");
-                return false;
-        }
-
-        if (m_skeletalAppearanceTemplate)
-        {
-                AppearanceTemplateList::release(m_skeletalAppearanceTemplate);
-                m_skeletalAppearanceTemplate = 0;
-        }
-
-        SkeletalAppearanceTemplate *const newTemplate = new SkeletalAppearanceTemplate();
-        IGNORE_RETURN(AppearanceTemplateList::fetchNew(newTemplate));
-
-        bool addedSkeleton = false;
-        bool addedMesh = false;
-        bool addedLatMapping = false;
-        const bool referencedAnimations = !preset.recommendedAnimations.empty();
-
-        std::vector<CString> missingAssets;
-
-        if (preset.skeletonTemplate.GetLength())
-        {
-                CStringA skeletonReference(preset.skeletonTemplate);
-                const bool skeletonExists = TreeFile::exists(skeletonReference);
-                const bool hasLatMapping = preset.latMapping.GetLength() > 0;
-                CStringA latReference;
-                bool latExists = false;
-
-                if (hasLatMapping)
-                {
-                        latReference = preset.latMapping;
-                        latExists = TreeFile::exists(latReference);
-                }
-
-                if (skeletonExists)
-                {
-                        newTemplate->addSkeletonTemplate(skeletonReference, 0);
-                        addedSkeleton = true;
-
-                        if (hasLatMapping)
-                        {
-                                CrcLowerString skeletonCrc(skeletonReference);
-                                CrcLowerString latCrc(latReference);
-                                newTemplate->setSktToLatMapping(skeletonCrc, latCrc);
-                                newTemplate->setCreateAnimationController(true);
-                                addedLatMapping = true;
-
-                                if (!latExists)
-                                        missingAssets.push_back(preset.latMapping);
-                        }
-                }
-                else
-                {
-                        missingAssets.push_back(preset.skeletonTemplate);
-
-                        if (hasLatMapping && !latExists)
-                                missingAssets.push_back(preset.latMapping);
-                }
-        }
-
-        if (preset.meshGenerator.GetLength())
-        {
-                CStringA meshReference(preset.meshGenerator);
-                const bool meshExists = TreeFile::exists(meshReference);
-
-                if (meshExists)
-                {
-                        newTemplate->addMeshGenerator(meshReference);
-                        addedMesh = true;
-                }
-                else
-                {
-                        missingAssets.push_back(preset.meshGenerator);
-                }
-        }
-
-        if (!addedSkeleton && !addedMesh)
-        {
-                AppearanceTemplateList::release(newTemplate);
-                statusMessage = _T("Preset could not be applied; no valid asset references were supplied.");
-                return false;
-        }
-
-        if (referencedAnimations)
-                newTemplate->setCreateAnimationController(true);
-
-        m_skeletalAppearanceTemplate = newTemplate;
-        m_skeletalAppearanceTemplateFilename = _T("");
-        m_skeletalAppearanceWorkspaceFilename = _T("");
-
-        rebuildAppearance();
-
-        CString summary;
-        summary.Format(_T("Preset \"%s\" applied."), preset.name.GetString());
-
-        if (addedSkeleton)
-                summary.AppendFormat(_T("\r\n- Skeleton: %s"), preset.skeletonTemplate.GetString());
-        if (addedMesh)
-                summary.AppendFormat(_T("\r\n- Mesh Generator: %s"), preset.meshGenerator.GetString());
-        if (addedLatMapping)
-                summary.AppendFormat(_T("\r\n- LAT Mapping: %s"), preset.latMapping.GetString());
-        if (preset.shaderTemplate.GetLength())
-                summary.AppendFormat(_T("\r\n- Suggested Shader: %s"), preset.shaderTemplate.GetString());
-        if (!preset.quickTips.IsEmpty())
-                summary.AppendFormat(_T("\r\n- Tips: %s"), preset.quickTips.GetString());
-
-        if (!missingAssets.empty())
-        {
-                summary += _T("\r\n\r\nAssets to verify:");
-                for (std::vector<CString>::const_iterator it = missingAssets.begin(); it != missingAssets.end(); ++it)
-                        summary.AppendFormat(_T("\r\n  - %s"), it->GetString());
-        }
-
-        statusMessage = summary;
-
-        UpdateAllViews(0);
-
-        return true;
-}
-
-// ----------------------------------------------------------------------
-
-void CViewerDoc::queuePresetAnimations(const std::vector<CString> &animations, bool appendToQueue)
-{
-        if (animations.empty())
-                return;
-
-        bool queueSubsequent = appendToQueue;
-
-        for (std::vector<CString>::const_iterator it = animations.begin(); it != animations.end(); ++it)
-        {
-                if (!(*it).GetLength())
-                        continue;
-
-                CStringA animationName(*it);
-                playAnim(animationName, queueSubsequent, true);
-                queueSubsequent = true;
-        }
-}
-
-// ----------------------------------------------------------------------
-
-bool CViewerDoc::previewPresetShader(const CString &shaderTemplateName, CString &statusMessage)
-{
-        if (!shaderTemplateName.GetLength())
-        {
-                statusMessage = _T("Preset does not define a shader template.");
-                return false;
-        }
-
-        CStringA shaderName(shaderTemplateName);
-
-        if (!TreeFile::exists(shaderName))
-        {
-                statusMessage.Format(_T("Shader template \"%s\" was not located."), shaderTemplateName.GetString());
-                return false;
-        }
-
-        if (loadShaderTemplate(shaderName))
-        {
-                statusMessage.Format(_T("Previewing shader template \"%s\"."), shaderTemplateName.GetString());
-                return true;
-        }
-
-        statusMessage.Format(_T("Failed to preview shader template \"%s\"."), shaderTemplateName.GetString());
-        return false;
-}
-
-// ----------------------------------------------------------------------
-
-bool CViewerDoc::previewSkeletonTemplate(const char *filename)
-{
-        return filename && loadSkeletonTemplate(filename);
-}
-
-// ----------------------------------------------------------------------
-
-bool CViewerDoc::previewMeshGenerator(const char *filename)
-{
-        return filename && loadMeshGenerator(filename);
+	OnButtonDebugdump ();
 }
 
 // ----------------------------------------------------------------------

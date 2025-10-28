@@ -5,8 +5,6 @@
 #ifndef	_SkillManager_H
 #define	_SkillManager_H
 
-#include <unordered_map>
-
 //---------------------------------------------------------------------
 #pragma warning (disable : 4786 )
 
@@ -18,8 +16,8 @@ class DataTable;
 class SkillManager
 {
 public:
-	typedef std::unordered_map<std::string, SkillObject *> SkillMap;
-	typedef std::unordered_map<std::string, uint32>        XpLimitMap;
+	typedef stdhash_map<std::string, SkillObject *>::fwd SkillMap;
+	typedef stdhash_map<std::string, uint32>::fwd        XpLimitMap;
 
 	virtual              ~SkillManager ();
 
@@ -54,7 +52,7 @@ private:
 
 inline const SkillManager::SkillMap & SkillManager::getSkillMap() const
 {
-	return *(m_skillMap);
+	return *NON_NULL(m_skillMap);
 }
 
 //---------------------------------------------------------------------

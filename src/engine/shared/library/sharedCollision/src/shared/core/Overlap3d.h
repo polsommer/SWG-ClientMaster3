@@ -26,7 +26,7 @@ class Range;
 class Cylinder;
 class MultiShape;
 
-typedef std::vector<Vector> VertexList;
+typedef stdvector<Vector>::fwd VertexList;
 
 // ======================================================================
 

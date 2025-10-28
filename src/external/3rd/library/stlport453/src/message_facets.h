@@ -23,7 +23,7 @@
 #include <stl/_ctype.h>
 // #include <istream>
 #include <typeinfo>
-#include "../../../../../engine/shared/library/sharedFoundation/include/public/sharedFoundation/HashMap.h"
+#include <hash_map>
 #include "c_locale.h"
 
 _STLP_BEGIN_NAMESPACE
