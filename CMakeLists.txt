@@ -36,6 +36,12 @@ if(WIN32)
 
     target_include_directories(swg_direct3d10_bootstrap PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/client/application/Direct3d10/src/win32
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedDebug/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedDebug/include/public
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedFoundation/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedFoundation/include/public
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedMemoryManager/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedMemoryManager/include/public
     )
 
     target_compile_definitions(swg_direct3d10_bootstrap PRIVATE DIRECT3D10_BOOTSTRAP)
