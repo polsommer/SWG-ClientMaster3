@@ -1502,9 +1502,45 @@ bool Direct3d9::install(Gl_install *gl_install)
 		ms_deviceType = D3DDEVTYPE_HAL;
 	// ---------------------------------------------------------------------------------
 
-	const bool canLockBackBuffer    = !ConfigDirect3d9::getDoNotLockBackBuffer() && !ConfigDirect3d9::getAntiAlias();
+        const bool canLockBackBuffer    = !ConfigDirect3d9::getDoNotLockBackBuffer() && !ConfigDirect3d9::getAntiAlias();
+        const DWORD lockableBackBuffer  = canLockBackBuffer ? D3DPRESENTFLAG_LOCKABLE_BACKBUFFER : 0;
 
-	//const bool screenShotBackBuffer =  ConfigDirect3d9::getScreenShotBackBuffer();
+        static const D3DFORMAT windowedBackBufferFormats[] =
+        {
+                D3DFMT_X8R8G8B8,
+                D3DFMT_A8R8G8B8,
+                D3DFMT_UNKNOWN
+        };
+
+        static const D3DFORMAT fullscreenBackBufferFormats[] =
+        {
+                D3DFMT_A8R8G8B8,
+                D3DFMT_X8R8G8B8,
+                D3DFMT_R5G6B5,
+                D3DFMT_UNKNOWN
+        };
+
+        static const D3DFORMAT windowedDepthStencilFormats[] =
+        {
+                D3DFMT_D24S8,
+                D3DFMT_D24X8,
+                D3DFMT_D16,
+                D3DFMT_UNKNOWN
+        };
+
+        static const D3DFORMAT fullscreenDepthStencilFormats[] =
+        {
+                D3DFMT_D24S8,
+                D3DFMT_D24X8,
+                D3DFMT_D32,
+                D3DFMT_D16,
+                D3DFMT_UNKNOWN
+        };
+
+        const D3DFORMAT *const backBufferFormats = ms_windowed ? windowedBackBufferFormats : fullscreenBackBufferFormats;
+        const D3DFORMAT *const depthStencilFormats = ms_windowed ? windowedDepthStencilFormats : fullscreenDepthStencilFormats;
+
+        //const bool screenShotBackBuffer =  ConfigDirect3d9::getScreenShotBackBuffer();
 	bool created = false;
 	bool attemptDirect3d9Ex = ms_usingDirect3d9Ex;
 	bool usingDirect3d9ExThisRun = false;
@@ -1616,8 +1652,7 @@ bool Direct3d9::install(Gl_install *gl_install)
 							}
 							else
 							{
-								REPORT_LOG(verboseHardwareLogging, ("Failed createEx %s %s %s %s
-", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
+								REPORT_LOG(verboseHardwareLogging, ("Failed createEx %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
 								continue;
 							}
 						}
@@ -1626,8 +1661,7 @@ bool Direct3d9::install(Gl_install *gl_install)
 							hresult = ms_direct3d->CreateDevice(ms_adapter, ms_deviceType, ms_window, vertexProcessingMode, &ms_presentParameters, &ms_device);
 							if (FAILED(hresult))
 							{
-								REPORT_LOG(verboseHardwareLogging, ("Failed create %s %s %s %s
-", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
+								REPORT_LOG(verboseHardwareLogging, ("Failed create %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
 								continue;
 							}
 						}
@@ -1656,13 +1690,11 @@ bool Direct3d9::install(Gl_install *gl_install)
 
 							if (created)
 							{
-								REPORT_LOG(verboseHardwareLogging, ("Passed format %s %s %s %s
-", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
+								REPORT_LOG(verboseHardwareLogging, ("Passed format %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
 							}
 							else
 							{
-								REPORT_LOG(verboseHardwareLogging, ("Failed wrong depth/stencil format %s %s %s %s
-", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
+								REPORT_LOG(verboseHardwareLogging, ("Failed wrong depth/stencil format %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
 								ms_device->Release();
 								ms_device = NULL;
 								if (useDirect3d9Ex)
@@ -1679,10 +1711,8 @@ bool Direct3d9::install(Gl_install *gl_install)
 	if (!ms_usingDirect3d9Ex)
 		ms_deviceEx = NULL;
 
-	REPORT_LOG(verboseHardwareLogging, ("Using Direct3D9Ex: %s
-", ms_usingDirect3d9Ex ? "yes" : "no"));
-	CrashReportInformation::addStaticText("Direct3D9Ex: %s
-", ms_usingDirect3d9Ex ? "yes" : "no");
+	REPORT_LOG(verboseHardwareLogging, ("Using Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no"));
+	CrashReportInformation::addStaticText("Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no");
 				{
 #ifdef FFP
 					if (ms_deviceCaps.MaxSimultaneousTextures >= 3)
@@ -2817,8 +2847,7 @@ bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int heig
 
 		if (SUCCEEDED(cooperativeLevel) || cooperativeLevel == D3DERR_DEVICENOTRESET)
 		{
-			DEBUG_REPORT_LOG(true, ("Device lost, restoring now
-"));
+			DEBUG_REPORT_LOG(true, ("Device lost, restoring now\n"));
 
 			lostDevice();
 
@@ -2827,8 +2856,7 @@ bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int heig
 
 			for (int i = 0; resetResult == D3DERR_DEVICELOST && i < 60; ++i)
 			{
-				DEBUG_REPORT_LOG(true, ("Reset failed, trying repeatedly
-"));
+				DEBUG_REPORT_LOG(true, ("Reset failed, trying repeatedly\n"));
 				Sleep(500);
 				resetResult = resetDevice(&ms_presentParameters);
 			}
@@ -2840,8 +2868,7 @@ bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int heig
 		}
 		else if (cooperativeLevel == D3DERR_DEVICELOST || cooperativeLevel == S_PRESENT_OCCLUDED)
 		{
-			DEBUG_REPORT_LOG(true, ("Device lost, waiting to restore
-"));
+			DEBUG_REPORT_LOG(true, ("Device lost, waiting to restore\n"));
 			Sleep(50);
 			return false;
 		}
