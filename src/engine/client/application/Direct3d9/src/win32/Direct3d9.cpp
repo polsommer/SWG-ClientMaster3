@@ -1759,7 +1759,6 @@ bool Direct3d9::install(Gl_install *gl_install)
                                 }
                         }
 		}
-	}
 
 	if (ms_shaderCapability < ShaderCapability(1,1))
 		ms_glApi.setAlphaFadeOpacity = noSetAlphaFadeOpacity;
