@@ -20,6 +20,7 @@ class  StaticShader;
 class  Transform;
 class  Vector;
 class  VertexBufferVector;
+struct IDirect3DDevice9Ex;
 
 #include <d3d9.h>
 #include <dxerr9.h>
@@ -43,6 +44,7 @@ public:
 	static int                  getShaderCapability();
 	static int                  getVideoMemoryInMegabytes();
 	static IDirect3DDevice9 *   getDevice();
+	static IDirect3DDevice9Ex * getDeviceEx();
 	static D3DDEVTYPE           getDeviceType();
 	static D3DFORMAT            getDepthStencilFormat();
 	static D3DCUBEMAP_FACES     getD3dCubeFace(CubeFace cubeFace);
@@ -62,6 +64,7 @@ public:
 	static float                getCurrentTime();
 	static int                  getFrameNumber();
 	static DWORD                getFogColor();
+	static bool                 isUsingDirect3d9Ex();
 
 	static void                 setAlphaBlendEnable(bool alphaBlendEnable);
 	static void                 setAlphaTestReferenceValue(uint8 alphaTestReferenceValue);
