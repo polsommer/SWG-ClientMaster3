@@ -139,6 +139,8 @@ namespace Direct3d9Namespace
 	bool                               supportsScissorRect();
 	bool                               supportsHardwareMouseCursor();
 
+	void                               installSubsystems();
+
 #ifdef _DEBUG
 	bool                               getShowMipmapLevels();
 	void                               clearStaticShader();
@@ -1762,6 +1764,15 @@ bool Direct3d9::install(Gl_install *gl_install)
 	if (ms_shaderCapability < ShaderCapability(1,1))
 		ms_glApi.setAlphaFadeOpacity = noSetAlphaFadeOpacity;
 
+	installSubsystems();
+
+        return true;
+}
+
+// ----------------------------------------------------------------------
+
+void Direct3d9Namespace::installSubsystems()
+{
 	REPORT_LOG(verboseHardwareLogging, ("Using graphics shader capability %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability)));
 	CrashReportInformation::addStaticText("ShaderCapability: %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability));
 
@@ -1834,8 +1845,6 @@ bool Direct3d9::install(Gl_install *gl_install)
 #endif
 
 	resizeQuadListIndexBuffer(4 * 1024);
-
-	return true;
 }
 
 // ----------------------------------------------------------------------
