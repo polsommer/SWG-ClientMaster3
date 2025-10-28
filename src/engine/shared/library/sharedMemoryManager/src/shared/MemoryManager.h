@@ -12,7 +12,17 @@
 
 // ======================================================================
 
-#include "sharedDebug/DebugHelp.h"
+#if defined(__has_include)
+#  if __has_include("sharedDebug/DebugHelp.h")
+#    include "sharedDebug/DebugHelp.h"
+#  elif __has_include("../../../sharedDebug/include/public/sharedDebug/DebugHelp.h")
+#    include "../../../sharedDebug/include/public/sharedDebug/DebugHelp.h"
+#  else
+#    error "Unable to locate sharedDebug/DebugHelp.h"
+#  endif
+#else
+#  include "sharedDebug/DebugHelp.h"
+#endif
 
 // ======================================================================
 
