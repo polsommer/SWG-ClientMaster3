@@ -1731,29 +1731,31 @@ bool Direct3d9::install(Gl_install *gl_install)
 				ms_shaderCapability = ShaderCapability(1,4);
 			}
 #undef IS_VERSION
-			//check for Geforce FX series cards, which screwed up shader2.0 support.  See http://en.wikipedia.org/wiki/GeForce_FX
-			if(ms_adapterIdentifier.VendorId == 0x10de) //NVidia
-			{
-				if(ms_adapterIdentifier.DeviceId  == 0x300 //various Geforce FX card versions
-				 || ms_adapterIdentifier.DeviceId == 0x301
-				 || ms_adapterIdentifier.DeviceId == 0x302
-				 || ms_adapterIdentifier.DeviceId == 0x311
-				 || ms_adapterIdentifier.DeviceId == 0x312
-				 || ms_adapterIdentifier.DeviceId == 0x314
-				 || ms_adapterIdentifier.DeviceId == 0x320
-				 || ms_adapterIdentifier.DeviceId == 0x321
-				 || ms_adapterIdentifier.DeviceId == 0x322
-				 || ms_adapterIdentifier.DeviceId == 0x330
-				 || ms_adapterIdentifier.DeviceId == 0x331
-				 || ms_adapterIdentifier.DeviceId == 0x333
-				 || ms_adapterIdentifier.DeviceId == 0x341
-				)
-				{
-					REPORT_LOG(verboseHardwareLogging, ("Detected Geforce FX series card - falling back to shader capability 1.4\n"));
-					CrashReportInformation::addStaticText("D3d9Hack1: enabling Geforce FX series card workaround\n");
-					ms_shaderCapability = ShaderCapability(1,4);
-				}
-			}
+                        // Check for Geforce FX series cards, which had problematic shader 2.0 support.
+                        if (ms_adapterIdentifier.VendorId == 0x10de)
+                        {
+                                bool const isGeforceFx =
+                                        ms_adapterIdentifier.DeviceId == 0x300 ||
+                                        ms_adapterIdentifier.DeviceId == 0x301 ||
+                                        ms_adapterIdentifier.DeviceId == 0x302 ||
+                                        ms_adapterIdentifier.DeviceId == 0x311 ||
+                                        ms_adapterIdentifier.DeviceId == 0x312 ||
+                                        ms_adapterIdentifier.DeviceId == 0x314 ||
+                                        ms_adapterIdentifier.DeviceId == 0x320 ||
+                                        ms_adapterIdentifier.DeviceId == 0x321 ||
+                                        ms_adapterIdentifier.DeviceId == 0x322 ||
+                                        ms_adapterIdentifier.DeviceId == 0x330 ||
+                                        ms_adapterIdentifier.DeviceId == 0x331 ||
+                                        ms_adapterIdentifier.DeviceId == 0x333 ||
+                                        ms_adapterIdentifier.DeviceId == 0x341;
+
+                                if (isGeforceFx)
+                                {
+                                        REPORT_LOG(verboseHardwareLogging, ("Detected Geforce FX series card - falling back to shader capability 1.4\n"));
+                                        CrashReportInformation::addStaticText("D3d9Hack1: enabling Geforce FX series card workaround\n");
+                                        ms_shaderCapability = ShaderCapability(1,4);
+                                }
+                        }
 		}
 	}
 
