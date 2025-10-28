@@ -9,10 +9,10 @@
 //
 // ======================================================================
 
-#ifndef INCLUDED_Direct3d9ExSupport_H
-#define INCLUDED_Direct3d9ExSupport_H
+#ifndef INCLUDED_Direct3d9ExSupportWrapper_H
+#define INCLUDED_Direct3d9ExSupportWrapper_H
 
 #include "../../../Direct3d9Ex/src/win32/Direct3d9ExSupport.h"
 
-#endif // INCLUDED_Direct3d9ExSupport_H
+#endif // INCLUDED_Direct3d9ExSupportWrapper_H
 
