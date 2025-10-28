@@ -1772,7 +1772,8 @@ bool Direct3d9::install(Gl_install *gl_install)
 
 void Direct3d9Namespace::installSubsystems()
 {
-	REPORT_LOG(verboseHardwareLogging, ("Using graphics shader capability %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability)));
+        const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
+        REPORT_LOG(verboseHardwareLogging, ("Using graphics shader capability %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability)));
 	CrashReportInformation::addStaticText("ShaderCapability: %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability));
 
 
