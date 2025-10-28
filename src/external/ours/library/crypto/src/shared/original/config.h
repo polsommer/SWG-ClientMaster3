@@ -25,20 +25,6 @@
 
 // define this if your compiler does not support namespaces
 // #define NO_NAMESPACE
-
-// Modern compilers always provide namespace support.  The historical
-// NO_NAMESPACE switch from Crypto++ removed the std/CryptoPP namespaces by
-// defining macros such as `#define std` which collide with the standard
-// library headers that ship with recent toolchains.  When those macros leak
-// outside of the Crypto++ sources they break unrelated code (for example the
-// STLPort headers used by the client).  Allow projects that really need the
-// legacy behaviour to opt back in via CRYPTOPP_ALLOW_NO_NAMESPACE, but default
-// to keeping namespaces enabled so the rest of the codebase can build
-// correctly on modern compilers like MSVC 2013.
-#if defined(NO_NAMESPACE) && !defined(CRYPTOPP_ALLOW_NO_NAMESPACE)
-# undef NO_NAMESPACE
-#endif
-
 #ifdef NO_NAMESPACE
 #define std
 #define CryptoPP
