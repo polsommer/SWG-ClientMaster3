@@ -1711,24 +1711,13 @@ bool Direct3d9::install(Gl_install *gl_install)
 	if (!ms_usingDirect3d9Ex)
 		ms_deviceEx = NULL;
 
-	REPORT_LOG(verboseHardwareLogging, ("Using Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no"));
-	CrashReportInformation::addStaticText("Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no");
-				{
-#ifdef FFP
-					if (ms_deviceCaps.MaxSimultaneousTextures >= 3)
-						ms_shaderCapability = ShaderCapability(0,3);
-					else
-						if (ms_deviceCaps.MaxSimultaneousTextures >= 2)
-							ms_shaderCapability = ShaderCapability(0,2);
-						else
-							ms_shaderCapability = ShaderCapability(0,0);
-#else
-					DEBUG_FATAL(true, ("VSPS-only graphics layer selected but no VSPS supported"));
-#endif
-				}
+        REPORT_LOG(verboseHardwareLogging, ("Using Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no"));
+        CrashReportInformation::addStaticText("Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no");
 
-		if (ms_shaderCapability == ShaderCapability(2,0))
-		{
+        ms_shaderCapability = computeShaderCapabilityFromCaps(ms_deviceCaps);
+
+        if (ms_shaderCapability == ShaderCapability(2,0))
+        {
 #define IS_VERSION(a,b,c,d) (product == a && version == b && subVersion == c && build == d)
 			int const product    = HIWORD(ms_adapterIdentifier.DriverVersion.HighPart);
 			int const version    = LOWORD(ms_adapterIdentifier.DriverVersion.HighPart);
