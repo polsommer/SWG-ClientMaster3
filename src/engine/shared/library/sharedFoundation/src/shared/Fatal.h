@@ -11,7 +11,19 @@
 
 // ======================================================================
 
+#if defined(__has_include)
+#if __has_include("sharedFoundation/FirstPlatform.h")
 #include "sharedFoundation/FirstPlatform.h"
+#elif __has_include("sharedFoundation/include/sharedFoundation/FirstPlatform.h")
+#include "sharedFoundation/include/sharedFoundation/FirstPlatform.h"
+#elif __has_include("../../include/public/sharedFoundation/FirstPlatform.h")
+#include "../../include/public/sharedFoundation/FirstPlatform.h"
+#else
+#error "Unable to locate sharedFoundation/FirstPlatform.h"
+#endif
+#else
+#include "sharedFoundation/FirstPlatform.h"
+#endif
 
 void           FatalInstall();
 
