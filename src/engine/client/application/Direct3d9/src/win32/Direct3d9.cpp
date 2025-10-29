@@ -362,9 +362,10 @@ namespace Direct3d9Namespace
 	Gl_api                                     ms_glApi;
 	HMODULE                                   ms_d3d9Module;
 	bool                                      ms_loadedD3d9Module;
-	bool                                      ms_usingDirect3d9Ex;
-	IDirect3D9Ex                              *ms_direct3dEx;
-	IDirect3DDevice9Ex                        *ms_deviceEx;
+        bool                                      ms_usingDirect3d9Ex;
+        IDirect3D9Ex                              *ms_direct3dEx;
+        IDirect3DDevice9Ex                        *ms_deviceEx;
+        bool                                      ms_reportedDeviceRemoval;
 #if defined(_DEBUG) && defined(VSPS)
 	bool                                      *ms_badVertexBufferVertexShaderCombination;
 	const char                                *ms_appearanceName;
@@ -1157,6 +1158,7 @@ bool Direct3d9Namespace::initializeDirect3dInterfaces(bool preferDirect3d9Ex)
         ms_usingDirect3d9Ex = false;
         ms_direct3d = NULL;
         ms_direct3dEx = NULL;
+        ms_reportedDeviceRemoval = false;
 
         bool loadedD3d9Module = false;
         ms_d3d9Module = Direct3d9ExSupport::loadRuntime(true, &loadedD3d9Module);
@@ -1225,26 +1227,43 @@ void Direct3d9Namespace::configureDirect3d9ExDevice(IDirect3DDevice9Ex *deviceEx
         if (!deviceEx)
                 return;
 
+        const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
+
         int const configuredLatency = ConfigDirect3d9::getMaximumFrameLatency();
         if (configuredLatency > 0)
         {
-                UINT latency = static_cast<UINT>(configuredLatency);
-                if (latency < 1u)
-                        latency = 1u;
-                if (latency > 16u)
-                        latency = 16u;
+                UINT const latency = Direct3d9ExSupport::clampMaximumFrameLatency(static_cast<UINT>(configuredLatency));
 
-                HRESULT const hr = deviceEx->SetMaximumFrameLatency(latency);
+                HRESULT const hr = Direct3d9ExSupport::setMaximumFrameLatency(deviceEx, latency);
                 if (SUCCEEDED(hr))
                 {
-                        const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
                         REPORT_LOG(verboseHardwareLogging, ("Direct3D9Ex maximum frame latency set to %u.\n", latency));
                         CrashReportInformation::addStaticText("Direct3D9ExFrameLatency: %u\n", latency);
                 }
-		else
+                else
                 {
                         DEBUG_REPORT_LOG(true, ("SetMaximumFrameLatency(%u) failed 0x%08x\n", latency, hr));
                 }
+        }
+
+        INT const configuredPriority = ConfigDirect3d9::getGpuThreadPriority();
+        HRESULT const priorityResult = Direct3d9ExSupport::setGpuThreadPriority(deviceEx, configuredPriority);
+        if (SUCCEEDED(priorityResult))
+        {
+                INT reportedPriority = 0;
+                if (SUCCEEDED(Direct3d9ExSupport::getGpuThreadPriority(deviceEx, &reportedPriority)))
+                {
+                        REPORT_LOG(verboseHardwareLogging, ("Direct3D9Ex GPU thread priority set to %d.\n", reportedPriority));
+                        CrashReportInformation::addStaticText("Direct3D9ExGpuThreadPriority: %d\n", reportedPriority);
+                }
+                else
+                {
+                        REPORT_LOG(verboseHardwareLogging, ("Direct3D9Ex GPU thread priority configured (requested %d).\n", Direct3d9ExSupport::clampGpuThreadPriority(configuredPriority)));
+                }
+        }
+        else if (priorityResult != E_POINTER)
+        {
+                DEBUG_REPORT_LOG(true, ("SetGPUThreadPriority(%d) failed 0x%08x\n", Direct3d9ExSupport::clampGpuThreadPriority(configuredPriority), priorityResult));
         }
 }
 
@@ -1258,11 +1277,12 @@ bool Direct3d9::install(Gl_install *gl_install)
 
 	ConfigDirect3d9::install();
 
-	ms_usingDirect3d9Ex = false;
-	ms_direct3dEx = NULL;
-	ms_deviceEx = NULL;
-	ms_d3d9Module = NULL;
-	ms_loadedD3d9Module = false;
+        ms_usingDirect3d9Ex = false;
+        ms_direct3dEx = NULL;
+        ms_deviceEx = NULL;
+        ms_d3d9Module = NULL;
+        ms_loadedD3d9Module = false;
+        ms_reportedDeviceRemoval = false;
 
 	ms_performanceTimer = new PerformanceTimer();
 
@@ -2347,8 +2367,10 @@ void Direct3d9Namespace::lostDevice()
 
 void Direct3d9Namespace::restoreDevice()
 {
-	if (ms_usingDirect3d9Ex && ms_deviceEx)
-		configureDirect3d9ExDevice(ms_deviceEx);
+        ms_reportedDeviceRemoval = false;
+
+        if (ms_usingDirect3d9Ex && ms_deviceEx)
+                configureDirect3d9ExDevice(ms_deviceEx);
 
 	Direct3d9_RenderTarget::restoreDevice();
         Direct3d9_DynamicVertexBufferData::restoreDevice();
@@ -2880,11 +2902,11 @@ bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int heig
 	}
 
 	HRESULT hresult = S_OK;
-	if (ms_usingDirect3d9Ex && ms_deviceEx)
-	{
-		const DWORD presentFlags = 0;
-		if (windowed)
-		{
+        if (ms_usingDirect3d9Ex && ms_deviceEx)
+        {
+                const DWORD presentFlags = 0;
+                if (windowed)
+                {
 			RECT source;
 			source.top = 0;
 			source.left = 0;
@@ -2895,11 +2917,11 @@ bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int heig
 		}
 		else
 		{
-			hresult = ms_deviceEx->PresentEx(NULL, NULL, NULL, NULL, presentFlags);
-		}
-	}
-	else
-	{
+                        hresult = ms_deviceEx->PresentEx(NULL, NULL, NULL, NULL, presentFlags);
+                }
+        }
+        else
+        {
 		if (windowed)
 		{
 			RECT source;
@@ -2913,28 +2935,48 @@ bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int heig
 		else
 		{
 			hresult = ms_device->Present(NULL, NULL, NULL, NULL);
-		}
-	}
+                }
+        }
 
-	if (hresult == S_PRESENT_OCCLUDED)
-	{
-		Sleep(50);
-		return false;
-	}
+        if (SUCCEEDED(hresult) && ms_usingDirect3d9Ex && ms_deviceEx && ConfigDirect3d9::getWaitForVBlankAfterPresent())
+        {
+                UINT adapter = ms_adapter;
+                int const configuredAdapter = ConfigDirect3d9::getWaitForVBlankAdapter();
+                if (configuredAdapter >= 0)
+                        adapter = static_cast<UINT>(configuredAdapter);
 
-	if (hresult == D3DERR_WASSTILLDRAWING)
-	{
-		Sleep(1);
-		return false;
-	}
+                HRESULT const waitResult = Direct3d9ExSupport::waitForVBlank(ms_deviceEx, adapter);
+                if (FAILED(waitResult))
+                        DEBUG_REPORT_LOG(true, ("WaitForVBlank(%u) failed 0x%08x\n", adapter, waitResult));
+        }
 
-	if (hresult == D3DERR_DEVICELOST || hresult == D3DERR_DRIVERINTERNALERROR || hresult == D3DERR_DEVICEHUNG || hresult == D3DERR_DEVICEREMOVED)
-	{
-		HRESULT cooperativeLevel = S_OK;
-		if (ms_usingDirect3d9Ex && ms_deviceEx)
-			cooperativeLevel = ms_deviceEx->CheckDeviceState(windowed ? window : ms_window);
-		else
-			cooperativeLevel = ms_device->TestCooperativeLevel();
+        if (hresult == S_PRESENT_OCCLUDED)
+        {
+                Sleep(50);
+                return false;
+        }
+
+        if (hresult == D3DERR_WASSTILLDRAWING)
+        {
+                Sleep(1);
+                return false;
+        }
+
+        if (hresult == D3DERR_DEVICELOST || hresult == D3DERR_DRIVERINTERNALERROR || hresult == D3DERR_DEVICEHUNG || hresult == D3DERR_DEVICEREMOVED)
+        {
+                if (Direct3d9ExSupport::isDeviceRemovedError(hresult) && !ms_reportedDeviceRemoval)
+                {
+                        ms_reportedDeviceRemoval = true;
+                        char const *const description = Direct3d9ExSupport::describeDeviceRemovedReason(hresult);
+                        DEBUG_REPORT_LOG(true, ("PresentEx returned %s (0x%08x)\n", description, hresult));
+                        CrashReportInformation::addStaticText("Direct3D9ExPresentFailure: %s (0x%08x)\n", description, hresult);
+                }
+
+                HRESULT cooperativeLevel = S_OK;
+                if (ms_usingDirect3d9Ex && ms_deviceEx)
+                        cooperativeLevel = ms_deviceEx->CheckDeviceState(windowed ? window : ms_window);
+                else
+                        cooperativeLevel = ms_device->TestCooperativeLevel();
 
 		if (SUCCEEDED(cooperativeLevel) || cooperativeLevel == D3DERR_DEVICENOTRESET)
 		{

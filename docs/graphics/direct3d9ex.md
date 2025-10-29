@@ -10,6 +10,9 @@ Add the following entries to the `Direct3d9` section of your configuration (for 
 | --- | --- | --- |
 | `Direct3d9.preferDirect3d9Ex` | `true` | Attempts to load the Direct3D 9Ex runtime via `Direct3DCreate9Ex`. When unavailable the client falls back to the classic Direct3D 9 path and records the reason in the crash report log. |
 | `Direct3d9.maximumFrameLatency` | `1` | Sets `IDirect3DDevice9Ex::SetMaximumFrameLatency` on successful 9Ex device creation. Values outside `1-16` are clamped to preserve stability on lower-end 32-bit hardware. |
+| `Direct3d9.gpuThreadPriority` | `0` | Applies `IDirect3DDevice9Ex::SetGPUThreadPriority` after device creation. The value is clamped to the documented `-7..7` range and recorded in the crash report metadata. |
+| `Direct3d9.waitForVBlankAfterPresent` | `false` | When enabled the renderer calls `IDirect3DDevice9Ex::WaitForVBlank` after a successful present to reduce tearing on windowed-mode swap chains. |
+| `Direct3d9.waitForVBlankAdapter` | `-1` | Overrides the adapter index passed to `WaitForVBlank`. The default (`-1`) reuses the active device adapter. |
 
 > ℹ️ The options above are ignored when the system does not provide the Direct3D 9Ex entry points. The client records a `Direct3D9ExFallback` entry in the crash report to aid support triage.
 
@@ -18,6 +21,7 @@ Add the following entries to the `Direct3d9` section of your configuration (for 
 * The 9Ex path is dynamically loaded, so the 32-bit binary remains compatible with systems that only ship `d3d9.dll`.
 * Frame latency is only configured when a 9Ex device is active. The classic Direct3D 9 runtime does not expose the API and remains unchanged.
 * Verbose hardware logging (`SharedFoundation` → `verboseHardwareLogging`) emits additional details about the selected runtime and any fallback decisions.
+* GPU thread priority and VBlank waits are skipped on systems that do not expose the Direct3D 9Ex entry points.
 
 ## Runtime Queries
 
