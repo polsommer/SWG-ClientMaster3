@@ -45,6 +45,9 @@ namespace ConfigDirect3d9Namespace
 
 	bool ms_antiAlias;
 
+	bool ms_preferDirect3d9Ex;
+	int  ms_maximumFrameLatency;
+
 	ConfigDirect3d9::VertexProcessingMode ms_vertexProcessingMode = ConfigDirect3d9::VPM_default;
 }
 using namespace ConfigDirect3d9Namespace;
@@ -85,6 +88,9 @@ void ConfigDirect3d9::install()
 	KEY_BOOL(discardDynamicBuffersAtBeginningOfFrame, false);
 	
 	KEY_BOOL(antiAlias, true);
+
+	KEY_BOOL(preferDirect3d9Ex, true);
+	KEY_INT (maximumFrameLatency, 1);
 
 	int const vertexProcessingMode = ConfigFile::getKeyInt("Direct3d9", "vertexProcessingMode", 0);
 	FATAL(vertexProcessingMode < 0 || vertexProcessingMode > 2, ("vertexProcessingMode setting invalid %d [0..2]", vertexProcessingMode));
@@ -196,6 +202,20 @@ int ConfigDirect3d9::getDynamicVertexBufferSize()
 bool ConfigDirect3d9::getAntiAlias()
 {
 	return ms_antiAlias;
+}
+
+// ----------------------------------------------------------------------
+
+bool ConfigDirect3d9::getPreferDirect3d9Ex()
+{
+	return ms_preferDirect3d9Ex;
+}
+
+// ----------------------------------------------------------------------
+
+int ConfigDirect3d9::getMaximumFrameLatency()
+{
+	return ms_maximumFrameLatency;
 }
 
 // ----------------------------------------------------------------------
