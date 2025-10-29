@@ -567,14 +567,27 @@ IDirect3DDevice9 *Direct3d9::getDevice()
 
 IDirect3DDevice9Ex *Direct3d9::getDeviceEx()
 {
-	return ms_deviceEx;
+        return ms_deviceEx;
+}
+
+// ----------------------------------------------------------------------
+
+bool Direct3d9::isDirect3d9ExRuntimeAvailable()
+{
+        if (ms_usingDirect3d9Ex || ms_deviceEx)
+                return true;
+
+        if (ms_d3d9Module)
+                return Direct3d9ExSupport::getCreate9ExProc(ms_d3d9Module) != NULL;
+
+        return Direct3d9ExSupport::isRuntimeAvailable();
 }
 
 // ----------------------------------------------------------------------
 
 bool Direct3d9::isUsingDirect3d9Ex()
 {
-	return ms_usingDirect3d9Ex;
+        return ms_usingDirect3d9Ex;
 }
 
 // ----------------------------------------------------------------------
@@ -1282,9 +1295,11 @@ bool Direct3d9::install(Gl_install *gl_install)
 	ms_glApi.getShaderCapability               = getShaderCapability;
 	ms_glApi.requiresVertexAndPixelShaders     = requiresVertexAndPixelShaders;
 	ms_glApi.getOtherAdapterRects              = getOtherAdapterRects;
-	ms_glApi.getVideoMemoryInMegabytes         = getVideoMemoryInMegabytes;
-	ms_glApi.isGdiVisible                      = isGdiVisible;
-	ms_glApi.wasDeviceReset                    = wasDeviceReset;
+        ms_glApi.getVideoMemoryInMegabytes         = getVideoMemoryInMegabytes;
+        ms_glApi.isGdiVisible                      = isGdiVisible;
+        ms_glApi.wasDeviceReset                    = wasDeviceReset;
+        ms_glApi.isDirect3d9ExRuntimeAvailable     = Direct3d9::isDirect3d9ExRuntimeAvailable;
+        ms_glApi.isUsingDirect3d9Ex                = Direct3d9::isUsingDirect3d9Ex;
 
 	ms_glApi.addDeviceLostCallback             = addDeviceLostCallback;
 	ms_glApi.removeDeviceLostCallback          = removeDeviceLostCallback;

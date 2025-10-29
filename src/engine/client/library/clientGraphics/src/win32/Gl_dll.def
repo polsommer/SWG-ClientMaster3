@@ -90,8 +90,10 @@ struct Gl_api
 
 	void (*flushResources)(bool fullReset);
 
-	bool (*isGdiVisible)(void);
-	bool (*wasDeviceReset)(void);
+        bool (*isGdiVisible)(void);
+        bool (*wasDeviceReset)(void);
+        bool (*isDirect3d9ExRuntimeAvailable)();
+        bool (*isUsingDirect3d9Ex)();
 
 	void (*addDeviceLostCallback)(CallbackFunction callbackFunction);
 	void (*removeDeviceLostCallback)(CallbackFunction callbackFunction);
