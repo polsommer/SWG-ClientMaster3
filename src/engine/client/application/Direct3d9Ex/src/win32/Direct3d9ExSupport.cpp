@@ -1,4 +1,5 @@
 #if !defined(SWG_DIRECT3D9EX_SUPPORT_HEADER_ONLY)
+#define SWG_DIRECT3D9EX_SUPPORT_SOURCE 1
 #include "Direct3d9ExSupport.h"
 
 namespace Direct3d9ExSupport
