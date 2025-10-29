@@ -55,7 +55,7 @@ if(WIN32)
     endif()
 
     set_target_properties(swg_direct3d9ex_support PROPERTIES
-        OUTPUT_NAME "SwgDirect3d9ExSupport"
+        OUTPUT_NAME "gl08"
     )
 
     add_library(swg_direct3d10_bootstrap STATIC
