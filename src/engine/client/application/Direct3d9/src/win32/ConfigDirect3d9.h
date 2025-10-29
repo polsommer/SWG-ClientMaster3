@@ -53,6 +53,8 @@ public:
 	static VertexProcessingMode getVertexProcessingMode();
 
 	static bool getAntiAlias();
+	static bool getPreferDirect3d9Ex();
+	static int  getMaximumFrameLatency();
 
 };
 
