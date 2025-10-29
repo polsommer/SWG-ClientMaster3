@@ -1,3 +1,4 @@
+#if !defined(SWG_DIRECT3D9EX_SUPPORT_HEADER_ONLY)
 #include "Direct3d9ExSupport.h"
 
 namespace Direct3d9ExSupport
@@ -128,3 +129,4 @@ namespace Direct3d9ExSupport
                         || result == D3DERR_DEVICELOST;
         }
 }
+#endif // !defined(SWG_DIRECT3D9EX_SUPPORT_HEADER_ONLY)
