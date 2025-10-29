@@ -18,6 +18,7 @@
 #include "clientGraphics/TextureFormatInfo.h"
 
 #include <d3dx9tex.h>
+#include <algorithm>
 #include <map>
 
 // ======================================================================
@@ -431,28 +432,32 @@ void Direct3d9_TextureData::lock(LockData &lockData)
 	// handle locking in native format when the resource can be locked directly
 	if (directNativeLock)
 	{
-		if (m_engineTexture.isVolumeMap())
-		{
-			D3DLOCKED_BOX lockedBox;
+                if (m_engineTexture.isVolumeMap())
+                {
+                        D3DLOCKED_BOX lockedBox;
 
-			D3DBOX box;
-			box.Left   = lockData.getX();
-			box.Top    = lockData.getY();
-			box.Right  = lockData.getX() + lockData.getWidth();
-			box.Bottom = lockData.getY() + lockData.getHeight();
-			box.Front  = lockData.getZ();
-			box.Back   = lockData.getZ() + lockData.getDepth();
+                        D3DBOX box;
+                        box.Left   = lockData.getX();
+                        box.Top    = lockData.getY();
+                        box.Right  = lockData.getX() + lockData.getWidth();
+                        box.Bottom = lockData.getY() + lockData.getHeight();
+                        box.Front  = lockData.getZ();
+                        box.Back   = lockData.getZ() + lockData.getDepth();
 
-			const bool wholeTexture = (
-				   box.Left   ==0
-				&& box.Top    ==0
-				&& box.Front  ==0
-				&& box.Right  ==unsigned(m_engineTexture.getWidth())
-				&& box.Bottom ==unsigned(m_engineTexture.getHeight())
-				&& box.Back   ==unsigned(m_engineTexture.getDepth())
-			);
+                        const unsigned levelWidth  = std::max(1, m_engineTexture.getWidth()  >> lockData.getLevel());
+                        const unsigned levelHeight = std::max(1, m_engineTexture.getHeight() >> lockData.getLevel());
+                        const unsigned levelDepth  = std::max(1, m_engineTexture.getDepth()  >> lockData.getLevel());
 
-			D3DBOX *pBox = (wholeTexture) ? (D3DBOX *)0 : &box;
+                        const bool wholeTexture = (
+                                   box.Left   ==0
+                                && box.Top    ==0
+                                && box.Front  ==0
+                                && box.Right  == levelWidth
+                                && box.Bottom == levelHeight
+                                && box.Back   == levelDepth
+                        );
+
+                        D3DBOX *pBox = (wholeTexture) ? (D3DBOX *)0 : &box;
 
 			hresult = static_cast<IDirect3DVolumeTexture9*>(m_d3dTexture)->LockBox(lockData.getLevel(), &lockedBox, pBox, flags);
 			FATAL_DX_HR("LockBox failed %s", hresult);
@@ -471,20 +476,23 @@ void Direct3d9_TextureData::lock(LockData &lockData)
 				flags |= D3DLOCK_DISCARD;
 			}
 
-			RECT r, *pr=&r;
-			r.left   = lockData.getX();
-			r.top    = lockData.getY();
-			r.right  = lockData.getX() + lockData.getWidth();
-			r.bottom = lockData.getY() + lockData.getHeight();
+                        RECT r, *pr=&r;
+                        r.left   = lockData.getX();
+                        r.top    = lockData.getY();
+                        r.right  = lockData.getX() + lockData.getWidth();
+                        r.bottom = lockData.getY() + lockData.getHeight();
 
-			if (  r.left==0
-				&& r.top==0
-				&& r.right==m_engineTexture.getWidth()
-				&& r.bottom==m_engineTexture.getHeight()
-				)
-			{
-				pr=0;
-			}
+                        const int levelWidth  = std::max(1, m_engineTexture.getWidth()  >> lockData.getLevel());
+                        const int levelHeight = std::max(1, m_engineTexture.getHeight() >> lockData.getLevel());
+
+                        if (  r.left==0
+                                && r.top==0
+                                && r.right==levelWidth
+                                && r.bottom==levelHeight
+                                )
+                        {
+                                pr=0;
+                        }
 
 			if (m_engineTexture.isCubeMap())
 			{
