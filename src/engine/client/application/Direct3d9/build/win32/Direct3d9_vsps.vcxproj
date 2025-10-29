@@ -61,18 +61,21 @@
     <LinkIncremental>true</LinkIncremental>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <TargetName>gl07_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">
     <OutDir>.\..\..\..\..\..\..\compile\win32\Direct3d9_vsps\Optimized\</OutDir>
     <IntDir>.\..\..\..\..\..\..\compile\win32\Direct3d9_vsps\Optimized\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <TargetName>gl07_o</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\..\..\..\..\..\..\compile\win32\Direct3d9_vsps\Release\</OutDir>
     <IntDir>.\..\..\..\..\..\..\compile\win32\Direct3d9_vsps\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <TargetName>gl07_r</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
