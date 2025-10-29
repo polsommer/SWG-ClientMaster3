@@ -80,13 +80,46 @@ void TemporaryCrcString::clear()
 
 // ----------------------------------------------------------------------
 
+namespace
+{
+        // Safely copies the supplied string into the destination buffer while guaranteeing
+        // null-termination.  Returns true if the input string was truncated in order to fit
+        // within the destination buffer.
+        bool copyStringTruncate(char *destination, size_t destinationSize, char const *source)
+        {
+                if (destinationSize == 0)
+                        return false;
+
+                size_t index = 0;
+                for (; index + 1 < destinationSize && source[index] != '\0'; ++index)
+                        destination[index] = source[index];
+
+                destination[index] = '\0';
+                return source[index] != '\0';
+        }
+}
+
 void TemporaryCrcString::internalSet(char const * string, bool applyNormalize)
 {
-	DEBUG_FATAL(strlen(string)+1 > BUFFER_SIZE, ("string too long %d/%d", strlen(string)+1, BUFFER_SIZE));
-	if (applyNormalize)
-		normalize(m_buffer, string);
-	else
-		strcpy(m_buffer, string);
+        bool truncated = false;
+
+        if (applyNormalize)
+        {
+                char normalizedSource[BUFFER_SIZE];
+                truncated = copyStringTruncate(normalizedSource, sizeof(normalizedSource), string);
+                normalize(m_buffer, normalizedSource);
+        }
+        else
+        {
+                truncated = copyStringTruncate(m_buffer, sizeof(m_buffer), string);
+        }
+
+#ifdef _DEBUG
+        DEBUG_FATAL(truncated, ("string too long %d/%d", static_cast<int>(strlen(string)) + 1, BUFFER_SIZE));
+#else
+        if (truncated)
+                WARNING(true, ("TemporaryCrcString truncated string [%s] to %d characters", string, BUFFER_SIZE - 1));
+#endif
 }
 
 // ----------------------------------------------------------------------
