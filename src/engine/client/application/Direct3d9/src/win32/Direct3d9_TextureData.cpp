@@ -577,7 +577,15 @@ void Direct3d9_TextureData::lock(LockData &lockData)
 		r.top    = 0;
 		r.right  = width;
 		r.bottom = height;
-		hresult = plainSurface->LockRect(&lockedRect, &r, flags);
+                // D3DLOCK_DISCARD is not valid for surfaces created with
+                // CreateOffscreenPlainSurface.  If the caller requested a
+                // discard (which is appropriate for the real texture when the
+                // entire resource is being rewritten) we must suppress it
+                // before locking the temporary scratch surface or the lock
+                // will fail with D3DERR_INVALIDCALL.
+                DWORD plainSurfaceFlags = flags & ~D3DLOCK_DISCARD;
+
+                hresult = plainSurface->LockRect(&lockedRect, &r, plainSurfaceFlags);
 		FATAL_DX_HR("LockRect failed %s", hresult);
 
 		// let the user know where and how to write
