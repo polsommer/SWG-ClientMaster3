@@ -227,6 +227,27 @@ namespace Direct3d9ExSupport
         // Utility helper that reports whether the supplied HRESULT maps to one
         // of the device removal conditions introduced with the 9Ex runtime.
         DIRECT3D9EX_API bool isDeviceRemovedError(HRESULT result);
+
+        // Clamps the provided frame latency to the range supported by 9Ex.
+        DIRECT3D9EX_API UINT clampMaximumFrameLatency(UINT latency);
+
+        // Clamps the GPU thread priority to the supported -7..7 range.
+        DIRECT3D9EX_API INT clampGpuThreadPriority(INT priority);
+
+        // Applies the configured maximum frame latency to the supplied device.
+        DIRECT3D9EX_API HRESULT setMaximumFrameLatency(IDirect3DDevice9Ex *deviceEx, UINT latency);
+
+        // Updates the GPU thread priority on the supplied device.
+        DIRECT3D9EX_API HRESULT setGpuThreadPriority(IDirect3DDevice9Ex *deviceEx, INT priority);
+
+        // Queries the current GPU thread priority.
+        DIRECT3D9EX_API HRESULT getGpuThreadPriority(IDirect3DDevice9Ex *deviceEx, INT *outPriority);
+
+        // Issues a WaitForVBlank call on the specified adapter.
+        DIRECT3D9EX_API HRESULT waitForVBlank(IDirect3DDevice9Ex *deviceEx, UINT adapter);
+
+        // Returns a short textual description for the most common device removal errors.
+        DIRECT3D9EX_API char const *describeDeviceRemovedReason(HRESULT result);
 }
 
 #if defined(SWG_DIRECT3D9EX_SUPPORT_HEADER_ONLY)
@@ -356,7 +377,71 @@ namespace Direct3d9ExSupport
         {
                 return result == D3DERR_DEVICEREMOVED
                         || result == D3DERR_DEVICEHUNG
-                        || result == D3DERR_DEVICELOST;
+                        || result == D3DERR_DEVICELOST
+                        || result == D3DERR_DRIVERINTERNALERROR;
+        }
+
+        inline UINT clampMaximumFrameLatency(UINT latency)
+        {
+                if (latency < 1u)
+                        latency = 1u;
+                if (latency > 16u)
+                        latency = 16u;
+                return latency;
+        }
+
+        inline INT clampGpuThreadPriority(INT priority)
+        {
+                if (priority < -7)
+                        priority = -7;
+                if (priority > 7)
+                        priority = 7;
+                return priority;
+        }
+
+        inline HRESULT setMaximumFrameLatency(IDirect3DDevice9Ex *deviceEx, UINT latency)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->SetMaximumFrameLatency(clampMaximumFrameLatency(latency));
+        }
+
+        inline HRESULT setGpuThreadPriority(IDirect3DDevice9Ex *deviceEx, INT priority)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->SetGPUThreadPriority(clampGpuThreadPriority(priority));
+        }
+
+        inline HRESULT getGpuThreadPriority(IDirect3DDevice9Ex *deviceEx, INT *outPriority)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->GetGPUThreadPriority(outPriority);
+        }
+
+        inline HRESULT waitForVBlank(IDirect3DDevice9Ex *deviceEx, UINT adapter)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->WaitForVBlank(adapter);
+        }
+
+        inline char const *describeDeviceRemovedReason(HRESULT result)
+        {
+                switch (result)
+                {
+                        case D3DERR_DEVICEREMOVED:
+                                return "D3DERR_DEVICEREMOVED";
+                        case D3DERR_DEVICEHUNG:
+                                return "D3DERR_DEVICEHUNG";
+                        case D3DERR_DEVICELOST:
+                                return "D3DERR_DEVICELOST";
+                        case D3DERR_DRIVERINTERNALERROR:
+                                return "D3DERR_DRIVERINTERNALERROR";
+                        default:
+                                return "UNKNOWN";
+                }
         }
 }
 

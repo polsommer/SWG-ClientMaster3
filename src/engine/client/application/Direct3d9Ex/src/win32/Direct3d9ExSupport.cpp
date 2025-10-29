@@ -127,7 +127,71 @@ namespace Direct3d9ExSupport
         {
                 return result == D3DERR_DEVICEREMOVED
                         || result == D3DERR_DEVICEHUNG
-                        || result == D3DERR_DEVICELOST;
+                        || result == D3DERR_DEVICELOST
+                        || result == D3DERR_DRIVERINTERNALERROR;
+        }
+
+        UINT clampMaximumFrameLatency(UINT latency)
+        {
+                if (latency < 1u)
+                        latency = 1u;
+                if (latency > 16u)
+                        latency = 16u;
+                return latency;
+        }
+
+        INT clampGpuThreadPriority(INT priority)
+        {
+                if (priority < -7)
+                        priority = -7;
+                if (priority > 7)
+                        priority = 7;
+                return priority;
+        }
+
+        HRESULT setMaximumFrameLatency(IDirect3DDevice9Ex *deviceEx, UINT latency)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->SetMaximumFrameLatency(clampMaximumFrameLatency(latency));
+        }
+
+        HRESULT setGpuThreadPriority(IDirect3DDevice9Ex *deviceEx, INT priority)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->SetGPUThreadPriority(clampGpuThreadPriority(priority));
+        }
+
+        HRESULT getGpuThreadPriority(IDirect3DDevice9Ex *deviceEx, INT *outPriority)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->GetGPUThreadPriority(outPriority);
+        }
+
+        HRESULT waitForVBlank(IDirect3DDevice9Ex *deviceEx, UINT adapter)
+        {
+                if (!deviceEx)
+                        return E_POINTER;
+                return deviceEx->WaitForVBlank(adapter);
+        }
+
+        char const *describeDeviceRemovedReason(HRESULT result)
+        {
+                switch (result)
+                {
+                        case D3DERR_DEVICEREMOVED:
+                                return "D3DERR_DEVICEREMOVED";
+                        case D3DERR_DEVICEHUNG:
+                                return "D3DERR_DEVICEHUNG";
+                        case D3DERR_DEVICELOST:
+                                return "D3DERR_DEVICELOST";
+                        case D3DERR_DRIVERINTERNALERROR:
+                                return "D3DERR_DRIVERINTERNALERROR";
+                        default:
+                                return "UNKNOWN";
+                }
         }
 }
 #endif // !defined(SWG_DIRECT3D9EX_SUPPORT_HEADER_ONLY)

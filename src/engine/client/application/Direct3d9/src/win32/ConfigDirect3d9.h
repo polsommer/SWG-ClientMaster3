@@ -52,9 +52,12 @@ public:
 
 	static VertexProcessingMode getVertexProcessingMode();
 
-	static bool getAntiAlias();
-	static bool getPreferDirect3d9Ex();
-	static int  getMaximumFrameLatency();
+        static bool getAntiAlias();
+        static bool getPreferDirect3d9Ex();
+        static int  getMaximumFrameLatency();
+        static int  getGpuThreadPriority();
+        static bool getWaitForVBlankAfterPresent();
+        static int  getWaitForVBlankAdapter();
 
 };
 
