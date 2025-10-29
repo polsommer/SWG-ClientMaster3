@@ -41,7 +41,16 @@
 #include <cwctype>
 #include <ctime>
 #include <cstdio>
+#include <system_error>
+#if defined(_MSC_VER) && (_MSC_VER < 1914)
+#include <experimental/filesystem>
+namespace std
+{
+        namespace filesystem = experimental::filesystem;
+}
+#else
 #include <filesystem>
+#endif
 #include <fstream>
 #include <iomanip>
 #include <cstdarg>
