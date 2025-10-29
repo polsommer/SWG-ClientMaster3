@@ -44,36 +44,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
-#if defined(__has_include)
-#if __has_include(<optional>)
-#include <optional>
-#elif __has_include(<experimental/optional>)
-#include <experimental/optional>
-namespace std
-{
-        using experimental::optional;
-        using experimental::nullopt;
-        using experimental::nullopt_t;
-        using experimental::make_optional;
-}
-#else
-#error "<optional> header is not available"
-#endif
-#elif defined(_MSC_VER) && (_MSC_VER < 1912)
-#include <experimental/optional>
-namespace std
-{
-        using experimental::optional;
-        using experimental::nullopt;
-        using experimental::nullopt_t;
-        using experimental::make_optional;
-}
-#else
-#include <optional>
-#endif
+#include <cstdarg>
+#include <cstddef>
 #include <sstream>
 #include <string>
-#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -104,12 +78,31 @@ namespace SwgClientSetupNamespace
 
         namespace
         {
+                int safeSnprintf(char * buffer, std::size_t count, char const * format, ...)
+                {
+                        std::va_list args;
+                        va_start(args, format);
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+                        int const result = _vsnprintf(buffer, count, format, args);
+                        va_end(args);
+                        if (count > 0)
+                                buffer[count - 1] = '\0';
+                        return result;
+#else
+                        int const result = std::vsnprintf(buffer, count, format, args);
+                        va_end(args);
+                        return result;
+#endif
+                }
+
                 struct CrashReport
                 {
                         std::filesystem::path basePath;
                         std::filesystem::path minidump;
-                        std::optional<std::filesystem::path> log;
-                        std::optional<std::filesystem::path> metadata;
+                        bool hasLog;
+                        std::filesystem::path log;
+                        bool hasMetadata;
+                        std::filesystem::path metadata;
                         std::filesystem::file_time_type timestamp;
                 };
 
@@ -124,7 +117,7 @@ namespace SwgClientSetupNamespace
                         return result;
                 }
 
-                std::string escapeJson(std::string_view value)
+                std::string escapeJson(std::string const & value)
                 {
                         std::string escaped;
                         escaped.reserve(value.size());
@@ -152,7 +145,7 @@ namespace SwgClientSetupNamespace
                                         if (static_cast<unsigned char>(ch) < 0x20)
                                         {
                                                 char buffer[7];
-                                                std::snprintf(buffer, sizeof(buffer), "\\u%04x", static_cast<unsigned char>(ch));
+                                                safeSnprintf(buffer, sizeof(buffer), "\\u%04x", static_cast<unsigned char>(ch));
                                                 escaped += buffer;
                                         }
                                         else
@@ -233,6 +226,8 @@ namespace SwgClientSetupNamespace
                                         continue;
 
                                 CrashReport report;
+                                report.hasLog = false;
+                                report.hasMetadata = false;
                                 report.minidump = path;
                                 report.basePath = path;
                                 report.basePath.replace_extension("");
@@ -248,13 +243,19 @@ namespace SwgClientSetupNamespace
                                 metadataPath += ".txt";
                                 std::error_code metadataError;
                                 if (std::filesystem::exists(metadataPath, metadataError))
+                                {
                                         report.metadata = metadataPath;
+                                        report.hasMetadata = true;
+                                }
 
                                 std::filesystem::path logPath = report.basePath;
                                 logPath += ".log";
                                 std::error_code logError;
                                 if (std::filesystem::exists(logPath, logError))
+                                {
                                         report.log = logPath;
+                                        report.hasLog = true;
+                                }
 
                                 reports.push_back(std::move(report));
                         }
@@ -283,11 +284,11 @@ namespace SwgClientSetupNamespace
                                 stream << "\"minidump\":\"" << escapeJson(report.minidump.string()) << "\",";
                                 stream << "\"timestamp\":\"" << escapeJson(formatFileTimestamp(report.timestamp)) << "\"";
 
-                                if (report.metadata)
-                                        stream << ",\"metadata\":\"" << escapeJson(report.metadata->string()) << "\"";
+                                if (report.hasMetadata)
+                                        stream << ",\"metadata\":\"" << escapeJson(report.metadata.string()) << "\"";
 
-                                if (report.log)
-                                        stream << ",\"log\":\"" << escapeJson(report.log->string()) << "\"";
+                                if (report.hasLog)
+                                        stream << ",\"log\":\"" << escapeJson(report.log.string()) << "\"";
 
                                 stream << '}';
                         }
@@ -314,7 +315,7 @@ namespace SwgClientSetupNamespace
                         return stream.str();
                 }
 
-                void appendTelemetryEvent(std::string_view type, std::string const & payload, std::filesystem::path const & logFile)
+                void appendTelemetryEvent(char const * type, std::string const & payload, std::filesystem::path const & logFile)
                 {
                         std::ofstream stream(logFile, std::ios::app);
                         if (!stream)
@@ -336,10 +337,10 @@ namespace SwgClientSetupNamespace
                         for (CrashReport const & report : reports)
                         {
                                 std::filesystem::remove(report.minidump, ec);
-                                if (report.metadata)
-                                        std::filesystem::remove(*report.metadata, ec);
-                                if (report.log)
-                                        std::filesystem::remove(*report.log, ec);
+                                if (report.hasMetadata)
+                                        std::filesystem::remove(report.metadata, ec);
+                                if (report.hasLog)
+                                        std::filesystem::remove(report.log, ec);
                         }
                 }
         }
