@@ -63,9 +63,17 @@ Direct3d9_StaticIndexBufferData::Direct3d9_StaticIndexBufferData(const StaticInd
 	m_memorySize(indexBuffer.getNumberOfIndices() * sizeof(Index))
 #endif
 {
-	const int length = indexBuffer.getNumberOfIndices() * sizeof(Index);
-	IDirect3DDevice9 *device = Direct3d9::getDevice();
-	const HRESULT hresult = device->CreateIndexBuffer(length, 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_d3dIndexBuffer, NULL);
+        int length = indexBuffer.getNumberOfIndices() * sizeof(Index);
+        if (length <= 0)
+        {
+                // Direct3D does not allow zero-length index buffers. Allocate a minimal buffer so
+                // resources that contain no indices (which can legitimately occur) don't trigger a
+                // fatal error during creation.
+                length = sizeof(Index);
+        }
+
+        IDirect3DDevice9 *device = Direct3d9::getDevice();
+        const HRESULT hresult = device->CreateIndexBuffer(length, 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_d3dIndexBuffer, NULL);
 	FATAL_DX_HR("Could not create IB %s", hresult);
 
 #ifdef _DEBUG
