@@ -4,12 +4,25 @@
 // Helper declarations to enable Direct3D 9Ex support when building
 // against legacy DirectX 9 headers.  In addition to the interface shims
 // the header now exposes a small utility namespace that dynamically
-// resolves the 9Ex entry points at runtime.
+// resolves the 9Ex entry points at runtime.  The utility namespace has
+// been extended to provide reusable helpers that can be exported from a
+// shared library when integrating with tooling outside of the classic
+// client tree.
 //
 // ======================================================================
 
 #ifndef INCLUDED_Direct3d9ExSupport_H
 #define INCLUDED_Direct3d9ExSupport_H
+
+#if defined(_WIN32) && defined(SWG_DIRECT3D9EX_SUPPORT_DLL)
+#ifdef SWG_DIRECT3D9EX_SUPPORT_BUILD
+#define DIRECT3D9EX_API __declspec(dllexport)
+#else
+#define DIRECT3D9EX_API __declspec(dllimport)
+#endif // SWG_DIRECT3D9EX_SUPPORT_BUILD
+#else
+#define DIRECT3D9EX_API
+#endif // defined(_WIN32) && defined(SWG_DIRECT3D9EX_SUPPORT_DLL)
 
 #ifndef DIRECT3D_VERSION
 #include <d3d9.h>
@@ -145,30 +158,57 @@ typedef HRESULT (WINAPI *PFN_Direct3DCreate9Ex)(UINT, IDirect3D9Ex **);
 
 namespace Direct3d9ExSupport
 {
+        struct RuntimeHandles
+        {
+                RuntimeHandles();
+
+                HMODULE                 module;
+                bool                    loaded;
+                PFN_Direct3DCreate9Ex   createProc;
+        };
+
         // Returns a handle to d3d9.dll. When the library is not yet loaded
         // the helper optionally loads it and reports the action through the
         // outLoaded flag. Passing loadIfMissing=false performs a non-loading
         // probe.
-        HMODULE loadRuntime(bool loadIfMissing, bool *outLoaded);
+        DIRECT3D9EX_API HMODULE loadRuntime(bool loadIfMissing, bool *outLoaded);
 
         // Releases the runtime if it was loaded through loadRuntime(). Callers
         // should pass the value returned through outLoaded so that we do not
         // accidentally unload a module owned by the host application.
-        void unloadRuntime(HMODULE module, bool loaded);
+        DIRECT3D9EX_API void unloadRuntime(HMODULE module, bool loaded);
 
         // Retrieves the Direct3DCreate9Ex entry point from the supplied module.
-        PFN_Direct3DCreate9Ex getCreate9ExProc(HMODULE module);
+        DIRECT3D9EX_API PFN_Direct3DCreate9Ex getCreate9ExProc(HMODULE module);
 
         // Invokes Direct3DCreate9Ex through the provided function pointer.
-        HRESULT createInterface(PFN_Direct3DCreate9Ex createProc, UINT sdkVersion, IDirect3D9Ex **outInterface);
+        DIRECT3D9EX_API HRESULT createInterface(PFN_Direct3DCreate9Ex createProc, UINT sdkVersion, IDirect3D9Ex **outInterface);
 
         // Convenience helper that loads the runtime (if necessary) and creates
         // the IDirect3D9Ex interface in one call.
-        HRESULT createInterface(UINT sdkVersion, IDirect3D9Ex **outInterface);
+        DIRECT3D9EX_API HRESULT createInterface(UINT sdkVersion, IDirect3D9Ex **outInterface);
+
+        // Aggregates the runtime handle, load-state and resolved entry point in
+        // one structure. Returns true when the loader could resolve the
+        // Direct3DCreate9Ex entry point.
+        DIRECT3D9EX_API bool acquireRuntime(bool loadIfMissing, RuntimeHandles *outHandles);
+
+        // Releases the resources held by RuntimeHandles. The structure remains
+        // valid for reuse, but the underlying module handle is reset.
+        DIRECT3D9EX_API void releaseRuntime(RuntimeHandles &handles);
+
+        // Creates the IDirect3D9Ex interface using a pre-acquired runtime
+        // description. This overload allows callers to control the module
+        // lifetime without reloading the runtime for subsequent attempts.
+        DIRECT3D9EX_API HRESULT createInterface(const RuntimeHandles &handles, UINT sdkVersion, IDirect3D9Ex **outInterface);
 
         // Returns true when the host system exposes the Direct3D 9Ex entry
         // point. No additional runtime state is modified.
-        bool isRuntimeAvailable();
+        DIRECT3D9EX_API bool isRuntimeAvailable();
+
+        // Utility helper that reports whether the supplied HRESULT maps to one
+        // of the device removal conditions introduced with the 9Ex runtime.
+        DIRECT3D9EX_API bool isDeviceRemovedError(HRESULT result);
 }
 
 #endif // INCLUDED_Direct3d9ExSupport_H
