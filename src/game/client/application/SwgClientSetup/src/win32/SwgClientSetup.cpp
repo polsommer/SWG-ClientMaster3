@@ -44,7 +44,23 @@
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
+#if defined(__has_include)
+#if __has_include(<optional>)
 #include <optional>
+#elif __has_include(<experimental/optional>)
+#include <experimental/optional>
+namespace std
+{
+        using experimental::optional;
+        using experimental::nullopt;
+        using experimental::nullopt_t;
+}
+#else
+#error "<optional> header is not available"
+#endif
+#else
+#include <optional>
+#endif
 #include <sstream>
 #include <string>
 #include <string_view>
