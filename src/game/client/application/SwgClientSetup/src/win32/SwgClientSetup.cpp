@@ -54,10 +54,20 @@ namespace std
         using experimental::optional;
         using experimental::nullopt;
         using experimental::nullopt_t;
+        using experimental::make_optional;
 }
 #else
 #error "<optional> header is not available"
 #endif
+#elif defined(_MSC_VER) && (_MSC_VER < 1912)
+#include <experimental/optional>
+namespace std
+{
+        using experimental::optional;
+        using experimental::nullopt;
+        using experimental::nullopt_t;
+        using experimental::make_optional;
+}
 #else
 #include <optional>
 #endif
