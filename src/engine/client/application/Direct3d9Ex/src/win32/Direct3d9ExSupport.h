@@ -36,6 +36,12 @@
 #endif
 #include <windows.h>
 
+#if defined(D3DERR_DEVICEHUNG)
+#define DIRECT3D9EX_SUPPORT_NEEDS_LEGACY_DECLS 0
+#else
+#define DIRECT3D9EX_SUPPORT_NEEDS_LEGACY_DECLS 1
+#endif
+
 #ifndef D3DERR_DEVICEREMOVED
 #define D3DERR_DEVICEREMOVED MAKE_D3DHRESULT(2160)
 #endif
@@ -47,6 +53,8 @@
 #ifndef S_PRESENT_OCCLUDED
 #define S_PRESENT_OCCLUDED MAKE_D3DSTATUS(2162)
 #endif
+
+#if DIRECT3D9EX_SUPPORT_NEEDS_LEGACY_DECLS
 
 #ifndef D3DSCANLINEORDERING_DEFINED
 #define D3DSCANLINEORDERING_DEFINED
@@ -154,7 +162,11 @@ struct IDirect3DDevice9Ex : public IDirect3DDevice9
 };
 #endif
 
+#endif // DIRECT3D9EX_SUPPORT_NEEDS_LEGACY_DECLS
+
+#ifndef PFN_Direct3DCreate9Ex
 typedef HRESULT (WINAPI *PFN_Direct3DCreate9Ex)(UINT, IDirect3D9Ex **);
+#endif
 
 namespace Direct3d9ExSupport
 {
