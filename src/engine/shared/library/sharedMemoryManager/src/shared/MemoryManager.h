@@ -23,7 +23,9 @@
 #error "Unable to locate sharedDebug/DebugHelp.h"
 #endif
 #else
-#include "sharedDebug/DebugHelp.h"
+// Older versions of MSVC do not provide __has_include, so fall back to the
+// relative path that is valid within the engine source tree.
+#include "../../../sharedDebug/include/sharedDebug/DebugHelp.h"
 #endif
 
 // ======================================================================

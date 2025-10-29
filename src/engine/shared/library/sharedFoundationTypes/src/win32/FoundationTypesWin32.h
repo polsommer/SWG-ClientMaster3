@@ -18,50 +18,52 @@
 // ======================================================================
 // basic types that we assume to be around
 
+#include <cstdint>
+
 #ifdef uint8
 #undef uint8
 #endif
-typedef unsigned char          uint8;
+using uint8 = std::uint8_t;
 
 #ifdef uint16
 #undef uint16
 #endif
-typedef unsigned short         uint16;
+using uint16 = std::uint16_t;
 
 #ifdef uint32
 #undef uint32
 #endif
-typedef unsigned long          uint32;
+using uint32 = std::uint32_t;
 
 #ifdef uint64
 #undef uint64
 #endif
-typedef unsigned __int64       uint64;
+using uint64 = std::uint64_t;
 
 #ifdef int8
 #undef int8
 #endif
-typedef signed char            int8;
+using int8 = std::int8_t;
 
 #ifdef int16
 #undef int16
 #endif
-typedef signed short           int16;
+using int16 = std::int16_t;
 
 #ifdef int32
 #undef int32
 #endif
-typedef signed long            int32;
+using int32 = std::int32_t;
 
 #ifdef int64
 #undef int64
 #endif
-typedef signed __int64         int64;
+using int64 = std::int64_t;
 
 #ifdef FILE_HANDLE
 #undef FILE_HANDLE
 #endif
-typedef int                    FILE_HANDLE;
+using FILE_HANDLE = int;
 
 // ======================================================================
 
