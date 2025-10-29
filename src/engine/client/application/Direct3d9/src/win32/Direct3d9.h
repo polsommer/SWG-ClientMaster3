@@ -64,7 +64,8 @@ public:
 	static float                getCurrentTime();
 	static int                  getFrameNumber();
 	static DWORD                getFogColor();
-	static bool                 isUsingDirect3d9Ex();
+        static bool                 isDirect3d9ExRuntimeAvailable();
+        static bool                 isUsingDirect3d9Ex();
 
 	static void                 setAlphaBlendEnable(bool alphaBlendEnable);
 	static void                 setAlphaTestReferenceValue(uint8 alphaTestReferenceValue);

@@ -680,15 +680,35 @@ bool Graphics::isGdiVisible(void)
 
 bool Graphics::wasDeviceReset()
 {
-	NOT_NULL(ms_api->wasDeviceReset);
-	return ms_api->wasDeviceReset();
+        NOT_NULL(ms_api->wasDeviceReset);
+        return ms_api->wasDeviceReset();
+}
+
+// ----------------------------------------------------------------------
+
+bool Graphics::isDirect3d9ExRuntimeAvailable()
+{
+        if (!ms_api || !ms_api->isDirect3d9ExRuntimeAvailable)
+                return false;
+
+        return ms_api->isDirect3d9ExRuntimeAvailable();
+}
+
+// ----------------------------------------------------------------------
+
+bool Graphics::isUsingDirect3d9Ex()
+{
+        if (!ms_api || !ms_api->isUsingDirect3d9Ex)
+                return false;
+
+        return ms_api->isUsingDirect3d9Ex();
 }
 
 // ----------------------------------------------------------------------
 
 void Graphics::addDeviceLostCallback(CallbackFunction callbackFunction)
 {
-	ms_api->addDeviceLostCallback(callbackFunction);
+        ms_api->addDeviceLostCallback(callbackFunction);
 }
 
 // ----------------------------------------------------------------------

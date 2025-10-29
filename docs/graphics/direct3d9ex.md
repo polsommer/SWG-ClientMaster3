@@ -19,3 +19,10 @@ Add the following entries to the `Direct3d9` section of your configuration (for 
 * Frame latency is only configured when a 9Ex device is active. The classic Direct3D 9 runtime does not expose the API and remains unchanged.
 * Verbose hardware logging (`SharedFoundation` → `verboseHardwareLogging`) emits additional details about the selected runtime and any fallback decisions.
 
+## Runtime Queries
+
+Use the `Graphics` facade to detect the 9Ex environment at runtime:
+
+* `Graphics::isDirect3d9ExRuntimeAvailable()` probes the host system for the `Direct3DCreate9Ex` entry point without triggering any loader side-effects.
+* `Graphics::isUsingDirect3d9Ex()` reports whether the current renderer instance booted through the Direct3D 9Ex device path.
+
