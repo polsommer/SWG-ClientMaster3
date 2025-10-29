@@ -285,6 +285,13 @@ Direct3d9_TextureData::Direct3d9_TextureData(const Texture &newEngineTexture, co
 		}
 	}
 
+	if (resourceUsage == 0 && Direct3d9::isUsingDirect3d9Ex())
+	{
+		// Managed resources are not available under Direct3D 9Ex, so fall back
+		// to the default pool for standard textures.
+		resourcePool = D3DPOOL_DEFAULT;
+	}
+
 	D3DRESOURCETYPE resourceType = D3DRTYPE_TEXTURE;
 	
 	if (newEngineTexture.isCubeMap())
@@ -729,7 +736,14 @@ IDirect3DTexture9* create2dTexture(int width, int height, int mipmapLevelCount, 
 		FATAL(true, ("Create2DTexture() : Tried to create a texture with an invalid device.\n"));
 	}
 
-	HRESULT result = device->CreateTexture(width, height, mipmapLevelCount, 0, translationTable[textureFormat], D3DPOOL_MANAGED, &newTexture, NULL);
+	D3DPOOL pool = Direct3d9::isUsingDirect3d9Ex() ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
+	HRESULT result = device->CreateTexture(width, height, mipmapLevelCount, 0, translationTable[textureFormat], pool, &newTexture, NULL);
+
+	if (result == D3DERR_INVALIDCALL && pool == D3DPOOL_MANAGED && Direct3d9::isUsingDirect3d9Ex())
+	{
+		pool = D3DPOOL_DEFAULT;
+		result = device->CreateTexture(width, height, mipmapLevelCount, 0, translationTable[textureFormat], pool, &newTexture, NULL);
+	}
 
 	if(!newTexture || result != D3D_OK)
 	{
