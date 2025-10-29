@@ -72,8 +72,18 @@ Direct3d9_StaticIndexBufferData::Direct3d9_StaticIndexBufferData(const StaticInd
                 length = sizeof(Index);
         }
 
-        IDirect3DDevice9 *device = Direct3d9::getDevice();
-        const HRESULT hresult = device->CreateIndexBuffer(length, 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_d3dIndexBuffer, NULL);
+	IDirect3DDevice9 *device = Direct3d9::getDevice();
+	HRESULT hresult = device->CreateIndexBuffer(length, 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_d3dIndexBuffer, NULL);
+
+	// Direct3D 9Ex devices do not support the managed pool.  When the initial
+	// creation fails with D3DERR_INVALIDCALL while running under Direct3D 9Ex,
+	// retry the allocation using the default pool so the client can continue to
+	// operate on modern systems.
+	if (hresult == D3DERR_INVALIDCALL && Direct3d9::isUsingDirect3d9Ex())
+	{
+		hresult = device->CreateIndexBuffer(length, 0, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_d3dIndexBuffer, NULL);
+	}
+
 	FATAL_DX_HR("Could not create IB %s", hresult);
 
 #ifdef _DEBUG

@@ -69,6 +69,15 @@ Direct3d9_StaticVertexBufferData::Direct3d9_StaticVertexBufferData(const StaticV
 	// create the VB
 	IDirect3DDevice9 *device = Direct3d9::getDevice();
 	HRESULT hresult = device->CreateVertexBuffer(m_descriptor.vertexSize * m_vertexBuffer.getNumberOfVertices(), 0, 0, D3DPOOL_MANAGED, &m_d3dVertexBuffer, NULL);
+
+	// Similar to index buffers, the managed pool is unavailable when running
+	// with a Direct3D 9Ex device.  Retry the allocation from the default pool
+	// if the first attempt fails due to an invalid call.
+	if (hresult == D3DERR_INVALIDCALL && Direct3d9::isUsingDirect3d9Ex())
+	{
+		hresult = device->CreateVertexBuffer(m_descriptor.vertexSize * m_vertexBuffer.getNumberOfVertices(), 0, 0, D3DPOOL_DEFAULT, &m_d3dVertexBuffer, NULL);
+	}
+
 	FATAL_DX_HR("could not create VB %d", hresult);
 
 #ifdef _DEBUG
