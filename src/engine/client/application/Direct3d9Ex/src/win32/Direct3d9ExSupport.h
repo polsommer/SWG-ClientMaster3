@@ -2,7 +2,9 @@
 //
 // Direct3d9ExSupport.h
 // Helper declarations to enable Direct3D 9Ex support when building
-// against legacy DirectX 9 headers.
+// against legacy DirectX 9 headers.  In addition to the interface shims
+// the header now exposes a small utility namespace that dynamically
+// resolves the 9Ex entry points at runtime.
 //
 // ======================================================================
 
@@ -12,6 +14,14 @@
 #ifndef DIRECT3D_VERSION
 #include <d3d9.h>
 #endif
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 
 #ifndef D3DERR_DEVICEREMOVED
 #define D3DERR_DEVICEREMOVED MAKE_D3DHRESULT(2160)
@@ -132,6 +142,34 @@ struct IDirect3DDevice9Ex : public IDirect3DDevice9
 #endif
 
 typedef HRESULT (WINAPI *PFN_Direct3DCreate9Ex)(UINT, IDirect3D9Ex **);
+
+namespace Direct3d9ExSupport
+{
+        // Returns a handle to d3d9.dll. When the library is not yet loaded
+        // the helper optionally loads it and reports the action through the
+        // outLoaded flag. Passing loadIfMissing=false performs a non-loading
+        // probe.
+        HMODULE loadRuntime(bool loadIfMissing, bool *outLoaded);
+
+        // Releases the runtime if it was loaded through loadRuntime(). Callers
+        // should pass the value returned through outLoaded so that we do not
+        // accidentally unload a module owned by the host application.
+        void unloadRuntime(HMODULE module, bool loaded);
+
+        // Retrieves the Direct3DCreate9Ex entry point from the supplied module.
+        PFN_Direct3DCreate9Ex getCreate9ExProc(HMODULE module);
+
+        // Invokes Direct3DCreate9Ex through the provided function pointer.
+        HRESULT createInterface(PFN_Direct3DCreate9Ex createProc, UINT sdkVersion, IDirect3D9Ex **outInterface);
+
+        // Convenience helper that loads the runtime (if necessary) and creates
+        // the IDirect3D9Ex interface in one call.
+        HRESULT createInterface(UINT sdkVersion, IDirect3D9Ex **outInterface);
+
+        // Returns true when the host system exposes the Direct3D 9Ex entry
+        // point. No additional runtime state is modified.
+        bool isRuntimeAvailable();
+}
 
 #endif // INCLUDED_Direct3d9ExSupport_H
 

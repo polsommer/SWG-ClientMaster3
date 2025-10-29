@@ -1145,16 +1145,9 @@ bool Direct3d9Namespace::initializeDirect3dInterfaces(bool preferDirect3d9Ex)
         ms_direct3d = NULL;
         ms_direct3dEx = NULL;
 
-        ms_d3d9Module = GetModuleHandle(TEXT("d3d9.dll"));
-        if (!ms_d3d9Module)
-        {
-                ms_d3d9Module = LoadLibrary(TEXT("d3d9.dll"));
-                ms_loadedD3d9Module = (ms_d3d9Module != NULL);
-        }
-        else
-        {
-                ms_loadedD3d9Module = false;
-        }
+        bool loadedD3d9Module = false;
+        ms_d3d9Module = Direct3d9ExSupport::loadRuntime(true, &loadedD3d9Module);
+        ms_loadedD3d9Module = loadedD3d9Module;
 
         const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
         char fallbackReason[128];
@@ -1162,11 +1155,11 @@ bool Direct3d9Namespace::initializeDirect3dInterfaces(bool preferDirect3d9Ex)
 
         if (ms_d3d9Module && preferDirect3d9Ex)
         {
-                PFN_Direct3DCreate9Ex const create9Ex = reinterpret_cast<PFN_Direct3DCreate9Ex>(GetProcAddress(ms_d3d9Module, "Direct3DCreate9Ex"));
+                PFN_Direct3DCreate9Ex const create9Ex = Direct3d9ExSupport::getCreate9ExProc(ms_d3d9Module);
                 if (create9Ex)
                 {
                         IDirect3D9Ex *direct3dEx = NULL;
-                        HRESULT const hr = create9Ex(D3D_SDK_VERSION, &direct3dEx);
+                        HRESULT const hr = Direct3d9ExSupport::createInterface(create9Ex, D3D_SDK_VERSION, &direct3dEx);
                         if (SUCCEEDED(hr) && direct3dEx)
                         {
                                 ms_direct3dEx = direct3dEx;
@@ -1984,10 +1977,7 @@ void Direct3d9Namespace::remove()
 	ms_direct3dEx = NULL;
 	ms_usingDirect3d9Ex = false;
 
-	if (ms_loadedD3d9Module && ms_d3d9Module)
-	{
-		FreeLibrary(ms_d3d9Module);
-	}
+        Direct3d9ExSupport::unloadRuntime(ms_d3d9Module, ms_loadedD3d9Module);
 
 	ms_d3d9Module = NULL;
 	ms_loadedD3d9Module = false;
