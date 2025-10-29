@@ -15,6 +15,13 @@ namespace Direct3d9ExSupport
                 }
         }
 
+        RuntimeHandles::RuntimeHandles()
+        : module(NULL)
+        , loaded(false)
+        , createProc(NULL)
+        {
+        }
+
         HMODULE loadRuntime(bool loadIfMissing, bool *outLoaded)
         {
                 if (outLoaded)
@@ -70,6 +77,41 @@ namespace Direct3d9ExSupport
                 return result;
         }
 
+        bool acquireRuntime(bool loadIfMissing, RuntimeHandles *outHandles)
+        {
+                if (!outHandles)
+                        return false;
+
+                RuntimeHandles handles;
+                handles.module = loadRuntime(loadIfMissing, &handles.loaded);
+                if (!handles.module)
+                {
+                        *outHandles = handles;
+                        return false;
+                }
+
+                handles.createProc = resolveCreateProc(handles.module);
+                *outHandles = handles;
+                return handles.createProc != NULL;
+        }
+
+        void releaseRuntime(RuntimeHandles &handles)
+        {
+                if (handles.module)
+                {
+                        unloadRuntime(handles.module, handles.loaded);
+                        handles.module = NULL;
+                }
+
+                handles.loaded = false;
+                handles.createProc = NULL;
+        }
+
+        HRESULT createInterface(const RuntimeHandles &handles, UINT sdkVersion, IDirect3D9Ex **outInterface)
+        {
+                return createInterface(handles.createProc, sdkVersion, outInterface);
+        }
+
         bool isRuntimeAvailable()
         {
                 HMODULE module = loadRuntime(false, NULL);
@@ -77,5 +119,12 @@ namespace Direct3d9ExSupport
                         return false;
 
                 return resolveCreateProc(module) != NULL;
+        }
+
+        bool isDeviceRemovedError(HRESULT result)
+        {
+                return result == D3DERR_DEVICEREMOVED
+                        || result == D3DERR_DEVICEHUNG
+                        || result == D3DERR_DEVICELOST;
         }
 }
