@@ -36,7 +36,20 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <algorithm>
+#include <chrono>
+#include <cctype>
+#include <cwctype>
+#include <ctime>
+#include <cstdio>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
+#include <optional>
+#include <sstream>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -58,121 +71,268 @@ namespace SwgClientSetupNamespace
 	TCHAR const * const cms_lastRatingTimeRegistryKey = _T("LastRatingTime");
 	TCHAR const * const cms_machineRequirementsDisplayCountRegistryKey = _T("MachineRequirementsDisplayCount");
 	TCHAR const * const cms_applicationName = _T("SwgClient_r.exe");
-	//char const * const cms_fromEmailAddress = "swgbetatestcrashes@soe.sony.com";
-	//char const * const cms_toEmailAddress = "swgbetatestcrashes@soe.sony.com";
-	TCHAR const * const cms_fileNameMask = _T("SwgClient_?.exe-*.*");
-	TCHAR const * const cms_languageStringJapanese = _T("ja");
+        TCHAR const * const cms_languageStringJapanese = _T("ja");
+        TCHAR const * const cms_crashFilePrefix = _T("SwgClient_");
+        char const * const cms_crashReportLog = "crash_reports.jsonl";
+        char const * const cms_mailCaptureLog = "mail_capture.jsonl";
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        namespace
+        {
+                struct CrashReport
+                {
+                        std::filesystem::path basePath;
+                        std::filesystem::path minidump;
+                        std::optional<std::filesystem::path> log;
+                        std::optional<std::filesystem::path> metadata;
+                        std::filesystem::file_time_type timestamp;
+                };
 
-	CString getVersion (CString const & fileName)
-	{
-		int const start = fileName.Find ('-', 0) + 1;
-		int const end = fileName.ReverseFind ('-');
+                std::tm toLocalTime(std::time_t time)
+                {
+                        std::tm result = {};
+#if defined(_WIN32)
+                        localtime_s(&result, &time);
+#else
+                        localtime_r(&time, &result);
+#endif
+                        return result;
+                }
 
-		return fileName.Mid (start, end - start);
-	}
+                std::string escapeJson(std::string_view value)
+                {
+                        std::string escaped;
+                        escaped.reserve(value.size());
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                        for (char ch : value)
+                        {
+                                switch (ch)
+                                {
+                                case '\\':
+                                        escaped += "\\\\";
+                                        break;
+                                case '"':
+                                        escaped += "\\\"";
+                                        break;
+                                case '\n':
+                                        escaped += "\\n";
+                                        break;
+                                case '\r':
+                                        escaped += "\\r";
+                                        break;
+                                case '\t':
+                                        escaped += "\\t";
+                                        break;
+                                default:
+                                        if (static_cast<unsigned char>(ch) < 0x20)
+                                        {
+                                                char buffer[7];
+                                                std::snprintf(buffer, sizeof(buffer), "\\u%04x", static_cast<unsigned char>(ch));
+                                                escaped += buffer;
+                                        }
+                                        else
+                                        {
+                                                escaped += ch;
+                                        }
+                                        break;
+                                }
+                        }
 
-	int getMajorVersion (CString const & fileName)
-	{
-		CString const version = getVersion (fileName);
+                        return escaped;
+                }
 
-		int const end = version.Find ('.', 0);
+                std::filesystem::path ensureTelemetryDirectory()
+                {
+                        std::filesystem::path telemetryDirectory = std::filesystem::current_path() / "telemetry";
+                        std::error_code ec;
+                        std::filesystem::create_directories(telemetryDirectory, ec);
+                        return telemetryDirectory;
+                }
 
-		return _ttoi (version.Mid (0, end));
-	}
+                bool isCrashMinidump(std::filesystem::path const & path)
+                {
+                        if (!path.has_extension())
+                                return false;
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                        std::string extension = path.extension().string();
+                        std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char value)
+                        {
+                                return static_cast<char>(std::tolower(value));
+                        });
 
-	int getMinorVersion (CString const & fileName)
-	{
-		CString const version = getVersion (fileName);
+                        if (extension != ".mdmp")
+                                return false;
 
-		int const end = version.Find ('.', 0);
+                        std::wstring filename = path.filename().wstring();
+                        std::wstring prefix(cms_crashFilePrefix);
+                        std::transform(filename.begin(), filename.end(), filename.begin(), [](wchar_t value)
+                        {
+                                return static_cast<wchar_t>(std::towlower(value));
+                        });
+                        std::transform(prefix.begin(), prefix.end(), prefix.begin(), [](wchar_t value)
+                        {
+                                return static_cast<wchar_t>(std::towlower(value));
+                        });
 
-		return _ttoi (version.Mid (end + 1, version.GetLength () - end));
-	}
+                        return filename.find(prefix) != std::wstring::npos;
+                }
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                std::string formatFileTimestamp(std::filesystem::file_time_type const & timestamp)
+                {
+                        using namespace std::chrono;
+                        auto const systemTime = time_point_cast<system_clock::duration>(timestamp - decltype(timestamp)::clock::now() + system_clock::now());
+                        std::time_t const timeValue = system_clock::to_time_t(systemTime);
+                        std::tm const tmValue = toLocalTime(timeValue);
 
-	CString getSubject (CString const & fileName)
-	{
-		return "automated crash dump " + fileName;
-	}
+                        std::ostringstream stream;
+                        stream << std::put_time(&tmValue, "%Y-%m-%dT%H:%M:%S");
+                        return stream.str();
+                }
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                std::vector<CrashReport> findCrashReports(std::filesystem::path const & root)
+                {
+                        std::vector<CrashReport> reports;
+                        std::error_code ec;
 
-	CString getBody (CString const & fileName)
-	{
-		CString body;
+                        for (std::filesystem::directory_iterator it(root, ec); !ec && it != std::filesystem::directory_iterator(); it.increment(ec))
+                        {
+                                if (ec)
+                                        break;
 
-		CStdioFile file;
-		if (file.Open (fileName + ".txt", CFile::modeRead | CFile::typeText))
-		{
-			CString line;
-			while (file.ReadString (line))
-				body += line + "\n";
-		}
-		else
-			body = "automated crash dump\n\nunknown: FATAL 00000000: minidump from options program\n";
+                                std::filesystem::directory_entry const & entry = *it;
+                                if (!entry.is_regular_file())
+                                        continue;
 
-		return body;
-	}
+                                std::filesystem::path const & path = entry.path();
+                                if (!isCrashMinidump(path))
+                                        continue;
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                                CrashReport report;
+                                report.minidump = path;
+                                report.basePath = path;
+                                report.basePath.replace_extension("");
 
-	CString getCode (CString const & fileName)
-	{
-		CString body;
+                                report.timestamp = entry.last_write_time(ec);
+                                if (ec)
+                                {
+                                        report.timestamp = std::filesystem::file_time_type::clock::now();
+                                        ec.clear();
+                                }
 
-		CStdioFile file;
-		if (file.Open (fileName + ".txt", CFile::modeRead | CFile::typeText))
-		{
-			CString line;
-			while (file.ReadString (line))
-			{
-				if (line.Find (_T("Exception")) != -1 || line.Find (_T("FATAL")) != -1)
-				{
-					body += line;
+                                std::filesystem::path metadataPath = report.basePath;
+                                metadataPath += ".txt";
+                                std::error_code metadataError;
+                                if (std::filesystem::exists(metadataPath, metadataError))
+                                        report.metadata = metadataPath;
 
-					break;
-				}
-			}
-		}
+                                std::filesystem::path logPath = report.basePath;
+                                logPath += ".log";
+                                std::error_code logError;
+                                if (std::filesystem::exists(logPath, logError))
+                                        report.log = logPath;
 
-		if (body.GetLength () == 0)
-			body = "unknown";
+                                reports.push_back(std::move(report));
+                        }
 
-		return body;
-	}
+                        std::sort(reports.begin(), reports.end(), [](CrashReport const & lhs, CrashReport const & rhs)
+                        {
+                                return lhs.timestamp < rhs.timestamp;
+                        });
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                        return reports;
+                }
 
-	CString getMinidump (CString const & fileName)
-	{
-		CString result;
+                std::string buildCrashReportPayload(std::vector<CrashReport> const & reports, bool shouldSend)
+                {
+                        std::ostringstream stream;
+                        stream << "{\"count\":" << reports.size() << ",\"sendMinidumps\":" << (shouldSend ? "true" : "false") << ",\"reports\":[";
 
-		CFile file;
-		if (file.Open (fileName + ".mdmp", CFile::modeRead))
-			result += fileName + ".mdmp";
+                        bool first = true;
+                        for (CrashReport const & report : reports)
+                        {
+                                if (!first)
+                                        stream << ',';
+                                first = false;
 
-		return result;
-	}
+                                stream << "{\"base\":\"" << escapeJson(report.basePath.filename().string()) << "\",";
+                                stream << "\"minidump\":\"" << escapeJson(report.minidump.string()) << "\",";
+                                stream << "\"timestamp\":\"" << escapeJson(formatFileTimestamp(report.timestamp)) << "\"";
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                                if (report.metadata)
+                                        stream << ",\"metadata\":\"" << escapeJson(report.metadata->string()) << "\"";
 
-	CString getLog (CString const & fileName)
-	{
-		CString result;
+                                if (report.log)
+                                        stream << ",\"log\":\"" << escapeJson(report.log->string()) << "\"";
 
-		CFile file;
-		if (file.Open (fileName + ".log", CFile::modeRead))
-			result += fileName + ".log";
+                                stream << '}';
+                        }
 
-		return result;
-	}
+                        stream << "]}";
+                        return stream.str();
+                }
+
+                std::string buildMailPayload(std::string const & to, std::string const & from, std::string const & subject, std::string const & body, std::vector<std::string> const & attachments)
+                {
+                        std::ostringstream stream;
+                        stream << "{\"to\":\"" << escapeJson(to) << "\",\"from\":\"" << escapeJson(from) << "\",\"subject\":\"" << escapeJson(subject) << "\",\"body\":\"" << escapeJson(body) << "\",\"attachments\":[";
+
+                        bool first = true;
+                        for (std::string const & attachment : attachments)
+                        {
+                                if (!first)
+                                        stream << ',';
+                                first = false;
+                                stream << '"' << escapeJson(attachment) << '"';
+                        }
+
+                        stream << "]}";
+                        return stream.str();
+                }
+
+                void appendTelemetryEvent(std::string_view type, std::string const & payload, std::filesystem::path const & logFile)
+                {
+                        std::ofstream stream(logFile, std::ios::app);
+                        if (!stream)
+                                return;
+
+                        auto const now = std::chrono::system_clock::now();
+                        std::time_t const currentTime = std::chrono::system_clock::to_time_t(now);
+                        std::tm const tmValue = toLocalTime(currentTime);
+
+                        std::ostringstream timestampStream;
+                        timestampStream << std::put_time(&tmValue, "%Y-%m-%dT%H:%M:%S");
+
+                        stream << "{\"type\":\"" << type << "\",\"timestamp\":\"" << timestampStream.str() << "\",\"payload\":" << payload << "}\n";
+                }
+
+                void cleanupCrashArtifacts(std::vector<CrashReport> const & reports)
+                {
+                        std::error_code ec;
+                        for (CrashReport const & report : reports)
+                        {
+                                std::filesystem::remove(report.minidump, ec);
+                                if (report.metadata)
+                                        std::filesystem::remove(*report.metadata, ec);
+                                if (report.log)
+                                        std::filesystem::remove(*report.log, ec);
+                        }
+                }
+        }
+
+        void processCrashReports()
+        {
+                std::vector<CrashReport> const reports = findCrashReports(std::filesystem::current_path());
+                if (reports.empty())
+                        return;
+
+                bool const shouldSend = SwgClientSetupApp::getSendMinidumps();
+                std::filesystem::path const telemetryDirectory = ensureTelemetryDirectory();
+                appendTelemetryEvent("crash_reports", buildCrashReportPayload(reports, shouldSend), telemetryDirectory / cms_crashReportLog);
+                cleanupCrashArtifacts(reports);
+
+                CString detectedStr;
+                if (detectedStr.LoadString(IDS_DETECTED_CRASH))
+                        AfxMessageBox(detectedStr, NULL, MB_ICONINFORMATION | MB_OK);
+        }
 	
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -278,16 +438,6 @@ namespace SwgClientSetupNamespace
 		return false;
 	}
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-	void RemoveFile(char const * fileName)
-	{
-		if (unlink(fileName) == -1 && errno == EACCES)
-		{
-			_chmod(fileName, _S_IREAD | _S_IWRITE);
-			unlink(fileName);
-		}
-	}
 }
 
 using namespace SwgClientSetupNamespace;
@@ -373,10 +523,12 @@ private:
 
 BOOL SwgClientSetupApp::InitInstance()
 {
-	MessageBox2::install(cms_registryFolder);
+        MessageBox2::install(cms_registryFolder);
 
-	// Initialize MFC controls.
-	AfxEnableControlContainer();
+        processCrashReports();
+
+        // Initialize MFC controls.
+        AfxEnableControlContainer();
 
 #if _MSC_VER < 1300
 #ifdef _AFXDLL
@@ -645,43 +797,9 @@ BOOL SwgClientSetupApp::InitInstance()
 
 void SwgClientSetupNamespace::sendMail(std::string const & to, std::string const & from, std::string const & subject, std::string const & body, std::vector<std::string> const & attachments)
 {
-	int const numAttachments = attachments.size();
-
-	const int static_args = 13;
-
-	int argc = static_args + (2 * numAttachments);
-	char** argv = new char*[argc];
-	int argv_value = 1;
-	argv[argv_value++] = "-to";
-	argv[argv_value++] = const_cast<char*>(to.c_str());
-	argv[argv_value++] = "-subject";
-	argv[argv_value++] = const_cast<char*>(subject.c_str());
-	argv[argv_value++] = "-smtphost";
-	argv[argv_value++] = "mail.station.sony.com";
-	argv[argv_value++] = "-port";
-	argv[argv_value++] = "2525";
-	argv[argv_value++] = "-f";
-	argv[argv_value++] = const_cast<char*>(from.c_str());
-	argv[argv_value++] = "-body";
-	argv[argv_value++] = const_cast<char*>(body.c_str());
-
-	//iterate through all attachments, building the argv entries for them
-	for(std::vector<std::string>::const_iterator i = attachments.begin(); i != attachments.end(); ++i)
-	{
-		argv[argv_value++] = "-attach";
-		argv[argv_value++] = const_cast<char*>(i->c_str());
-	}
-
-	//this doesn't get used, but make sure to send initialized memory anyway
-	char* envp = new char[256];
-	memset(envp, 0, 256);
-
-	//call into blat to send the mail
-	//callBlat(argc, argv, &envp);
-
-	//clean up allocated memory
-	delete[] argv;
-	delete[] envp;
+        std::filesystem::path const telemetryDirectory = ensureTelemetryDirectory();
+        std::filesystem::path const logFile = telemetryDirectory / cms_mailCaptureLog;
+        appendTelemetryEvent("mail_capture", buildMailPayload(to, from, subject, body, attachments), logFile);
 }
 
 // ----------------------------------------------------------------------
@@ -748,156 +866,6 @@ void SwgClientSetupApp::configure ()
 		Options::setAllowCustomerContact (oldAllowCustomerContact);
 	}
 }
-
-// ----------------------------------------------------------------------
-
-/*
-void SwgClientSetupApp::detectAndSendMinidumps ()
-{
-	typedef std::vector<std::wstring> StringList;
-	StringList fileNameList;
-
-	//-- find all files in the current directory that end in match SwgClient_r.exe-*.mdmp
-	CFileFind finder;
-	BOOL working = finder.FindFile (cms_fileNameMask);
-	while (working)
-	{
-		working = finder.FindNextFile ();
-
-		if (!finder.IsDots () && !finder.IsDirectory () && finder.MatchesMask (FILE_ATTRIBUTE_ARCHIVE))
-		{
-			CString fileName = finder.GetFileName ();
-			int const index = fileName.ReverseFind ('.');
-			fileName = fileName.Left (index);
-
-			std::wstring const fileNameString(fileName);
-			if (std::find (fileNameList.begin (), fileNameList.end (), fileNameString) == fileNameList.end ())
-				fileNameList.push_back (fileNameString);
-		}
-	}
-
-	if (!fileNameList.empty ())
-	{
-		bool const sendMinidumps = getSendMinidumps ();
-		if (sendMinidumps)
-		{
-			//-- do both the minidump and the
-			DialogProgress * dlg = new DialogProgress ();
-			dlg->Create ();
-			dlg->SetRange (0, fileNameList.size ());
-			dlg->SetStep (1);
-			dlg->SetPos (0);
-
-			CString name;
-			name.Format (_T("Sending %i log(s)..."), fileNameList.size ());
-			dlg->SetStatus (name);
-
-			for (size_t i = 0; i < fileNameList.size (); ++i)
-			{
-				CString const fileName = fileNameList [i].c_str ();
-
-				//-- send the minidump
-				std::vector<std::string> attachments;
-				CString const attachment = getMinidump (fileName);
-				if (attachment.GetLength () != 0)
-					attachments.push_back(wideToNarrow(attachment));
-				CString const attachmentLog = getLog (fileName);
-				if(attachmentLog.GetLength() != 0)
-					attachments.push_back(wideToNarrow(attachmentLog));
-
-				int const majorVersion = getMajorVersion (fileName);
-				int const minorVersion = getMinorVersion (fileName);
-				if (majorVersion >= 100000 || (majorVersion == 0 && minorVersion >= 100000))
-					sendMail (cms_toEmailAddress, cms_fromEmailAddress, wideToNarrow (getSubject (fileName)), wideToNarrow (getBody (fileName)), attachments);
-
-				dlg->StepIt ();
-
-				if (dlg->CheckCancelButton ())
-					break;
-			}
-
-			delete dlg;
-			dlg = 0;
-		}
-
-		//-- log the filenames to a file
-		{
-			CStdioFile outfile;
-			if (outfile.Open (_T("minidump.log"), CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite | CFile::typeText))
-			{
-				//-- seek to the end of the log file
-				outfile.SeekToEnd ();
-
-				//-- write the header
-				time_t osTime;
-				time (&osTime);
-				CTime const ctime (osTime);
-				CString const header = ctime.Format(_T("-- %Y-%m-%d %H:%M "));
-				outfile.WriteString (header + (sendMinidumps ? _T("sent") : _T("not sent")) + '\n');
-
-				//-- write the file
-				for (size_t i = 0; i < fileNameList.size (); ++i)
-				{
-					//-- write the file name and the exception or fatal string
-					CString const fileName = fileNameList [i].c_str ();
-					outfile.WriteString (fileName + ".txt " + getCode (fileName) + '\n');
-
-					std::string const file1(wideToNarrow(fileName) + ".txt");
-					std::string const file2(wideToNarrow(fileName) + ".mdmp");
-					std::string const file3(wideToNarrow(fileName) + ".log");
-					
-					//-- delete the files
-					RemoveFile (file1.c_str());
-					RemoveFile (file2.c_str());
-					RemoveFile (file3.c_str());
-				}
-
-				outfile.WriteString (_T("\n"));
-			}
-		}
-
-		CString detectedStr;
-		VERIFY(detectedStr.LoadString(IDS_DETECTED_CRASH));
-		AfxMessageBox (detectedStr, NULL, MB_ICONINFORMATION | MB_OK);
-	}
-}
-*/
-
-// ----------------------------------------------------------------------
-
-/*
-void SwgClientSetupApp::detectAndSendHardwareInformation ()
-{
-	if (getAutomaticallySendHardwareInformation())
-	{
-		DWORD const savedInformationCrc = getRegistryKey(cms_informationCrcRegistryKey);
-		CString const informationString = ClientMachine::getHardwareInformationString() + Options::getInformationString();
-		DWORD const informationCrc = Crc::calculate(wideToNarrow(informationString).c_str());
-		if (informationCrc != savedInformationCrc)
-		{
-			CString const stationId = getStationId(AfxGetApp()->m_lpCmdLine);
-
-			setRegistryKey(cms_informationCrcRegistryKey, informationCrc);
-			CString const subject = _T("machine description from ") + stationId;
-			std::vector<std::string> const attachments;
-			sendMail(cms_toEmailAddress, cms_fromEmailAddress, wideToNarrow(subject), wideToNarrow(informationString), attachments);
-		}
-	}
-
-	{
-		DWORD const savedHardwareInformationCrc = getRegistryKey(cms_hardwareInformationCrcRegistryKey);
-		CString const hardwareInformationString = ClientMachine::getHardwareInformationString();
-		DWORD const hardwareInformationCrc = Crc::calculate(wideToNarrow(hardwareInformationString).c_str());
-		if (hardwareInformationCrc != savedHardwareInformationCrc)
-		{
-			setRegistryKey(cms_hardwareInformationCrcRegistryKey, hardwareInformationCrc);
-			setRegistryKey(cms_machineRequirementsDisplayCountRegistryKey, 0);
-		}
-	}
-}
-*/
-
-// ----------------------------------------------------------------------
 
 TCHAR const * SwgClientSetupApp::getSendMinidumpsString ()
 {
