@@ -97,6 +97,71 @@ namespace
                 destination[index] = '\0';
                 return source[index] != '\0';
         }
+
+        // Normalizes the supplied string into the destination buffer while guaranteeing
+        // null-termination.  The behavior mirrors CrcString::normalize but adds bounds
+        // checking so that overly long normalized strings are truncated safely.  Returns
+        // true if truncation was required.
+        bool normalizeStringTruncate(char *destination, size_t destinationSize, char const *source)
+        {
+                if (destinationSize == 0)
+                        return false;
+
+                size_t index = 0;
+                bool previousIsSlash = true;
+                bool truncated = false;
+
+                for ( ; *source != '\0'; ++source)
+                {
+                        char outputCharacter = '\0';
+                        bool writeCharacter = false;
+
+                        const char c = *source;
+                        if (c == '\\' || c == '/')
+                        {
+                                if (!previousIsSlash)
+                                {
+                                        outputCharacter = '/';
+                                        writeCharacter = true;
+                                        previousIsSlash = true;
+                                }
+                        }
+                        else if (c == '.')
+                        {
+                                if (!previousIsSlash)
+                                {
+                                        outputCharacter = '.';
+                                        writeCharacter = true;
+                                }
+                        }
+                        else
+                        {
+                                outputCharacter = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+                                writeCharacter = true;
+                                previousIsSlash = false;
+                        }
+
+                        if (writeCharacter)
+                        {
+                                if (index + 1 < destinationSize)
+                                {
+                                        destination[index++] = outputCharacter;
+                                }
+                                else
+                                {
+                                        truncated = true;
+                                        break;
+                                }
+                        }
+                }
+
+                destination[index] = '\0';
+
+                if (!truncated && *source != '\0')
+                        truncated = true;
+
+                return truncated;
+        }
 }
 
 void TemporaryCrcString::internalSet(char const * string, bool applyNormalize)
@@ -105,9 +170,7 @@ void TemporaryCrcString::internalSet(char const * string, bool applyNormalize)
 
         if (applyNormalize)
         {
-                char normalizedSource[BUFFER_SIZE];
-                truncated = copyStringTruncate(normalizedSource, sizeof(normalizedSource), string);
-                normalize(m_buffer, normalizedSource);
+                truncated = normalizeStringTruncate(m_buffer, sizeof(m_buffer), string);
         }
         else
         {
