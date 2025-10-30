@@ -9,18 +9,22 @@
 #include "sharedFoundation/FirstSharedFoundation.h"
 #include "sharedFoundation/TemporaryCrcString.h"
 
-#include "sharedFoundation/Os.h"
 #include "sharedFoundation/Crc.h"
+#include "sharedFoundation/Os.h"
+
+#include <cstring>
+#include <string>
 
 // ======================================================================
 
 TemporaryCrcString::TemporaryCrcString()
-: CrcString()
+: CrcString(),
+        m_heapBuffer(NULL)
 {
-	// this is to avoid including Os in the header file
-	DEBUG_FATAL(static_cast<int>(BUFFER_SIZE) != static_cast<int>(Os::MAX_PATH_LENGTH), ("Os::MAX_PATH_LENGTH and BUFFER_SIZE differ"));
+        // this is to avoid including Os in the header file
+        DEBUG_FATAL(static_cast<int>(BUFFER_SIZE) != static_cast<int>(Os::MAX_PATH_LENGTH), ("Os::MAX_PATH_LENGTH and BUFFER_SIZE differ"));
 
-	m_buffer[0] = '\0';
+        m_buffer[0] = '\0';
 }
 
 // ----------------------------------------------------------------------
@@ -30,52 +34,57 @@ TemporaryCrcString::TemporaryCrcString()
  * TRF needed this to allow useful sanity checking with std::set<TemporaryCrcString>.
  */
 TemporaryCrcString::TemporaryCrcString(const TemporaryCrcString &rhs)
-: CrcString()
+: CrcString(),
+        m_heapBuffer(NULL)
 {
-	set(rhs.getString(), rhs.getCrc());
+        set(rhs.getString(), rhs.getCrc());
 }
 
 // ----------------------------------------------------------------------
 
 TemporaryCrcString::TemporaryCrcString(char const * string, bool applyNormalize)
-: CrcString()
+: CrcString(),
+        m_heapBuffer(NULL)
 {
-	// this is to avoid including Os in the header file
-	DEBUG_FATAL(static_cast<int>(BUFFER_SIZE) != static_cast<int>(Os::MAX_PATH_LENGTH), ("Os::MAX_PATH_LENGTH and BUFFER_SIZE differ"));
+        // this is to avoid including Os in the header file
+        DEBUG_FATAL(static_cast<int>(BUFFER_SIZE) != static_cast<int>(Os::MAX_PATH_LENGTH), ("Os::MAX_PATH_LENGTH and BUFFER_SIZE differ"));
 
-	set(string, applyNormalize);
+        set(string, applyNormalize);
 }
 
 // ----------------------------------------------------------------------
 
 TemporaryCrcString::TemporaryCrcString(char const * string, uint32 crc)
-: CrcString()
+: CrcString(),
+        m_heapBuffer(NULL)
 {
-	// this is to avoid including Os in the header file
-	DEBUG_FATAL(static_cast<int>(BUFFER_SIZE) != static_cast<int>(Os::MAX_PATH_LENGTH), ("Os::MAX_PATH_LENGTH and BUFFER_SIZE differ"));
+        // this is to avoid including Os in the header file
+        DEBUG_FATAL(static_cast<int>(BUFFER_SIZE) != static_cast<int>(Os::MAX_PATH_LENGTH), ("Os::MAX_PATH_LENGTH and BUFFER_SIZE differ"));
 
-	set(string, crc);
+        set(string, crc);
 }
 
 // ----------------------------------------------------------------------
 
 TemporaryCrcString::~TemporaryCrcString()
 {
+        freeHeapBuffer();
 }
 
 // ----------------------------------------------------------------------
 
 char const * TemporaryCrcString::getString() const
 {
-	return m_buffer;
+        return m_heapBuffer ? m_heapBuffer : m_buffer;
 }
 
 // ----------------------------------------------------------------------
 
 void TemporaryCrcString::clear()
 {
-	m_buffer[0] = '\0';
-	m_crc = Crc::crcNull;
+        freeHeapBuffer();
+        m_buffer[0] = '\0';
+        m_crc = Crc::crcNull;
 }
 
 // ----------------------------------------------------------------------
@@ -164,6 +173,55 @@ namespace
         }
 }
 
+namespace
+{
+        std::string normalizeStringUnbounded(char const *source)
+        {
+                std::string result;
+                if (!source)
+                        return result;
+
+                result.reserve(strlen(source));
+
+                bool previousIsSlash = true;
+                for (; *source != '\0'; ++source)
+                {
+                        char outputCharacter = '\0';
+                        bool writeCharacter = false;
+
+                        const char c = *source;
+                        if (c == '\\' || c == '/')
+                        {
+                                if (!previousIsSlash)
+                                {
+                                        outputCharacter = '/';
+                                        writeCharacter = true;
+                                        previousIsSlash = true;
+                                }
+                        }
+                        else if (c == '.')
+                        {
+                                if (!previousIsSlash)
+                                {
+                                        outputCharacter = '.';
+                                        writeCharacter = true;
+                                }
+                        }
+                        else
+                        {
+                                outputCharacter = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+                                writeCharacter = true;
+                                previousIsSlash = false;
+                        }
+
+                        if (writeCharacter)
+                                result.push_back(outputCharacter);
+                }
+
+                return result;
+        }
+}
+
 void TemporaryCrcString::internalSet(char const * string, bool applyNormalize)
 {
         bool truncated = false;
@@ -177,30 +235,66 @@ void TemporaryCrcString::internalSet(char const * string, bool applyNormalize)
                 truncated = copyStringTruncate(m_buffer, sizeof(m_buffer), string);
         }
 
+        if (!truncated)
+        {
+                freeHeapBuffer();
+        }
+        else
+        {
+                std::string expanded;
+                if (applyNormalize)
+                        expanded = normalizeStringUnbounded(string);
+                else
+                        expanded = string ? std::string(string) : std::string();
+
+                freeHeapBuffer();
+                if (!expanded.empty())
+                {
+                        m_heapBuffer = new char[expanded.length() + 1];
+                        memcpy(m_heapBuffer, expanded.c_str(), expanded.length() + 1);
+                }
+                else
+                {
+                        m_heapBuffer = new char[1];
+                        m_heapBuffer[0] = '\0';
+                }
+                m_buffer[0] = '\0';
+
 #ifdef _DEBUG
-        DEBUG_FATAL(truncated, ("string too long %d/%d", static_cast<int>(strlen(string)) + 1, BUFFER_SIZE));
+                DEBUG_WARNING(true, ("TemporaryCrcString expanded buffer for long string [%s] (%d characters)", string ? string : "", static_cast<int>(expanded.length()) + 1));
 #else
-        if (truncated)
-                WARNING(true, ("TemporaryCrcString truncated string [%s] to %d characters", string, BUFFER_SIZE - 1));
+                WARNING(true, ("TemporaryCrcString expanded buffer for long string [%s] (%d characters)", string ? string : "", static_cast<int>(expanded.length()) + 1));
 #endif
+        }
 }
 
 // ----------------------------------------------------------------------
 
 void TemporaryCrcString::set(char const * string, bool applyNormalize)
 {
-	NOT_NULL(string);
-	internalSet(string, applyNormalize);
-	calculateCrc();
+        NOT_NULL(string);
+        internalSet(string, applyNormalize);
+        calculateCrc();
 }
 
 // ----------------------------------------------------------------------
 
 void TemporaryCrcString::set(char const * string, uint32 crc)
 {
-	NOT_NULL(string);
-	internalSet(string, false);
-	m_crc = crc;
+        NOT_NULL(string);
+        internalSet(string, false);
+        m_crc = crc;
+}
+
+// ----------------------------------------------------------------------
+
+void TemporaryCrcString::freeHeapBuffer()
+{
+        if (m_heapBuffer)
+        {
+                delete [] m_heapBuffer;
+                m_heapBuffer = NULL;
+        }
 }
 
 // ======================================================================
