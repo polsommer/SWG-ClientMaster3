@@ -427,7 +427,21 @@ void Direct3d9_TextureData::lock(LockData &lockData)
 
 	HRESULT hresult;
 
-	bool const directNativeLock = (lockData.getFormat() == m_destFormat) && !m_engineTexture.isRenderTarget();
+        // When running under Direct3D 9Ex the runtime does not provide CPU access
+        // to default pool textures that were created without the dynamic flag.
+        // The legacy texture streaming path expects to be able to lock static
+        // textures directly, so we fall back to the scratch-surface code path in
+        // that configuration and let D3DX handle the upload.
+        bool const usingDirect3d9ExStaticTexture =
+                        Direct3d9::isUsingDirect3d9Ex()
+                &&      !m_engineTexture.isDynamic()
+                &&      !m_engineTexture.isRenderTarget()
+                &&      !m_engineTexture.isVolumeMap();
+
+        bool const directNativeLock =
+                        (lockData.getFormat() == m_destFormat)
+                &&      !m_engineTexture.isRenderTarget()
+                &&      !usingDirect3d9ExStaticTexture;
 
 	// handle locking in native format when the resource can be locked directly
 	if (directNativeLock)
