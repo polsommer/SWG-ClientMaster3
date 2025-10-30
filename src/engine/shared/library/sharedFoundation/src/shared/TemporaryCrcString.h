@@ -40,14 +40,19 @@ private:
 
 private:
 
-	enum
-	{
-		BUFFER_SIZE = 512
-	};
+        enum
+        {
+                BUFFER_SIZE = 512
+        };
 
 private:
 
-	char   m_buffer[BUFFER_SIZE];
+        void   freeHeapBuffer();
+
+private:
+
+        char   m_buffer[BUFFER_SIZE];
+        char  *m_heapBuffer;
 };
 
 // ======================================================================
