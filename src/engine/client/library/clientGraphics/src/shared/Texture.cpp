@@ -471,7 +471,40 @@ void Texture::load(const char * fileName)
 	AbstractFile *fileInterface = TreeFile::open(fileName, AbstractFile::PriorityData, true);
 	if (!fileInterface)
 	{
-		DEBUG_FATAL(fileName == TextureList::getDefaultTextureName(), ("Could not open default texture"));
+		if (fileName == TextureList::getDefaultTextureName())
+		{
+			WARNING(true, ("Could not open default texture %s - creating procedural fallback", fileName));
+
+			m_renderTarget = false;
+			m_cube = false;
+			m_volume = false;
+			m_dynamic = false;
+			m_width = 1;
+			m_height = 1;
+			m_depth = 1;
+			m_mipmapLevelCount = 1;
+
+			if (m_graphicsData)
+			{
+				delete m_graphicsData;
+				m_graphicsData = 0;
+			}
+
+			TextureFormat const fallbackFormat = TF_ARGB_8888;
+			m_graphicsData = Graphics::createTextureData(*this, &fallbackFormat, 1);
+
+			LockData lockData(fallbackFormat, 0, 0, 0, 1, 1, true);
+			lock(lockData);
+
+				reinterpret_cast<uint32*>(lockData.getPixelData())[0] = PackedArgb::solidWhite.getArgb();
+
+			unlock(lockData);
+			m_representativeColorComputed = 0;
+			m_representativeColor = PackedArgb::solidWhite;
+
+			return;
+		}
+
 		WARNING(true, ("Could not open texture %s", fileName));
 		load(TextureList::getDefaultTextureName());
 		return;
