@@ -5097,7 +5097,10 @@ bool Direct3d9Namespace::writeImage(char const * file, int const width, int cons
 		D3DLOCKED_RECT lockedRect;
 		HRESULT hresult(0);
 	
-		hresult = texturePointer->LockRect(0, &lockedRect, NULL, D3DLOCK_DISCARD);
+               // The texture is created in D3DPOOL_SYSTEMMEM without the dynamic usage flag, so
+               // using D3DLOCK_DISCARD is invalid and results in D3DERR_INVALIDCALL.  Lock the
+               // surface without any flags instead.
+               hresult = texturePointer->LockRect(0, &lockedRect, NULL, 0);
 		FATAL_DX_HR("LockRect failed %s", hresult);
 
 		int * lockedPixels = reinterpret_cast<int *>(lockedRect.pBits);
