@@ -42,19 +42,43 @@ namespace FatalNamespace
 
 namespace SetupSharedFoundationNamespace
 {
-	LONG __stdcall MyUnhandledExceptionFilter(LPEXCEPTION_POINTERS exceptionPointers);
+        LONG __stdcall MyUnhandledExceptionFilter(LPEXCEPTION_POINTERS exceptionPointers);
 
-	bool  ms_writeMiniDumps;
+        bool  ms_writeMiniDumps;
+
+        size_t safeStringLength(char const * text);
 }
 
 using namespace SetupSharedFoundationNamespace;
 
 // ======================================================================
 
+size_t SetupSharedFoundationNamespace::safeStringLength(char const * const text)
+{
+        if (!text)
+                return 0u;
+
+#if defined(PLATFORM_WIN32)
+        __try
+        {
+                return static_cast<size_t>(strlen(text));
+        }
+        __except(EXCEPTION_EXECUTE_HANDLER)
+        {
+                OutputDebugString("SetupSharedFoundation: ignoring crash report entry with invalid pointer\n");
+                return 0u;
+        }
+#else
+        return static_cast<size_t>(strlen(text));
+#endif
+}
+
+// ======================================================================
+
 LONG __stdcall SetupSharedFoundationNamespace::MyUnhandledExceptionFilter(LPEXCEPTION_POINTERS exceptionPointers)
 {
-	// make the routine somewhat safe from re-entrance
-	static bool entered = false;
+        // make the routine somewhat safe from re-entrance
+        static bool entered = false;
 	if (entered)
 		return EXCEPTION_CONTINUE_SEARCH;
 	entered = true;
@@ -153,17 +177,17 @@ LONG __stdcall SetupSharedFoundationNamespace::MyUnhandledExceptionFilter(LPEXCE
 			for (int i = 0; text8; ++i)
 			{
 				text8 = CrashReportInformation::getEntry(i);
-				if (text8)
-				{
-					int const text8Length = strlen(text8);
-					if (text8Length)
-						WriteFile(file, text8, text8Length, &bytesWritten, NULL);
-				}
-			}
+                                if (text8)
+                                {
+                                        size_t const text8Length = safeStringLength(text8);
+                                        if (text8Length)
+                                                WriteFile(file, text8, static_cast<DWORD>(text8Length), &bytesWritten, NULL);
+                                }
+                        }
 
-			CloseHandle(file);
-			wroteCrashLogFile = true;
-		}
+                        CloseHandle(file);
+                        wroteCrashLogFile = true;
+                }
 
 		sprintf(fileName, "%s-%s-%I64d.mdmp", Os::getShortProgramName(), ApplicationVersion::getInternalVersion(), timestamp);
 		strncpy(miniDumpFileName, fileName, sizeof(miniDumpFileName) - 1);
