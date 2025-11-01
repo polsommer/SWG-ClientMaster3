@@ -50,8 +50,10 @@
 #include "sharedObject/PortalProperty.h"
 #include "sharedTerrain/TerrainObject.h"
 #include "swgClientUserInterface/SwgCuiMediatorTypes.h"
+#include "sharedMemoryManager/MemoryManager.h"
 
 #include <cstdio>
+#include <cmath>
 
 //----------------------------------------------------------------------
 namespace PlayerCreatureControllerNamespace
@@ -442,54 +444,47 @@ void SwgCuiDebugInfoPage::updatePositions ()
 
 void SwgCuiDebugInfoPage::updateFps()
 {
-    //-- Update FPS every N frames (configurable)
-    constexpr int kFrameUpdateInterval = 10;
-    const int currentFrameNumber = Graphics::getFrameNumber();
+        static int const kFrameUpdateInterval = 10;
+        int const currentFrameNumber = Graphics::getFrameNumber();
 
-    if (currentFrameNumber - m_lastFrameNumber < kFrameUpdateInterval)
-        return;
+        if (currentFrameNumber - m_lastFrameNumber < kFrameUpdateInterval)
+                return;
 
-    m_lastFrameNumber = currentFrameNumber;
+        m_lastFrameNumber = currentFrameNumber;
 
-    //-- Get current FPS
-    const float fps = Clock::framesPerSecond();
+        float const fps = Clock::framesPerSecond();
 
-    //-- Only update if visually meaningful (avoid UI spam for tiny float jitter)
-    if (fabsf(fps - m_lastFps) < 0.01f)
-        return;
+        if (std::fabs(fps - m_lastFps) < 0.01f)
+                return;
 
-    m_lastFps = fps;
+        m_lastFps = fps;
 
-    //-- Memory metrics (safe for 32-bit systems)
-    const int64_t bytesAllocated = static_cast<int64_t>(MemoryManager::getCurrentNumberOfBytesAllocated());
-    const int64_t bytesLimit     = static_cast<int64_t>(MemoryManager::getLimit());
+        unsigned long const bytesAllocated = MemoryManager::getCurrentNumberOfBytesAllocated();
+        unsigned long const mbAllocated = static_cast<unsigned long>(bytesAllocated / (1024 * 1024));
+        int const mbLimit = MemoryManager::getLimit();
 
-    const int32_t mbAllocated = static_cast<int32_t>(bytesAllocated / (1024 * 1024));
-    const int32_t mbLimit     = static_cast<int32_t>(bytesLimit     / (1024 * 1024));
-
-    //-- Optional: System memory and CPU stats (if available)
-#if defined(_WIN32)
-    MEMORYSTATUS memStat;
-    GlobalMemoryStatus(&memStat);
-    const int32_t sysMemLoad = static_cast<int32_t>(memStat.dwMemoryLoad);
-#else
-    const int32_t sysMemLoad = 0;
+        int sysMemLoad = 0;
+#ifdef _WIN32
+        MEMORYSTATUS memStat;
+        GlobalMemoryStatus(&memStat);
+        sysMemLoad = static_cast<int>(memStat.dwMemoryLoad);
 #endif
 
-    //-- Safety clamp (prevent overflow in 32-bit)
-    const int32_t safeFps = static_cast<int32_t>(std::min(fps, 9999.0f));
+        int safeFps = static_cast<int>(fps);
+        if (safeFps < 0)
+                safeFps = 0;
+        else if (safeFps > 9999)
+                safeFps = 9999;
 
-    //-- Build formatted output safely
-    char buf[256];
-    int written = snprintf(buf, sizeof(buf),
-        "FPS: %4d | Alloc: %4dMB / %4dMB | SysLoad: %3d%%",
-        safeFps, mbAllocated, mbLimit, sysMemLoad);
+        char buf[256];
+        int const written = _snprintf(buf, sizeof(buf),
+                "FPS: %4d | Alloc: %4luMB / %4dMB | SysLoad: %3d%%",
+                safeFps, mbAllocated, mbLimit, sysMemLoad);
 
-    if (written < 0 || written >= static_cast<int>(sizeof(buf)))
-        strcpy(buf, "FPS: ERR");
+        if (written < 0 || written >= static_cast<int>(sizeof(buf)))
+                strcpy(buf, "FPS: ERR");
 
-    //-- Push to UI
-    m_fpsText->SetLocalText(Unicode::narrowToWide(UINarrowString(buf)));
+        m_fpsText->SetLocalText(Unicode::narrowToWide(UINarrowString(buf)));
 }
 
 
