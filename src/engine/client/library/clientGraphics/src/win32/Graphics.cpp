@@ -660,7 +660,23 @@ bool Graphics::supportsStreamOffsets()
 
 bool Graphics::supportsDynamicTextures()
 {
-	return ms_api->supportsDynamicTextures();
+        return ms_api->supportsDynamicTextures();
+}
+
+// ----------------------------------------------------------------------
+
+bool Graphics::isDirect3d9ExRuntimeAvailable()
+{
+        NOT_NULL(ms_api->isDirect3d9ExRuntimeAvailable);
+        return ms_api->isDirect3d9ExRuntimeAvailable();
+}
+
+// ----------------------------------------------------------------------
+
+bool Graphics::isUsingDirect3d9Ex()
+{
+        NOT_NULL(ms_api->isUsingDirect3d9Ex);
+        return ms_api->isUsingDirect3d9Ex();
 }
 
 // ----------------------------------------------------------------------
