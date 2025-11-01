@@ -35,7 +35,7 @@
 #include "WriteTGA.h"
 
 #define SWG_DIRECT3D9EX_SUPPORT_HEADER_ONLY 1
-#include "../../Direct3d9Ex/src/win32/Direct3d9ExSupport.h"
+#include "../../../Direct3d9Ex/src/win32/Direct3d9ExSupport.h"
 
 #include "clientGraphics/Camera.h"
 #include "clientGraphics/ConfigClientGraphics.h"
