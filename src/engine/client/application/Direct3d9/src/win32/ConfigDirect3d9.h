@@ -48,11 +48,17 @@ public:
 	static int  getMaxVertexShaderVersion();
 	static int  getMaxPixelShaderVersion();
 
-	static bool getDiscardDynamicBuffersAtBeginningOfFrame();
+        static bool getDiscardDynamicBuffersAtBeginningOfFrame();
 
-	static VertexProcessingMode getVertexProcessingMode();
+        static VertexProcessingMode getVertexProcessingMode();
 
-	static bool getAntiAlias();
+        static bool getAntiAlias();
+
+        static bool getPreferDirect3d9Ex();
+        static int  getMaximumFrameLatency();
+        static int  getGpuThreadPriority();
+        static bool getWaitForVBlankAfterPresent();
+        static int  getWaitForVBlankAdapter();
 
 };
 

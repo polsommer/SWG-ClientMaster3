@@ -80,11 +80,13 @@ public:
 
 	static void                          flushResources(bool fullReset);
 
-	static int                           getFrameNumber();
-	static bool                          isGdiVisible();
-	static bool                          wasDeviceReset();
+        static int                           getFrameNumber();
+        static bool                          isGdiVisible();
+        static bool                          wasDeviceReset();
+        static bool                          isDirect3d9ExRuntimeAvailable();
+        static bool                          isUsingDirect3d9Ex();
 
-	static void                          addDeviceLostCallback(CallbackFunction callbackFunction);
+        static void                          addDeviceLostCallback(CallbackFunction callbackFunction);
 	static void                          removeDeviceLostCallback(CallbackFunction callbackFunction);
 	static void                          addDeviceRestoredCallback(CallbackFunction callbackFunction);
 	static void                          removeDeviceRestoredCallback(CallbackFunction callbackFunction);
