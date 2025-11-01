@@ -30,7 +30,6 @@
 #include "Direct3d9_VertexDeclarationMap.h"
 #include "Direct3d9_VertexShaderConstantRegisters.h"
 #include "Direct3d9_VertexShaderData.h"
-#include "Direct3d9ExSupport.h"
 #include "PaddedVector.h"
 #include "SetupDll.h"
 #include "WriteTGA.h"
@@ -139,8 +138,6 @@ namespace Direct3d9Namespace
 	bool                               supportsScissorRect();
 	bool                               supportsHardwareMouseCursor();
 
-	void                               installSubsystems();
-
 #ifdef _DEBUG
 	bool                               getShowMipmapLevels();
 	void                               clearStaticShader();
@@ -205,7 +202,6 @@ namespace Direct3d9Namespace
 	bool                               lockBackBuffer(Gl_pixelRect &o_pixels, const RECT *i_lockRect);
 	bool                               unlockBackBuffer();
 	void                               releaseBackBuffer();
-	HRESULT                            resetDevice(D3DPRESENT_PARAMETERS *presentationParameters);
 	bool                               present(bool windowed, HWND window, int width, int height);
 	bool                               present();
 	bool                               present(HWND window, int width, int height);
@@ -301,8 +297,6 @@ namespace Direct3d9Namespace
 	bool                               writeImage(char const * file, int const width, int const height, int const pitch, int const * pixelsARGB, bool const alphaExtend, Gl_imageFormat const imageFormat, Rectangle2d const * subRect);
 
 	void                               _queryVideoMemory();
-	bool                               initializeDirect3dInterfaces(bool preferDirect3d9Ex);
-	void                               configureDirect3d9ExDevice(IDirect3DDevice9Ex *deviceEx);
 
 	// video capture routines
 
@@ -360,12 +354,6 @@ namespace Direct3d9Namespace
 	HWND                                       ms_window;
 
 	Gl_api                                     ms_glApi;
-	HMODULE                                   ms_d3d9Module;
-	bool                                      ms_loadedD3d9Module;
-        bool                                      ms_usingDirect3d9Ex;
-        IDirect3D9Ex                              *ms_direct3dEx;
-        IDirect3DDevice9Ex                        *ms_deviceEx;
-        bool                                      ms_reportedDeviceRemoval;
 #if defined(_DEBUG) && defined(VSPS)
 	bool                                      *ms_badVertexBufferVertexShaderCombination;
 	const char                                *ms_appearanceName;
@@ -563,35 +551,6 @@ IDirect3DDevice9 *Direct3d9::getDevice()
 {
 	return ms_device;
 }
-
-// ----------------------------------------------------------------------
-
-IDirect3DDevice9Ex *Direct3d9::getDeviceEx()
-{
-        return ms_deviceEx;
-}
-
-// ----------------------------------------------------------------------
-
-bool Direct3d9::isDirect3d9ExRuntimeAvailable()
-{
-        if (ms_usingDirect3d9Ex || ms_deviceEx)
-                return true;
-
-        if (ms_d3d9Module)
-                return Direct3d9ExSupport::getCreate9ExProc(ms_d3d9Module) != NULL;
-
-        return Direct3d9ExSupport::isRuntimeAvailable();
-}
-
-// ----------------------------------------------------------------------
-
-bool Direct3d9::isUsingDirect3d9Ex()
-{
-        return ms_usingDirect3d9Ex;
-}
-
-// ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
@@ -1019,7 +978,7 @@ Direct3d9Namespace::AdapterCandidate Direct3d9Namespace::buildAdapterCandidate(U
         ZeroMemory(&candidate.identifier, sizeof(candidate.identifier));
         ZeroMemory(&candidate.caps, sizeof(candidate.caps));
 
-	if (!ms_direct3d)
+        if (!ms_direct3d)
                 return candidate;
 
         if (FAILED(ms_direct3d->GetAdapterIdentifier(adapterIndex, 0, &candidate.identifier)))
@@ -1044,7 +1003,7 @@ Direct3d9Namespace::AdapterCandidate Direct3d9Namespace::selectBestAdapterCandid
 {
         AdapterCandidate bestCandidate;
 
-	if (!ms_direct3d)
+        if (!ms_direct3d)
                 return bestCandidate;
 
         const UINT adapterCount = ms_direct3d->GetAdapterCount();
@@ -1063,7 +1022,7 @@ Direct3d9Namespace::AdapterCandidate Direct3d9Namespace::selectBestAdapterCandid
 bool Direct3d9Namespace::isBetterAdapterCandidate(const AdapterCandidate &candidate, const AdapterCandidate &current)
 {
         if (!candidate.valid)
-		return false;
+                return false;
         if (!current.valid)
                 return true;
 
@@ -1153,136 +1112,13 @@ const char *Direct3d9Namespace::describeVendor(DWORD vendorId)
 
 // ----------------------------------------------------------------------
 
-bool Direct3d9Namespace::initializeDirect3dInterfaces(bool preferDirect3d9Ex)
-{
-        ms_usingDirect3d9Ex = false;
-        ms_direct3d = NULL;
-        ms_direct3dEx = NULL;
-        ms_reportedDeviceRemoval = false;
-
-        bool loadedD3d9Module = false;
-        ms_d3d9Module = Direct3d9ExSupport::loadRuntime(true, &loadedD3d9Module);
-        ms_loadedD3d9Module = loadedD3d9Module;
-
-        const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
-        char fallbackReason[128];
-        fallbackReason[0] = '\0';
-
-        if (ms_d3d9Module && preferDirect3d9Ex)
-        {
-                PFN_Direct3DCreate9Ex const create9Ex = Direct3d9ExSupport::getCreate9ExProc(ms_d3d9Module);
-                if (create9Ex)
-                {
-                        IDirect3D9Ex *direct3dEx = NULL;
-                        HRESULT const hr = Direct3d9ExSupport::createInterface(create9Ex, D3D_SDK_VERSION, &direct3dEx);
-                        if (SUCCEEDED(hr) && direct3dEx)
-                        {
-                                ms_direct3dEx = direct3dEx;
-                                ms_direct3d = direct3dEx;
-                                ms_usingDirect3d9Ex = true;
-                                REPORT_LOG(verboseHardwareLogging, ("Direct3D9Ex runtime detected and selected.\n"));
-                        }
-                        else
-                        {
-                                REPORT_LOG(verboseHardwareLogging, ("Direct3DCreate9Ex failed (0x%08x). Falling back to Direct3D9.\n", hr));
-                                IGNORE_RETURN(_snprintf(fallbackReason, sizeof(fallbackReason), "Direct3DCreate9Ex failed (0x%08x)", hr));
-                        }
-                }
-                else
-                {
-                        REPORT_LOG(verboseHardwareLogging, ("Direct3DCreate9Ex entry point not found. Falling back to Direct3D9.\n"));
-                        IGNORE_RETURN(_snprintf(fallbackReason, sizeof(fallbackReason), "Direct3DCreate9Ex entry point missing"));
-                }
-        }
-        else if (preferDirect3d9Ex)
-        {
-                IGNORE_RETURN(_snprintf(fallbackReason, sizeof(fallbackReason), "d3d9.dll unavailable"));
-        }
-
-        if (!ms_direct3d)
-        {
-                ms_direct3d = Direct3DCreate9(D3D_SDK_VERSION);
-        }
-
-        if (!ms_direct3d)
-        {
-                return false;
-        }
-
-        fallbackReason[sizeof(fallbackReason) - 1] = '\0';
-
-        if (!ms_usingDirect3d9Ex && preferDirect3d9Ex && fallbackReason[0] != '\0')
-        {
-                REPORT_LOG(true, ("Direct3D9Ex not in use: %s.\n", fallbackReason));
-                CrashReportInformation::addStaticText("Direct3D9ExFallback: %s\n", fallbackReason);
-        }
-
-        return true;
-}
-
-// ----------------------------------------------------------------------
-
-void Direct3d9Namespace::configureDirect3d9ExDevice(IDirect3DDevice9Ex *deviceEx)
-{
-        if (!deviceEx)
-                return;
-
-        const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
-
-        int const configuredLatency = ConfigDirect3d9::getMaximumFrameLatency();
-        if (configuredLatency > 0)
-        {
-                UINT const latency = Direct3d9ExSupport::clampMaximumFrameLatency(static_cast<UINT>(configuredLatency));
-
-                HRESULT const hr = Direct3d9ExSupport::setMaximumFrameLatency(deviceEx, latency);
-                if (SUCCEEDED(hr))
-                {
-                        REPORT_LOG(verboseHardwareLogging, ("Direct3D9Ex maximum frame latency set to %u.\n", latency));
-                        CrashReportInformation::addStaticText("Direct3D9ExFrameLatency: %u\n", latency);
-                }
-                else
-                {
-                        DEBUG_REPORT_LOG(true, ("SetMaximumFrameLatency(%u) failed 0x%08x\n", latency, hr));
-                }
-        }
-
-        INT const configuredPriority = ConfigDirect3d9::getGpuThreadPriority();
-        HRESULT const priorityResult = Direct3d9ExSupport::setGpuThreadPriority(deviceEx, configuredPriority);
-        if (SUCCEEDED(priorityResult))
-        {
-                INT reportedPriority = 0;
-                if (SUCCEEDED(Direct3d9ExSupport::getGpuThreadPriority(deviceEx, &reportedPriority)))
-                {
-                        REPORT_LOG(verboseHardwareLogging, ("Direct3D9Ex GPU thread priority set to %d.\n", reportedPriority));
-                        CrashReportInformation::addStaticText("Direct3D9ExGpuThreadPriority: %d\n", reportedPriority);
-                }
-                else
-                {
-                        REPORT_LOG(verboseHardwareLogging, ("Direct3D9Ex GPU thread priority configured (requested %d).\n", Direct3d9ExSupport::clampGpuThreadPriority(configuredPriority)));
-                }
-        }
-        else if (priorityResult != E_POINTER)
-        {
-                DEBUG_REPORT_LOG(true, ("SetGPUThreadPriority(%d) failed 0x%08x\n", Direct3d9ExSupport::clampGpuThreadPriority(configuredPriority), priorityResult));
-        }
-}
-
-// ----------------------------------------------------------------------
-
 bool Direct3d9::install(Gl_install *gl_install)
 {
-        DEBUG_FATAL(sizeof(PaddedVector) != sizeof(float) * 4, ("PaddedVector size bad"));
-        NOT_NULL(gl_install);
-        DEBUG_FATAL(ms_installed, ("already installed"));
+	DEBUG_FATAL(sizeof(PaddedVector) != sizeof(float) * 4, ("PaddedVector size bad"));
+	NOT_NULL(gl_install);
+	DEBUG_FATAL(ms_installed, ("already installed"));
 
 	ConfigDirect3d9::install();
-
-        ms_usingDirect3d9Ex = false;
-        ms_direct3dEx = NULL;
-        ms_deviceEx = NULL;
-        ms_d3d9Module = NULL;
-        ms_loadedD3d9Module = false;
-        ms_reportedDeviceRemoval = false;
 
 	ms_performanceTimer = new PerformanceTimer();
 
@@ -1315,11 +1151,9 @@ bool Direct3d9::install(Gl_install *gl_install)
 	ms_glApi.getShaderCapability               = getShaderCapability;
 	ms_glApi.requiresVertexAndPixelShaders     = requiresVertexAndPixelShaders;
 	ms_glApi.getOtherAdapterRects              = getOtherAdapterRects;
-        ms_glApi.getVideoMemoryInMegabytes         = getVideoMemoryInMegabytes;
-        ms_glApi.isGdiVisible                      = isGdiVisible;
-        ms_glApi.wasDeviceReset                    = wasDeviceReset;
-        ms_glApi.isDirect3d9ExRuntimeAvailable     = Direct3d9::isDirect3d9ExRuntimeAvailable;
-        ms_glApi.isUsingDirect3d9Ex                = Direct3d9::isUsingDirect3d9Ex;
+	ms_glApi.getVideoMemoryInMegabytes         = getVideoMemoryInMegabytes;
+	ms_glApi.isGdiVisible                      = isGdiVisible;
+	ms_glApi.wasDeviceReset                    = wasDeviceReset;
 
 	ms_glApi.addDeviceLostCallback             = addDeviceLostCallback;
 	ms_glApi.removeDeviceLostCallback          = removeDeviceLostCallback;
@@ -1465,12 +1299,10 @@ bool Direct3d9::install(Gl_install *gl_install)
 	ms_glApi.releaseVideoBuffers = releaseVideoBuffers;
 #endif  // PRODUCTION
 
-        // -----------------------------------
-        // create Direct3d
-        if (!initializeDirect3dInterfaces(ConfigDirect3d9::getPreferDirect3d9Ex()))
-        {
-                FATAL(true, ("Could not create direct3d"));
-        }
+	// -----------------------------------
+	// create Direct3d
+	ms_direct3d = Direct3DCreate9(D3D_SDK_VERSION);
+	FATAL(!ms_direct3d, ("Could not create direct3d"));
 	// -----------------------------------
 
 	const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
@@ -1514,7 +1346,7 @@ bool Direct3d9::install(Gl_install *gl_install)
                 {
                         ms_adapter = static_cast<UINT>(configAdapter);
                 }
-		else
+                else
                 {
                         autoSelectedAdapter = selectBestAdapterCandidate();
                         if (autoSelectedAdapter.valid)
@@ -1522,7 +1354,7 @@ bool Direct3d9::install(Gl_install *gl_install)
                                 ms_adapter = autoSelectedAdapter.adapterIndex;
                                 usedAutoSelection = true;
                         }
-			else
+                        else
                         {
                                 ms_adapter = D3DADAPTER_DEFAULT;
                         }
@@ -1612,48 +1444,21 @@ bool Direct3d9::install(Gl_install *gl_install)
 		ms_deviceType = D3DDEVTYPE_HAL;
 	// ---------------------------------------------------------------------------------
 
-        const bool canLockBackBuffer    = !ConfigDirect3d9::getDoNotLockBackBuffer() && !ConfigDirect3d9::getAntiAlias();
-        const DWORD lockableBackBuffer  = canLockBackBuffer ? D3DPRESENTFLAG_LOCKABLE_BACKBUFFER : 0;
+	const bool canLockBackBuffer    = !ConfigDirect3d9::getDoNotLockBackBuffer() && !ConfigDirect3d9::getAntiAlias();
 
-        static const D3DFORMAT windowedBackBufferFormats[] =
-        {
-                D3DFMT_X8R8G8B8,
-                D3DFMT_A8R8G8B8,
-                D3DFMT_UNKNOWN
-        };
+	//const bool screenShotBackBuffer =  ConfigDirect3d9::getScreenShotBackBuffer();
 
-        static const D3DFORMAT fullscreenBackBufferFormats[] =
-        {
-                D3DFMT_A8R8G8B8,
-                D3DFMT_X8R8G8B8,
-                D3DFMT_R5G6B5,
-                D3DFMT_UNKNOWN
-        };
+	const DWORD lockableBackBuffer = canLockBackBuffer ? D3DPRESENTFLAG_LOCKABLE_BACKBUFFER : 0;
 
-        static const D3DFORMAT windowedDepthStencilFormats[] =
-        {
-                D3DFMT_D24S8,
-                D3DFMT_D24X8,
-                D3DFMT_D16,
-                D3DFMT_UNKNOWN
-        };
+	// ---------------------------------------------------------------------------------
+	// figure out color/alpha/depth/stencil buffer formats
+	const D3DFORMAT *depthStencilFormats = getMatchingDepthStencilFormats(gl_install->zBufferBitDepth, gl_install->stencilBufferBitDepth);
+	FATAL(!depthStencilFormats, ("invalid depth/stencil format specified"));
+	const D3DFORMAT *backBufferFormats = getMatchingColorAlphaFormats(gl_install->colorBufferBitDepth, gl_install->alphaBufferBitDepth);
+	FATAL(!backBufferFormats, ("invalid color/alpha format specified"));
+	// ---------------------------------------------------------------------------------
 
-        static const D3DFORMAT fullscreenDepthStencilFormats[] =
-        {
-                D3DFMT_D24S8,
-                D3DFMT_D24X8,
-                D3DFMT_D32,
-                D3DFMT_D16,
-                D3DFMT_UNKNOWN
-        };
-
-        const D3DFORMAT *const backBufferFormats = ms_windowed ? windowedBackBufferFormats : fullscreenBackBufferFormats;
-        const D3DFORMAT *const depthStencilFormats = ms_windowed ? windowedDepthStencilFormats : fullscreenDepthStencilFormats;
-
-        //const bool screenShotBackBuffer =  ConfigDirect3d9::getScreenShotBackBuffer();
 	bool created = false;
-	bool attemptDirect3d9Ex = ms_usingDirect3d9Ex;
-	bool usingDirect3d9ExThisRun = false;
 	for (int h = 0; h < 2; ++h)
 	{
 		// figure out whether to create with HW T&L or SW T&L
@@ -1705,16 +1510,24 @@ bool Direct3d9::install(Gl_install *gl_install)
 					ms_presentParameters.BackBufferWidth        = ms_width;
 					ms_presentParameters.BackBufferHeight       = ms_height;
 					ms_presentParameters.BackBufferCount        = 1;
-                                        ms_presentParameters.BackBufferFormat       = ms_backBufferFormat;
-                                        ms_presentParameters.hDeviceWindow          = ms_window;
-                                        ms_presentParameters.EnableAutoDepthStencil = TRUE;
-                                        ms_presentParameters.AutoDepthStencilFormat = ms_depthStencilFormat;
-                                        ms_presentParameters.Flags                  = lockableBackBuffer | D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
+					ms_presentParameters.BackBufferFormat       = ms_backBufferFormat;
+					ms_presentParameters.hDeviceWindow          = ms_window;
+					ms_presentParameters.EnableAutoDepthStencil = TRUE;
+					ms_presentParameters.AutoDepthStencilFormat = ms_depthStencilFormat;
+					ms_presentParameters.Flags                  = lockableBackBuffer;
+
+					/*  &&
+					SUCCEEDED(ms_direct3d->CheckDeviceMultiSampleType( ms_adapter, 
+					ms_deviceType , ms_depthStencilFormat, FALSE, 
+					D3DMULTISAMPLE_NONMASKABLE, NULL ) )  &&
+					SUCCEEDED(ms_direct3d->CheckDeviceMultiSampleType( ms_adapter, 
+					ms_deviceType , ms_adapterFormat, FALSE, 
+					D3DMULTISAMPLE_NONMASKABLE, NULL ) )*/
 
 					// check for multisampling support
 					DWORD qualityLevels;
-					if( SUCCEEDED(ms_direct3d->CheckDeviceMultiSampleType( ms_adapter,
-						ms_deviceType , ms_backBufferFormat, FALSE,
+					if( SUCCEEDED(ms_direct3d->CheckDeviceMultiSampleType( ms_adapter, 
+						ms_deviceType , ms_backBufferFormat, FALSE, 
 						D3DMULTISAMPLE_NONMASKABLE, &qualityLevels ) ))
 					{
 						ms_supportsMultiSample = true;
@@ -1731,106 +1544,116 @@ bool Direct3d9::install(Gl_install *gl_install)
 					if (vertexProcessingMode == D3DCREATE_HARDWARE_VERTEXPROCESSING && ConfigDirect3d9::getUsePureDevice())
 						vertexProcessingMode |= D3DCREATE_PUREDEVICE;
 
-					for (int attempt = 0; !created && attempt < ((attemptDirect3d9Ex && ms_direct3dEx) ? 2 : 1); ++attempt)
+					hresult = ms_direct3d->CreateDevice(ms_adapter, ms_deviceType, ms_window, vertexProcessingMode, &ms_presentParameters, &ms_device);
+
+					if (SUCCEEDED(hresult))
 					{
-						const bool useDirect3d9Ex = (attempt == 0) && attemptDirect3d9Ex && ms_direct3dEx;
+						IDirect3DSurface9 *depthStencilSurface = NULL;
+						hresult = ms_device->GetDepthStencilSurface(&depthStencilSurface);
+						FATAL_DX_HR("GetDepthStencilSurface failed %s", hresult);
+						D3DSURFACE_DESC surfaceDesc;
+						hresult = depthStencilSurface->GetDesc(&surfaceDesc);
+						FATAL_DX_HR("GetDesc failed %s", hresult);
+						depthStencilSurface->Release();
 
-						if (useDirect3d9Ex)
+						if (surfaceDesc.Format == ms_depthStencilFormat)
 						{
-							IDirect3DDevice9Ex *deviceEx = NULL;
-							D3DDISPLAYMODEEX fullscreenDisplayMode;
-							D3DDISPLAYMODEEX *fullscreenDisplayModePtr = NULL;
+							created = true;
+						}
 
-							if (!ms_windowed)
-							{
-								Zero(fullscreenDisplayMode);
-								fullscreenDisplayMode.Size = sizeof(fullscreenDisplayMode);
-								fullscreenDisplayMode.Width = ms_presentParameters.BackBufferWidth;
-								fullscreenDisplayMode.Height = ms_presentParameters.BackBufferHeight;
-								fullscreenDisplayMode.RefreshRate = ms_presentParameters.FullScreen_RefreshRateInHz;
-								fullscreenDisplayMode.Format = ms_presentParameters.BackBufferFormat;
-								fullscreenDisplayMode.ScanLineOrdering = D3DSCANLINEORDERING_PROGRESSIVE;
-								fullscreenDisplayModePtr = &fullscreenDisplayMode;
-							}
+						if (created && !gl_install->skipInitialClearViewport)
+						{
+							clearViewport(true, 0, false, 0, false, 0);
+							present();
+						}
 
-							hresult = ms_direct3dEx->CreateDeviceEx(ms_adapter, ms_deviceType, ms_window, vertexProcessingMode, &ms_presentParameters, fullscreenDisplayModePtr, &deviceEx);
-
-							if (SUCCEEDED(hresult))
-							{
-								ms_deviceEx = deviceEx;
-								ms_device = deviceEx;
-							}
-							else
-							{
-								REPORT_LOG(verboseHardwareLogging, ("Failed createEx %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
-								continue;
-							}
+						if (created)
+						{
+							REPORT_LOG(verboseHardwareLogging, ("Passed format %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
 						}
 						else
 						{
-							hresult = ms_direct3d->CreateDevice(ms_adapter, ms_deviceType, ms_window, vertexProcessingMode, &ms_presentParameters, &ms_device);
-							if (FAILED(hresult))
-							{
-								REPORT_LOG(verboseHardwareLogging, ("Failed create %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
-								continue;
-							}
-						}
-
-						if (SUCCEEDED(hresult))
-						{
-							IDirect3DSurface9 *depthStencilSurface = NULL;
-							hresult = ms_device->GetDepthStencilSurface(&depthStencilSurface);
-							FATAL_DX_HR("GetDepthStencilSurface failed %s", hresult);
-							D3DSURFACE_DESC surfaceDesc;
-							hresult = depthStencilSurface->GetDesc(&surfaceDesc);
-							FATAL_DX_HR("GetDesc failed %s", hresult);
-							depthStencilSurface->Release();
-
-                                                        if (surfaceDesc.Format == ms_depthStencilFormat)
-                                                        {
-                                                                created = true;
-                                                                usingDirect3d9ExThisRun = useDirect3d9Ex;
-
-                                                                if (created && useDirect3d9Ex && ms_deviceEx)
-                                                                        configureDirect3d9ExDevice(ms_deviceEx);
-                                                        }
-
-                                                        if (created && !gl_install->skipInitialClearViewport)
-                                                        {
-                                                                clearViewport(true, 0, false, 0, false, 0);
-								present();
-							}
-
-							if (created)
-							{
-								REPORT_LOG(verboseHardwareLogging, ("Passed format %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
-							}
-							else
-							{
-								REPORT_LOG(verboseHardwareLogging, ("Failed wrong depth/stencil format %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
-								ms_device->Release();
-								ms_device = NULL;
-								if (useDirect3d9Ex)
-									ms_deviceEx = NULL;
-							}
+							REPORT_LOG(verboseHardwareLogging, ("Failed wrong depth/stencil format %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
+							ms_device->Release();
+							ms_device = NULL;
 						}
 					}
+					else
+					{
+						REPORT_LOG(verboseHardwareLogging, ("Failed create %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
+					}
+				}
+				else
+				{
+					REPORT_LOG(verboseHardwareLogging, ("Failed checks %s %s %s %s\n", vertexProcessingModeText, getFormatName(ms_adapterFormat), getFormatName(ms_backBufferFormat), getFormatName(ms_depthStencilFormat)));
 				}
 			}
 		}
 	}
 
-	ms_usingDirect3d9Ex = usingDirect3d9ExThisRun;
-	if (!ms_usingDirect3d9Ex)
-		ms_deviceEx = NULL;
+	if (!created)
+	{
+		char const *message = "Direct3D could not be correctly initialized.  Sometimes this will be fixed by rebooting your machine.\r\nIf it still occurs after a fresh reboot, you may need to reinstall DirectX.";
+		MessageBox(NULL, message, NULL, MB_OK | MB_ICONSTOP);
+		return false;
+	}
 
-        REPORT_LOG(verboseHardwareLogging, ("Using Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no"));
-        CrashReportInformation::addStaticText("Direct3D9Ex: %s\n", ms_usingDirect3d9Ex ? "yes" : "no");
+	updateWindowSettings();
 
-        ms_shaderCapability = computeShaderCapabilityFromCaps(ms_deviceCaps);
+	ms_hasDepthBuffer = getDepthBufferBitDepth(ms_depthStencilFormat) != 0;
+	ms_hasStencilBuffer = getStencilBufferBitDepth(ms_depthStencilFormat) != 0;
 
-        if (ms_shaderCapability == ShaderCapability(2,0))
-        {
+	hresult = ms_device->GetDeviceCaps(&ms_deviceCaps);
+	FATAL_DX_HR("GetDeviceCaps failed %s", hresult);
+
+	ms_supportsStreamOffsets   = (ms_deviceCaps.DevCaps2 & D3DDEVCAPS2_STREAMOFFSET) != 0;
+
+	ms_supportsDynamicTextures = 
+		   !ConfigDirect3d9::getDisableDynamicTextures() 
+		&& (ms_deviceCaps.Caps2 & D3DCAPS2_DYNAMICTEXTURES) != 0
+		;
+
+	ms_deviceCaps.VertexShaderVersion &= 0xffff;
+	ms_deviceCaps.PixelShaderVersion &= 0xffff;
+
+	// limit the vertex and pixel shader version as requested.  this is unlike the override which lets you set it to anything.
+	if (ms_deviceCaps.VertexShaderVersion > static_cast<DWORD>(ConfigDirect3d9::getMaxVertexShaderVersion()))
+		ms_deviceCaps.VertexShaderVersion = static_cast<DWORD>(ConfigDirect3d9::getMaxVertexShaderVersion());
+	if (ms_deviceCaps.PixelShaderVersion > static_cast<DWORD>(ConfigDirect3d9::getMaxPixelShaderVersion()))
+		ms_deviceCaps.PixelShaderVersion = static_cast<DWORD>(ConfigDirect3d9::getMaxPixelShaderVersion());
+
+	// figure out what shader capability this adapter has
+	if (ConfigDirect3d9::getShaderCapabilityOverride())
+		ms_shaderCapability = ConfigDirect3d9::getShaderCapabilityOverride();
+	else
+	{
+#ifdef VSPS
+		if (!ConfigDirect3d9::getDisableVertexAndPixelShaders() && ms_deviceCaps.VertexShaderVersion >= 0x0200 && ms_deviceCaps.PixelShaderVersion >= 0x0200)
+			ms_shaderCapability = ShaderCapability(2,0);
+		else
+			if (!ConfigDirect3d9::getDisableVertexAndPixelShaders() && ms_deviceCaps.VertexShaderVersion >= 0x0101 && ms_deviceCaps.PixelShaderVersion >= 0x0104)
+				ms_shaderCapability = ShaderCapability(1,4);
+			else
+				if (!ConfigDirect3d9::getDisableVertexAndPixelShaders() && ms_deviceCaps.VertexShaderVersion >= 0x0101 && ms_deviceCaps.PixelShaderVersion >= 0x0101)
+					ms_shaderCapability = ShaderCapability(1,1);
+				else
+#endif
+				{
+#ifdef FFP
+					if (ms_deviceCaps.MaxSimultaneousTextures >= 3)
+						ms_shaderCapability = ShaderCapability(0,3);
+					else
+						if (ms_deviceCaps.MaxSimultaneousTextures >= 2)
+							ms_shaderCapability = ShaderCapability(0,2);
+						else
+							ms_shaderCapability = ShaderCapability(0,0);
+#else
+					DEBUG_FATAL(true, ("VSPS-only graphics layer selected but no VSPS supported"));
+#endif
+				}
+
+		if (ms_shaderCapability == ShaderCapability(2,0))
+		{
 #define IS_VERSION(a,b,c,d) (product == a && version == b && subVersion == c && build == d)
 			int const product    = HIWORD(ms_adapterIdentifier.DriverVersion.HighPart);
 			int const version    = LOWORD(ms_adapterIdentifier.DriverVersion.HighPart);
@@ -1844,47 +1667,36 @@ bool Direct3d9::install(Gl_install *gl_install)
 				ms_shaderCapability = ShaderCapability(1,4);
 			}
 #undef IS_VERSION
-                        // Check for Geforce FX series cards, which had problematic shader 2.0 support.
-                        if (ms_adapterIdentifier.VendorId == 0x10de)
-                        {
-                                bool const isGeforceFx =
-                                        ms_adapterIdentifier.DeviceId == 0x300 ||
-                                        ms_adapterIdentifier.DeviceId == 0x301 ||
-                                        ms_adapterIdentifier.DeviceId == 0x302 ||
-                                        ms_adapterIdentifier.DeviceId == 0x311 ||
-                                        ms_adapterIdentifier.DeviceId == 0x312 ||
-                                        ms_adapterIdentifier.DeviceId == 0x314 ||
-                                        ms_adapterIdentifier.DeviceId == 0x320 ||
-                                        ms_adapterIdentifier.DeviceId == 0x321 ||
-                                        ms_adapterIdentifier.DeviceId == 0x322 ||
-                                        ms_adapterIdentifier.DeviceId == 0x330 ||
-                                        ms_adapterIdentifier.DeviceId == 0x331 ||
-                                        ms_adapterIdentifier.DeviceId == 0x333 ||
-                                        ms_adapterIdentifier.DeviceId == 0x341;
-
-                                if (isGeforceFx)
-                                {
-                                        REPORT_LOG(verboseHardwareLogging, ("Detected Geforce FX series card - falling back to shader capability 1.4\n"));
-                                        CrashReportInformation::addStaticText("D3d9Hack1: enabling Geforce FX series card workaround\n");
-                                        ms_shaderCapability = ShaderCapability(1,4);
-                                }
-                        }
+			//check for Geforce FX series cards, which screwed up shader2.0 support.  See http://en.wikipedia.org/wiki/GeForce_FX
+			if(ms_adapterIdentifier.VendorId == 0x10de) //NVidia
+			{
+				if(ms_adapterIdentifier.DeviceId  == 0x300 //various Geforce FX card versions
+				 || ms_adapterIdentifier.DeviceId == 0x301
+				 || ms_adapterIdentifier.DeviceId == 0x302
+				 || ms_adapterIdentifier.DeviceId == 0x311
+				 || ms_adapterIdentifier.DeviceId == 0x312
+				 || ms_adapterIdentifier.DeviceId == 0x314
+				 || ms_adapterIdentifier.DeviceId == 0x320
+				 || ms_adapterIdentifier.DeviceId == 0x321
+				 || ms_adapterIdentifier.DeviceId == 0x322
+				 || ms_adapterIdentifier.DeviceId == 0x330
+				 || ms_adapterIdentifier.DeviceId == 0x331
+				 || ms_adapterIdentifier.DeviceId == 0x333
+				 || ms_adapterIdentifier.DeviceId == 0x341
+				)
+				{
+					REPORT_LOG(verboseHardwareLogging, ("Detected Geforce FX series card - falling back to shader capability 1.4\n"));
+					CrashReportInformation::addStaticText("D3d9Hack1: enabling Geforce FX series card workaround\n");
+					ms_shaderCapability = ShaderCapability(1,4);
+				}
+			}
 		}
+	}
 
 	if (ms_shaderCapability < ShaderCapability(1,1))
 		ms_glApi.setAlphaFadeOpacity = noSetAlphaFadeOpacity;
 
-	installSubsystems();
-
-	return true;
-}
-
-// ----------------------------------------------------------------------
-
-void Direct3d9Namespace::installSubsystems()
-{
-	const bool verboseHardwareLogging = ConfigSharedFoundation::getVerboseHardwareLogging();
-        REPORT_LOG(verboseHardwareLogging, ("Using graphics shader capability %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability)));
+	REPORT_LOG(verboseHardwareLogging, ("Using graphics shader capability %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability)));
 	CrashReportInformation::addStaticText("ShaderCapability: %d.%d\n", GetShaderCapabilityMajor(ms_shaderCapability), GetShaderCapabilityMinor(ms_shaderCapability));
 
 
@@ -1956,6 +1768,8 @@ void Direct3d9Namespace::installSubsystems()
 #endif
 
 	resizeQuadListIndexBuffer(4 * 1024);
+
+	return true;
 }
 
 // ----------------------------------------------------------------------
@@ -2001,21 +1815,11 @@ void Direct3d9Namespace::remove()
 		ms_device = NULL;
 	}
 
-	ms_deviceEx = NULL;
-
 	if (ms_direct3d)
 	{
 		IGNORE_RETURN(ms_direct3d->Release());
 		ms_direct3d = NULL;
 	}
-
-	ms_direct3dEx = NULL;
-	ms_usingDirect3d9Ex = false;
-
-        Direct3d9ExSupport::unloadRuntime(ms_d3d9Module, ms_loadedD3d9Module);
-
-	ms_d3d9Module = NULL;
-	ms_loadedD3d9Module = false;
 
 	if (ms_engineOwnsWindow)
 		SetWindowPos(ms_window, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOCOPYBITS | SWP_HIDEWINDOW);
@@ -2367,16 +2171,11 @@ void Direct3d9Namespace::lostDevice()
 
 void Direct3d9Namespace::restoreDevice()
 {
-        ms_reportedDeviceRemoval = false;
-
-        if (ms_usingDirect3d9Ex && ms_deviceEx)
-                configureDirect3d9ExDevice(ms_deviceEx);
-
 	Direct3d9_RenderTarget::restoreDevice();
-        Direct3d9_DynamicVertexBufferData::restoreDevice();
-        Direct3d9_DynamicIndexBufferData::restoreDevice();
-        Direct3d9_StateCache::restoreDevice();
-        setViewport(ms_viewportX, ms_viewportY, ms_viewportWidth, ms_viewportHeight, ms_viewportMinimumZ, ms_viewportMaximumZ);
+	Direct3d9_DynamicVertexBufferData::restoreDevice();
+	Direct3d9_DynamicIndexBufferData::restoreDevice();
+	Direct3d9_StateCache::restoreDevice();
+	setViewport(ms_viewportX, ms_viewportY, ms_viewportWidth, ms_viewportHeight, ms_viewportMinimumZ, ms_viewportMaximumZ);
 
 	CallbackFunctions::const_iterator const iEnd = ms_deviceRestoredCallbacks.end();
 	for (CallbackFunctions::const_iterator i = ms_deviceRestoredCallbacks.begin(); i != iEnd; ++i)
@@ -2866,32 +2665,6 @@ void Direct3d9Namespace::releaseBackBuffer()
 
 // ----------------------------------------------------------------------
 
-HRESULT Direct3d9Namespace::resetDevice(D3DPRESENT_PARAMETERS *presentationParameters)
-{
-	if (ms_usingDirect3d9Ex && ms_deviceEx)
-	{
-		D3DDISPLAYMODEEX fullscreenDisplayMode;
-		D3DDISPLAYMODEEX *fullscreenDisplayModePtr = NULL;
-		if (!ms_windowed)
-		{
-			Zero(fullscreenDisplayMode);
-			fullscreenDisplayMode.Size = sizeof(fullscreenDisplayMode);
-			fullscreenDisplayMode.Width = presentationParameters->BackBufferWidth;
-			fullscreenDisplayMode.Height = presentationParameters->BackBufferHeight;
-			fullscreenDisplayMode.RefreshRate = presentationParameters->FullScreen_RefreshRateInHz;
-			fullscreenDisplayMode.Format = presentationParameters->BackBufferFormat;
-			fullscreenDisplayMode.ScanLineOrdering = D3DSCANLINEORDERING_PROGRESSIVE;
-			fullscreenDisplayModePtr = &fullscreenDisplayMode;
-		}
-
-		return ms_deviceEx->ResetEx(presentationParameters, fullscreenDisplayModePtr);
-	}
-
-	return ms_device->Reset(presentationParameters);
-}
-
-// ----------------------------------------------------------------------
-
 bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int height)
 {
 	if (ms_displayModeChanged)
@@ -2901,114 +2674,75 @@ bool Direct3d9Namespace::present(bool windowed, HWND window, int width, int heig
 		return false;
 	}
 
-	HRESULT hresult = S_OK;
-        if (ms_usingDirect3d9Ex && ms_deviceEx)
-        {
-                const DWORD presentFlags = 0;
-                if (windowed)
-                {
-			RECT source;
-			source.top = 0;
-			source.left = 0;
-			source.right = width;
-			source.bottom = height;
+	// display the new frame (but only do it when we're rendering to the frame buffer rather than a texture)
+	HRESULT hresult;
+	if (windowed)
+	{
+		RECT source;
+		source.top = 0;
+		source.left = 0;
+		source.right = width;
+		source.bottom = height;
 
-			hresult = ms_deviceEx->PresentEx(&source, NULL, window, NULL, presentFlags);
-		}
-		else
+		hresult = ms_device->Present(&source, NULL, window, NULL);
+	}
+	else
+	{
+		// flipping requires all the arguments are NULL
+		hresult = ms_device->Present(NULL, NULL, NULL, NULL);
+	}
+
+	// check if the device was lost for any reason
+	if (hresult == D3DERR_DEVICELOST || hresult == D3DERR_DRIVERINTERNALERROR)
+	{
+		char present[16];
+		sprintf(present, "%d", HRESULT_CODE(hresult));
+
+		// check if we can restore the device now
+		hresult = ms_device->TestCooperativeLevel();
+		if (SUCCEEDED(hresult) || hresult == D3DERR_DEVICENOTRESET)
 		{
-                        hresult = ms_deviceEx->PresentEx(NULL, NULL, NULL, NULL, presentFlags);
-                }
-        }
-        else
-        {
-		if (windowed)
-		{
-			RECT source;
-			source.top = 0;
-			source.left = 0;
-			source.right = width;
-			source.bottom = height;
+			char tcl[16];
+			sprintf(tcl, "%d", HRESULT_CODE(hresult));
 
-			hresult = ms_device->Present(&source, NULL, window, NULL);
-		}
-		else
-		{
-			hresult = ms_device->Present(NULL, NULL, NULL, NULL);
-                }
-        }
-
-        if (SUCCEEDED(hresult) && ms_usingDirect3d9Ex && ms_deviceEx && ConfigDirect3d9::getWaitForVBlankAfterPresent())
-        {
-                UINT adapter = ms_adapter;
-                int const configuredAdapter = ConfigDirect3d9::getWaitForVBlankAdapter();
-                if (configuredAdapter >= 0)
-                        adapter = static_cast<UINT>(configuredAdapter);
-
-                HRESULT const waitResult = Direct3d9ExSupport::waitForVBlank(ms_deviceEx, adapter);
-                if (FAILED(waitResult))
-                        DEBUG_REPORT_LOG(true, ("WaitForVBlank(%u) failed 0x%08x\n", adapter, waitResult));
-        }
-
-        if (hresult == S_PRESENT_OCCLUDED)
-        {
-                Sleep(50);
-                return false;
-        }
-
-        if (hresult == D3DERR_WASSTILLDRAWING)
-        {
-                Sleep(1);
-                return false;
-        }
-
-        if (hresult == D3DERR_DEVICELOST || hresult == D3DERR_DRIVERINTERNALERROR || hresult == D3DERR_DEVICEHUNG || hresult == D3DERR_DEVICEREMOVED)
-        {
-                if (Direct3d9ExSupport::isDeviceRemovedError(hresult) && !ms_reportedDeviceRemoval)
-                {
-                        ms_reportedDeviceRemoval = true;
-                        char const *const description = Direct3d9ExSupport::describeDeviceRemovedReason(hresult);
-                        DEBUG_REPORT_LOG(true, ("PresentEx returned %s (0x%08x)\n", description, hresult));
-                        CrashReportInformation::addStaticText("Direct3D9ExPresentFailure: %s (0x%08x)\n", description, hresult);
-                }
-
-                HRESULT cooperativeLevel = S_OK;
-                if (ms_usingDirect3d9Ex && ms_deviceEx)
-                        cooperativeLevel = ms_deviceEx->CheckDeviceState(windowed ? window : ms_window);
-                else
-                        cooperativeLevel = ms_device->TestCooperativeLevel();
-
-		if (SUCCEEDED(cooperativeLevel) || cooperativeLevel == D3DERR_DEVICENOTRESET)
-		{
 			DEBUG_REPORT_LOG(true, ("Device lost, restoring now\n"));
 
 			lostDevice();
 
-			HRESULT resetResult = resetDevice(&ms_presentParameters);
-			FATAL(resetResult == D3DERR_INVALIDCALL, ("Reset failed %d - likely unreleased render target", HRESULT_CODE(resetResult)));
+			// try to restore the device
+			hresult = ms_device->Reset(&ms_presentParameters);
 
-			for (int i = 0; resetResult == D3DERR_DEVICELOST && i < 60; ++i)
+			// give a better message if we get back INVALIDCALL
+			FATAL(hresult == D3DERR_INVALIDCALL, ("Reset failed %d - likely unreleased render target", HRESULT_CODE(hresult)));
+
+			for (int i = 0; hresult == D3DERR_DEVICELOST && i < 60; ++i)
 			{
+				char present[16];
+				sprintf(present, "%d", HRESULT_CODE(hresult));
 				DEBUG_REPORT_LOG(true, ("Reset failed, trying repeatedly\n"));
+
 				Sleep(500);
-				resetResult = resetDevice(&ms_presentParameters);
+				hresult = ms_device->Reset(&ms_presentParameters);
 			}
 
-			FATAL_DX_HR("Reset failed after present %s", resetResult);
+			FATAL_DX_HR("Reset failed after present %s", hresult);
 
+			// recreate necessary resources after resetting the device
 			restoreDevice();
 			return false;
 		}
-		else if (cooperativeLevel == D3DERR_DEVICELOST || cooperativeLevel == S_PRESENT_OCCLUDED)
-		{
-			DEBUG_REPORT_LOG(true, ("Device lost, waiting to restore\n"));
-			Sleep(50);
-			return false;
-		}
 		else
-		{
-			FATAL_DX_HR(ms_usingDirect3d9Ex ? "CheckDeviceState failed %s" : "TestCooperativeLevel failed %s", cooperativeLevel);
-		}
+			if (hresult == D3DERR_DEVICELOST)
+			{
+				// device is lost, can't restore just yet.  waste some time.
+				DEBUG_REPORT_LOG(true, ("Device lost, waiting to restore\n"));
+				Sleep(50);
+				return false;
+			}
+			else
+			{
+				FATAL_DX_HR("TestCooperativeLevel failed %s", hresult);
+			}
 	}
 	else
 	{
@@ -5097,10 +4831,7 @@ bool Direct3d9Namespace::writeImage(char const * file, int const width, int cons
 		D3DLOCKED_RECT lockedRect;
 		HRESULT hresult(0);
 	
-               // The texture is created in D3DPOOL_SYSTEMMEM without the dynamic usage flag, so
-               // using D3DLOCK_DISCARD is invalid and results in D3DERR_INVALIDCALL.  Lock the
-               // surface without any flags instead.
-               hresult = texturePointer->LockRect(0, &lockedRect, NULL, 0);
+		hresult = texturePointer->LockRect(0, &lockedRect, NULL, D3DLOCK_DISCARD);
 		FATAL_DX_HR("LockRect failed %s", hresult);
 
 		int * lockedPixels = reinterpret_cast<int *>(lockedRect.pBits);

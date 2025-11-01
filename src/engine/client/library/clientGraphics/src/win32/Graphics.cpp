@@ -149,47 +149,6 @@ namespace GraphicsNamespace
 using namespace GraphicsNamespace;
 
 // ======================================================================
-
-namespace
-{
-	void cleanupFailedGraphicsInstall()
-	{
-		Os::setAcquiredFocusHookFunction(NULL);
-		Os::setGetHardwareMouseCursorEnabled(NULL);
-#ifdef _DEBUG
-		Os::setSetSystemMouseCursorPositionHookFunction2(NULL);
-#endif
-
-		if (ms_api && ms_api->remove)
-			ms_api->remove();
-
-		ms_api = NULL;
-
-		if (ms_dll)
-		{
-			if (!ExitChain::isFataling())
-			{
-				const BOOL result = FreeLibrary(ms_dll);
-				if (!result)
-					DEBUG_WARNING(true, ("FreeLibrary failed while cleaning up a Graphics::install failure"));
-			}
-
-			ms_dll = NULL;
-		}
-
-		ExitChain::remove(GraphicsNamespace::remove);
-
-		ms_supportsHardwareMouseCursor = false;
-		ms_shaderCapability = 0;
-		ms_videoMemoryInMegabytes = 0;
-		ms_requiresVertexAndPixelShaders = false;
-		ms_allowMouseCursorConstrained = false;
-		ms_hardwareMouseCursorEnabled = false;
-		ms_mouseCursorConstrained = false;
-	}
-}
-
-// ======================================================================
 // Install the Graphics Layer subsystem
 //
 // Remarks:
@@ -263,7 +222,6 @@ bool Graphics::install()
 	{
 #if PRODUCTION
 		MessageBox(NULL, "The graphics subsystem could not be initialized.  This is most likely caused by DirectX 9 not being properly installed.", NULL, MB_OK | MB_ICONSTOP);
-		cleanupFailedGraphicsInstall();
 		return false;
 #else
 		char *error = Os::getLastError();
@@ -317,12 +275,7 @@ bool Graphics::install()
 	// install the rasterizer
 	NOT_NULL(ms_api->install);
 	if (!ms_api->install(&gl_install))
-	{
-		DEBUG_WARNING(true, ("Graphics API install returned false"));
-
-		cleanupFailedGraphicsInstall();
 		return false;
-	}
 
 	ms_frameBufferMaxWidth  = gl_install.width;
 	ms_frameBufferMaxHeight = gl_install.height;
@@ -727,35 +680,15 @@ bool Graphics::isGdiVisible(void)
 
 bool Graphics::wasDeviceReset()
 {
-        NOT_NULL(ms_api->wasDeviceReset);
-        return ms_api->wasDeviceReset();
-}
-
-// ----------------------------------------------------------------------
-
-bool Graphics::isDirect3d9ExRuntimeAvailable()
-{
-        if (!ms_api || !ms_api->isDirect3d9ExRuntimeAvailable)
-                return false;
-
-        return ms_api->isDirect3d9ExRuntimeAvailable();
-}
-
-// ----------------------------------------------------------------------
-
-bool Graphics::isUsingDirect3d9Ex()
-{
-        if (!ms_api || !ms_api->isUsingDirect3d9Ex)
-                return false;
-
-        return ms_api->isUsingDirect3d9Ex();
+	NOT_NULL(ms_api->wasDeviceReset);
+	return ms_api->wasDeviceReset();
 }
 
 // ----------------------------------------------------------------------
 
 void Graphics::addDeviceLostCallback(CallbackFunction callbackFunction)
 {
-        ms_api->addDeviceLostCallback(callbackFunction);
+	ms_api->addDeviceLostCallback(callbackFunction);
 }
 
 // ----------------------------------------------------------------------

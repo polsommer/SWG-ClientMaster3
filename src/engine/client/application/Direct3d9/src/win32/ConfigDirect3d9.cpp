@@ -43,13 +43,7 @@ namespace ConfigDirect3d9Namespace
 
 	bool ms_discardDynamicBuffersAtBeginningOfFrame;
 
-        bool ms_antiAlias;
-
-        bool ms_preferDirect3d9Ex;
-        int  ms_maximumFrameLatency;
-        int  ms_gpuThreadPriority;
-        bool ms_waitForVBlankAfterPresent;
-        int  ms_waitForVBlankAdapter;
+	bool ms_antiAlias;
 
 	ConfigDirect3d9::VertexProcessingMode ms_vertexProcessingMode = ConfigDirect3d9::VPM_default;
 }
@@ -90,22 +84,13 @@ void ConfigDirect3d9::install()
 
 	KEY_BOOL(discardDynamicBuffersAtBeginningOfFrame, false);
 	
-        KEY_BOOL(antiAlias, true);
-
-        KEY_BOOL(preferDirect3d9Ex, true);
-        KEY_INT (maximumFrameLatency, 1);
-        KEY_INT (gpuThreadPriority, 0);
-        KEY_BOOL(waitForVBlankAfterPresent, false);
-        KEY_INT (waitForVBlankAdapter, -1);
+	KEY_BOOL(antiAlias, true);
 
 	int const vertexProcessingMode = ConfigFile::getKeyInt("Direct3d9", "vertexProcessingMode", 0);
 	FATAL(vertexProcessingMode < 0 || vertexProcessingMode > 2, ("vertexProcessingMode setting invalid %d [0..2]", vertexProcessingMode));
 	ms_vertexProcessingMode = static_cast<VertexProcessingMode>(vertexProcessingMode);
 
-        CrashReportInformation::addStaticText("DiscardDynamicBuffersAtBeginningOfFrame: %d\n", ms_discardDynamicBuffersAtBeginningOfFrame ? 1 : 0);
-        CrashReportInformation::addStaticText("Direct3d9ExMaximumFrameLatency: %d\n", ms_maximumFrameLatency);
-        CrashReportInformation::addStaticText("Direct3d9ExGpuThreadPriority: %d\n", ms_gpuThreadPriority);
-        CrashReportInformation::addStaticText("Direct3d9ExWaitForVBlank: %d (adapter %d)\n", ms_waitForVBlankAfterPresent ? 1 : 0, ms_waitForVBlankAdapter);
+	CrashReportInformation::addStaticText("DiscardDynamicBuffersAtBeginningOfFrame: %d\n", ms_discardDynamicBuffersAtBeginningOfFrame ? 1 : 0);
 }
 
 // ----------------------------------------------------------------------
@@ -211,41 +196,6 @@ int ConfigDirect3d9::getDynamicVertexBufferSize()
 bool ConfigDirect3d9::getAntiAlias()
 {
 	return ms_antiAlias;
-}
-
-// ----------------------------------------------------------------------
-
-bool ConfigDirect3d9::getPreferDirect3d9Ex()
-{
-	return ms_preferDirect3d9Ex;
-}
-
-// ----------------------------------------------------------------------
-
-int ConfigDirect3d9::getMaximumFrameLatency()
-{
-        return ms_maximumFrameLatency;
-}
-
-// ----------------------------------------------------------------------
-
-int ConfigDirect3d9::getGpuThreadPriority()
-{
-        return ms_gpuThreadPriority;
-}
-
-// ----------------------------------------------------------------------
-
-bool ConfigDirect3d9::getWaitForVBlankAfterPresent()
-{
-        return ms_waitForVBlankAfterPresent;
-}
-
-// ----------------------------------------------------------------------
-
-int ConfigDirect3d9::getWaitForVBlankAdapter()
-{
-        return ms_waitForVBlankAdapter;
 }
 
 // ----------------------------------------------------------------------

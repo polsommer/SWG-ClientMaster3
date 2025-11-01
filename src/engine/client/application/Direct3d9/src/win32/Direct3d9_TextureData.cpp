@@ -18,7 +18,6 @@
 #include "clientGraphics/TextureFormatInfo.h"
 
 #include <d3dx9tex.h>
-#include <algorithm>
 #include <map>
 
 // ======================================================================
@@ -286,13 +285,6 @@ Direct3d9_TextureData::Direct3d9_TextureData(const Texture &newEngineTexture, co
 		}
 	}
 
-	if (resourceUsage == 0 && Direct3d9::isUsingDirect3d9Ex())
-	{
-		// Managed resources are not available under Direct3D 9Ex, so fall back
-		// to the default pool for standard textures.
-		resourcePool = D3DPOOL_DEFAULT;
-	}
-
 	D3DRESOURCETYPE resourceType = D3DRTYPE_TEXTURE;
 	
 	if (newEngineTexture.isCubeMap())
@@ -427,51 +419,33 @@ void Direct3d9_TextureData::lock(LockData &lockData)
 
 	HRESULT hresult;
 
-        // When running under Direct3D 9Ex the runtime does not provide CPU access
-        // to default pool textures that were created without the dynamic flag.
-        // The legacy texture streaming path expects to be able to lock static
-        // textures directly, so we fall back to the scratch-surface code path in
-        // that configuration and let D3DX handle the upload.
-        bool const usingDirect3d9ExStaticTexture =
-                        Direct3d9::isUsingDirect3d9Ex()
-                &&      !m_engineTexture.isDynamic()
-                &&      !m_engineTexture.isRenderTarget()
-                &&      !m_engineTexture.isVolumeMap();
-
-        bool const directNativeLock =
-                        (lockData.getFormat() == m_destFormat)
-                &&      !m_engineTexture.isRenderTarget()
-                &&      !usingDirect3d9ExStaticTexture;
+	bool const directNativeLock = (lockData.getFormat() == m_destFormat) && !m_engineTexture.isRenderTarget();
 
 	// handle locking in native format when the resource can be locked directly
 	if (directNativeLock)
 	{
-                if (m_engineTexture.isVolumeMap())
-                {
-                        D3DLOCKED_BOX lockedBox;
+		if (m_engineTexture.isVolumeMap())
+		{
+			D3DLOCKED_BOX lockedBox;
 
-                        D3DBOX box;
-                        box.Left   = lockData.getX();
-                        box.Top    = lockData.getY();
-                        box.Right  = lockData.getX() + lockData.getWidth();
-                        box.Bottom = lockData.getY() + lockData.getHeight();
-                        box.Front  = lockData.getZ();
-                        box.Back   = lockData.getZ() + lockData.getDepth();
+			D3DBOX box;
+			box.Left   = lockData.getX();
+			box.Top    = lockData.getY();
+			box.Right  = lockData.getX() + lockData.getWidth();
+			box.Bottom = lockData.getY() + lockData.getHeight();
+			box.Front  = lockData.getZ();
+			box.Back   = lockData.getZ() + lockData.getDepth();
 
-                        const unsigned levelWidth  = std::max(1, m_engineTexture.getWidth()  >> lockData.getLevel());
-                        const unsigned levelHeight = std::max(1, m_engineTexture.getHeight() >> lockData.getLevel());
-                        const unsigned levelDepth  = std::max(1, m_engineTexture.getDepth()  >> lockData.getLevel());
+			const bool wholeTexture = (
+				   box.Left   ==0
+				&& box.Top    ==0
+				&& box.Front  ==0
+				&& box.Right  ==unsigned(m_engineTexture.getWidth())
+				&& box.Bottom ==unsigned(m_engineTexture.getHeight())
+				&& box.Back   ==unsigned(m_engineTexture.getDepth())
+			);
 
-                        const bool wholeTexture = (
-                                   box.Left   ==0
-                                && box.Top    ==0
-                                && box.Front  ==0
-                                && box.Right  == levelWidth
-                                && box.Bottom == levelHeight
-                                && box.Back   == levelDepth
-                        );
-
-                        D3DBOX *pBox = (wholeTexture) ? (D3DBOX *)0 : &box;
+			D3DBOX *pBox = (wholeTexture) ? (D3DBOX *)0 : &box;
 
 			hresult = static_cast<IDirect3DVolumeTexture9*>(m_d3dTexture)->LockBox(lockData.getLevel(), &lockedBox, pBox, flags);
 			FATAL_DX_HR("LockBox failed %s", hresult);
@@ -490,23 +464,20 @@ void Direct3d9_TextureData::lock(LockData &lockData)
 				flags |= D3DLOCK_DISCARD;
 			}
 
-                        RECT r, *pr=&r;
-                        r.left   = lockData.getX();
-                        r.top    = lockData.getY();
-                        r.right  = lockData.getX() + lockData.getWidth();
-                        r.bottom = lockData.getY() + lockData.getHeight();
+			RECT r, *pr=&r;
+			r.left   = lockData.getX();
+			r.top    = lockData.getY();
+			r.right  = lockData.getX() + lockData.getWidth();
+			r.bottom = lockData.getY() + lockData.getHeight();
 
-                        const int levelWidth  = std::max(1, m_engineTexture.getWidth()  >> lockData.getLevel());
-                        const int levelHeight = std::max(1, m_engineTexture.getHeight() >> lockData.getLevel());
-
-                        if (  r.left==0
-                                && r.top==0
-                                && r.right==levelWidth
-                                && r.bottom==levelHeight
-                                )
-                        {
-                                pr=0;
-                        }
+			if (  r.left==0
+				&& r.top==0
+				&& r.right==m_engineTexture.getWidth()
+				&& r.bottom==m_engineTexture.getHeight()
+				)
+			{
+				pr=0;
+			}
 
 			if (m_engineTexture.isCubeMap())
 			{
@@ -591,15 +562,7 @@ void Direct3d9_TextureData::lock(LockData &lockData)
 		r.top    = 0;
 		r.right  = width;
 		r.bottom = height;
-                // D3DLOCK_DISCARD is not valid for surfaces created with
-                // CreateOffscreenPlainSurface.  If the caller requested a
-                // discard (which is appropriate for the real texture when the
-                // entire resource is being rewritten) we must suppress it
-                // before locking the temporary scratch surface or the lock
-                // will fail with D3DERR_INVALIDCALL.
-                DWORD plainSurfaceFlags = flags & ~D3DLOCK_DISCARD;
-
-                hresult = plainSurface->LockRect(&lockedRect, &r, plainSurfaceFlags);
+		hresult = plainSurface->LockRect(&lockedRect, &r, flags);
 		FATAL_DX_HR("LockRect failed %s", hresult);
 
 		// let the user know where and how to write
@@ -766,14 +729,7 @@ IDirect3DTexture9* create2dTexture(int width, int height, int mipmapLevelCount, 
 		FATAL(true, ("Create2DTexture() : Tried to create a texture with an invalid device.\n"));
 	}
 
-	D3DPOOL pool = Direct3d9::isUsingDirect3d9Ex() ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
-	HRESULT result = device->CreateTexture(width, height, mipmapLevelCount, 0, translationTable[textureFormat], pool, &newTexture, NULL);
-
-	if (result == D3DERR_INVALIDCALL && pool == D3DPOOL_MANAGED && Direct3d9::isUsingDirect3d9Ex())
-	{
-		pool = D3DPOOL_DEFAULT;
-		result = device->CreateTexture(width, height, mipmapLevelCount, 0, translationTable[textureFormat], pool, &newTexture, NULL);
-	}
+	HRESULT result = device->CreateTexture(width, height, mipmapLevelCount, 0, translationTable[textureFormat], D3DPOOL_MANAGED, &newTexture, NULL);
 
 	if(!newTexture || result != D3D_OK)
 	{
