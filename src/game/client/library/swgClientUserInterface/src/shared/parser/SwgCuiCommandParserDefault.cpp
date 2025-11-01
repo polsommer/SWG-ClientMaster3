@@ -84,10 +84,35 @@
 
 // ======================================================================
 
+namespace
+{
+        size_t getSafeCrashReportEntryLength(char const * const entry)
+        {
+                if (!entry)
+                        return 0u;
+
+#if defined(PLATFORM_WIN32)
+                __try
+                {
+                        return static_cast<size_t>(strlen(entry));
+                }
+                __except(EXCEPTION_EXECUTE_HANDLER)
+                {
+                        DEBUG_WARNING(true, ("Skipping invalid CrashReportInformation entry while copying to clipboard."));
+                        return 0u;
+                }
+#else
+                return static_cast<size_t>(strlen(entry));
+#endif
+        }
+}
+
+// ======================================================================
+
 namespace SwgCuiCommandParserDefaultNamespace
 {
-	namespace Commands
-	{
+        namespace Commands
+        {
 #define MAKE_COMMAND(a) const char * const a = #a
 
 		MAKE_COMMAND (fatal);
@@ -1806,19 +1831,22 @@ bool SwgCuiCommandParserDefault::performParsing (const NetworkId & userId, const
 	else if (isCommand( argv [0], Commands::copyCrashReportInformation))
 	{
 		// build up all the text into a single buffer
-		std::string crashReportInformation;
-		for (int i = 0; ; ++i)
-		{
-			char const * entry = CrashReportInformation::getEntry(i);
-			if (!entry)
-				break;
-			crashReportInformation += std::string(entry);
-		}
+                std::string crashReportInformation;
+                for (int i = 0; ; ++i)
+                {
+                        char const * entry = CrashReportInformation::getEntry(i);
+                        if (!entry)
+                                break;
 
-		// copy it to the clipboard
-		Os::copyTextToClipboard(crashReportInformation.c_str());
+                        size_t const entryLength = getSafeCrashReportEntryLength(entry);
+                        if (entryLength)
+                                crashReportInformation.append(entry, entryLength);
+                }
 
-		return true; //lint !e527
+                // copy it to the clipboard
+                Os::copyTextToClipboard(crashReportInformation.c_str());
+
+                return true; //lint !e527
 	}
 
 	//-----------------------------------------------------------------
