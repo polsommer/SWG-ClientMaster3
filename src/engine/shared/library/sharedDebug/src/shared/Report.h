@@ -45,7 +45,7 @@ public:
 
 // ======================================================================
 
-#define REPORT(expr, flags, printf2)             do { if (expr) { Report::setFlags(flags); Report::printf printf2; } } while (false)
+#define REPORT(expr, flags, printf2)             ((expr) ? Report::setFlags(flags), Report::printf printf2 : NOP)
 #define REPORT_LOG(expr, printf)                 REPORT(expr, Report::RF_log, printf)
 #define REPORT_PRINT(expr, printf)               REPORT(expr, Report::RF_print, printf)
 #define REPORT_LOG_PRINT(expr, printf)           REPORT(expr, Report::RF_log | Report::RF_print, printf)

@@ -15,12 +15,6 @@
 
 #include <atlbase.h>
 #include <windows.h>
-
-#ifndef DIRECTINPUT_VERSION
-#define DIRECTINPUT_VERSION 0x0800
-#endif
-#include <dinput.h>
-
 #include <d3d9.h>
 #include <dxgi.h>
 #include <ddraw.h>
@@ -30,6 +24,12 @@
 #include <vector>
 #include <winnls.h>
 #include <winioctl.h>
+
+#undef  DIRECTINPUT_VERSION
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+
+#include "NPClient.h"
 
 // ======================================================================
 // ClientMachineNamespace

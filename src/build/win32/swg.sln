@@ -204,8 +204,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Direct3d9_ffp", "..\..\engi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Direct3d10", "..\..\engine\client\application\Direct3d10\build\win32\Direct3d10.vcxproj", "{C984AC37-2686-448C-8D6E-E3F98E61D975}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Direct3d9Ex", "..\..\engine\client\application\Direct3d9Ex\build\win32\Direct3d9Ex.vcxproj", "{5B743413-A64B-4E07-9A9F-E9024735DEF4}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Direct3d9_vsps", "..\..\engine\client\application\Direct3d9\build\win32\Direct3d9_vsps.vcxproj", "{CF3B1EE2-D965-44E1-9464-01297964F2CB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{78041480-C2C5-42A1-A566-C57BC3100BBF} = {78041480-C2C5-42A1-A566-C57BC3100BBF}
@@ -2393,12 +2391,6 @@ Global
 		{C984AC37-2686-448C-8D6E-E3F98E61D975}.Optimized|Win32.Build.0 = Optimized|Win32
 		{C984AC37-2686-448C-8D6E-E3F98E61D975}.Release|Win32.ActiveCfg = Release|Win32
 		{C984AC37-2686-448C-8D6E-E3F98E61D975}.Release|Win32.Build.0 = Release|Win32
-		{5B743413-A64B-4E07-9A9F-E9024735DEF4}.Debug|Win32.ActiveCfg = Debug|Win32
-		{5B743413-A64B-4E07-9A9F-E9024735DEF4}.Debug|Win32.Build.0 = Debug|Win32
-		{5B743413-A64B-4E07-9A9F-E9024735DEF4}.Optimized|Win32.ActiveCfg = Optimized|Win32
-		{5B743413-A64B-4E07-9A9F-E9024735DEF4}.Optimized|Win32.Build.0 = Optimized|Win32
-		{5B743413-A64B-4E07-9A9F-E9024735DEF4}.Release|Win32.ActiveCfg = Release|Win32
-		{5B743413-A64B-4E07-9A9F-E9024735DEF4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

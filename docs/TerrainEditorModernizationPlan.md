@@ -4,17 +4,6 @@ This document describes a staged roadmap for bringing the legacy **TerrainEditor
 application up to date while keeping it useful for creating worlds for *Star Wars
 Galaxies*.
 
-> **New – AI assistant blueprint**
-> 
-> The editor now ships with an expanded *Terrain Intelligence* audit that
-> synthesises structural scores, biome diversity checks and workflow heuristics
-> into an actionable blueprint.  The audit surfaces dormant layers, boundary
-> gaps, limited shader libraries and repeated procedural seeds while proposing
-> AI-driven fixes (automatic boundary drafting, fractal training, seed
-> regeneration and workflow automation).  Designers can run the audit from the
-> `Tools → Terrain Intelligence` menu to receive a rich report directly inside
-> the console.
-
 The code that lives under `src/engine/client/application/TerrainEditor/src/win32`
 implements a classic MFC desktop application.  The project still compiles
 against an ancient tool-chain and depends on custom UI widgets that are not

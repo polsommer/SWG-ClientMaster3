@@ -78,7 +78,7 @@ inline void UiReport::memoryManagerVerify (bool guardPatterns, bool freePatterns
 
 // ======================================================================
 
-#define UI_REPORT(expr, flags, printf2)             do { if (expr) { UiReport::setFlags(flags); UiReport::printf printf2; } } while (false)
+#define UI_REPORT(expr, flags, printf2)             ((expr) ? UiReport::setFlags(flags), UiReport::printf printf2 : UI_NOP)
 #define UI_REPORT_LOG(expr, printf)                 UI_REPORT(expr, UiReport::RF_log, printf)
 #define UI_REPORT_PRINT(expr, printf)               UI_REPORT(expr, UiReport::RF_print, printf)
 #define UI_REPORT_LOG_PRINT(expr, printf)           UI_REPORT(expr, UiReport::RF_log | UiReport::RF_print, printf)

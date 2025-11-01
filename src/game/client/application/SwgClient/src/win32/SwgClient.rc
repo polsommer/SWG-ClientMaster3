@@ -26,8 +26,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "swg1.ico"
-IDI_ICON2               ICON                    "swg1.ico"
+IDI_ICON1               ICON                    "swgh.ico"
+IDI_ICON2               ICON                    "swgh.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -61,8 +61,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 5,5,0,0
- PRODUCTVERSION 5,5,0,0
+ FILEVERSION 5,0,0,5
+ PRODUCTVERSION 5,0,0,5
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -77,16 +77,16 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "Compiled for Swg+"
+            VALUE "Comments", "Compiled for Swg Plus"
             VALUE "CompanyName", "SWG+"
             VALUE "FileDescription", "SWG+ Client"
-            VALUE "FileVersion", "5.5 Release"
+            VALUE "FileVersion", "5.1R Snap"
             VALUE "InternalName", "SWG+ Client"
             VALUE "LegalCopyright", "© Lucasfilm Entertainment Company Ltd. or Lucasfilm Ltd."
             VALUE "LegalTrademarks", "Star Wars Galaxies is a trademark of Lucasfilm Entertainment Company Ltd."
             VALUE "OriginalFilename", "SWG+.exe"
             VALUE "ProductName", "Star Wars Galaxies Plus"
-            VALUE "ProductVersion", "5.5 Release"
+            VALUE "ProductVersion", "5.1R Snap"
         END
     END
     BLOCK "VarFileInfo"

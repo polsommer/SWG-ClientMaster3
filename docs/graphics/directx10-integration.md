@@ -70,10 +70,9 @@ hardware feature set before switching to the new renderer.
   engine will favour the Direct3D 9Ex device path and advertise the active runtime via
   the crash reporter, allowing QA to confirm whether the shim is in effect during game
   sessions.
-* **Visual Studio projects:** `Direct3d10.vcxproj` and the companion
-  `Direct3d9Ex.vcxproj` are part of `swg.sln`, pushing the solution inventory to 131
-  projects and allowing engineers to build both the new backend and the D3D9Ex
-  compatibility layer in the classic workflow.
+* **Visual Studio project:** `Direct3d10.vcxproj` is part of `swg.sln`, raising the
+  solution inventory to 130 projects and allowing engineers to build the backend in the
+  classic workflow.
 * **CMake target:** the modern toolchain exposes `swg_direct3d10_bootstrap`, enabling
   continuous integration and headless builds to exercise the D3D10 runtime checks.
 

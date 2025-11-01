@@ -64,16 +64,13 @@ bool Headless::install( Gl_install *gl_install )
 
 	#define DEFAULT_FUNC_TRUE( a ) 	*(int(**)())(&s_api.##a) = _defaultFunc_True;
 
-        DEFAULT_FUNC_TRUE( presentToWindow );
-        DEFAULT_FUNC_TRUE( present );
-        DEFAULT_FUNC_TRUE( copyRenderTargetToNonRenderTargetTexture );
-        DEFAULT_FUNC_TRUE( screenShot );
-        DEFAULT_FUNC_TRUE( setMouseCursor );
-        DEFAULT_FUNC_TRUE( supportsMipmappedRenderTargets );
-        DEFAULT_FUNC_TRUE( writeImage );
-
-        s_api.isDirect3d9ExRuntimeAvailable = reinterpret_cast<bool (*)()>(_defaultFunc_False);
-        s_api.isUsingDirect3d9Ex = reinterpret_cast<bool (*)()>(_defaultFunc_False);
+	DEFAULT_FUNC_TRUE( presentToWindow );
+	DEFAULT_FUNC_TRUE( present );
+	DEFAULT_FUNC_TRUE( copyRenderTargetToNonRenderTargetTexture );
+	DEFAULT_FUNC_TRUE( screenShot );
+	DEFAULT_FUNC_TRUE( setMouseCursor );
+	DEFAULT_FUNC_TRUE( supportsMipmappedRenderTargets );
+	DEFAULT_FUNC_TRUE( writeImage );
 
 
 	VertexBufferDescriptorCache::install();
@@ -99,14 +96,7 @@ void Headless::_defaultFunc_Void()
 
 int Headless::_defaultFunc_True()
 {
-        return 1;
-}
-
-//---------------------------------------------------------------------------
-
-int Headless::_defaultFunc_False()
-{
-        return 0;
+	return 1;
 }
 
 //---------------------------------------------------------------------------

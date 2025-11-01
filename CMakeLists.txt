@@ -13,12 +13,6 @@ add_library(swg_plugin_api INTERFACE)
 target_include_directories(swg_plugin_api
     INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedDebug/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedDebug/include/public
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedFoundation/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedFoundation/include/public
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedMemoryManager/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/shared/library/sharedMemoryManager/include/public
 )
 
 target_compile_features(swg_plugin_api INTERFACE cxx_std_20)
@@ -35,29 +29,6 @@ target_include_directories(WorldBuilderProceduralPlugin PRIVATE
 target_link_libraries(WorldBuilderProceduralPlugin PRIVATE swg_plugin_api)
 
 if(WIN32)
-    add_library(swg_direct3d9ex_support SHARED
-        src/engine/client/application/Direct3d9Ex/src/win32/Direct3d9ExSupport.cpp
-    )
-
-    target_include_directories(swg_direct3d9ex_support PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/client/application/Direct3d9Ex/src/win32
-    )
-
-    target_compile_definitions(swg_direct3d9ex_support
-        PRIVATE SWG_DIRECT3D9EX_SUPPORT_BUILD SWG_DIRECT3D9EX_SUPPORT_DLL
-        PUBLIC SWG_DIRECT3D9EX_SUPPORT_DLL
-    )
-
-    if(MSVC)
-        target_compile_options(swg_direct3d9ex_support PRIVATE /W4 /permissive-)
-    else()
-        target_compile_options(swg_direct3d9ex_support PRIVATE -Wall -Wextra -Wpedantic)
-    endif()
-
-    set_target_properties(swg_direct3d9ex_support PROPERTIES
-        OUTPUT_NAME "gl08"
-    )
-
     add_library(swg_direct3d10_bootstrap STATIC
         src/engine/client/application/Direct3d10/src/win32/Direct3d10.cpp
         src/engine/client/application/Direct3d10/src/win32/Direct3d10Bootstrap.cpp
@@ -66,8 +37,6 @@ if(WIN32)
     target_include_directories(swg_direct3d10_bootstrap PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/client/application/Direct3d10/src/win32
     )
-
-    target_link_libraries(swg_direct3d10_bootstrap PUBLIC swg_plugin_api)
 
     target_compile_definitions(swg_direct3d10_bootstrap PRIVATE DIRECT3D10_BOOTSTRAP)
 

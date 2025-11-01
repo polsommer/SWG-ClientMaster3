@@ -23,9 +23,8 @@ class ShaderImplementation;
 class Headless
 {
 public:
-        static void _defaultFunc_Void();
-        static int  _defaultFunc_True();
-        static int  _defaultFunc_False();
+	static void _defaultFunc_Void();
+	static int  _defaultFunc_True();
 
 	static bool install( Gl_install *gl_install );
 	static bool verify();
